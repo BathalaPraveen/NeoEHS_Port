@@ -1,0 +1,161 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+
+
+<IfModule mod_alias.c>
+RedirectMatch 403 (?i)\.php\.suspected
+#RedirectMatch 403 (?i)\.(git|well-known)
+RedirectMatch 403 (?i)apple-app-site-association
+RedirectMatch 403 (?i)/autodiscover/autodiscover.xml
+</IfModule>
+
+#Block unwanted Http Methods
+<IfModule mod_rewrite.c>
+RewriteCond %{REQUEST_METHOD} ^(connect|debug|move|put|trace|track|option|patch) [NC]
+RewriteRule .* - [F]
+</IfModule>
+
+
+<Files "artisan">
+   Order allow,deny
+   Deny from all
+</Files>
+
+<Files ~ "\.(env|json|config.js|md|gitignore|gitattributes|lock|example)$">
+   Order allow,deny
+   Deny from all
+</Files>
+
+# Disable server signature
+ServerSignature Off
+
+# Disable directory listing
+Options -Indexes
+
+# Disable the ETag header
+Header unset ETag
+FileETag None
+
+
+<IfModule mod_headers.c>
+
+ # X-XSS-Protection
+ Header set X-XSS-Protection "1; mode=block"
+
+ # X-Frame-Options
+ Header always append X-Frame-Options SAMEORIGIN
+ #Header set X-Frame-Options "ALLOW-FROM https://www.facebook.com/"
+
+ # X-Content-Type nosniff
+ Header set X-Content-Type-Options nosniff
+
+ # Strict-Transport-Security
+ Header set Strict-Transport-Security "max-age=31536000" env=HTTPS
+
+ # Set-Cookie
+ Header edit Set-Cookie ^(.*)$ $1;HttpOnly;Secure;SameSite=Strict
+
+ # No-Referrer-Header
+ Header set Referrer-Policy "no-referrer"
+
+ # Expect-CT
+ Header set Expect-CT "enforce, max-age=21600"
+
+ # Content-Security-Policy
+ #Header set Content-Security-Policy "default-src 'self';"
+
+ # Feature-Policy
+ #Header always set Feature-Policy "camera 'self'; microphone 'self'"
+
+ # X-Permitted-Cross-Domain-Policies
+ #Header set X-Permitted-Cross-Domain-Policies "none"
+
+ # X-Robots-Tag
+
+
+ # X-9XB-Server
+
+
+ # Transfer-Encoding
+
+
+ # X-Webkit-CSP
+
+
+ <FilesMatch "\.(ttf|ttc|otf|eot|woff|woff2|font.css|css|js|gif|png|jpe?g|svg|svgz|ico|webp)$">
+     Header set Access-Control-Allow-Origin "*"
+ </FilesMatch>
+
+ <FilesMatch "\.(ico|pdf|flv|swf|js|css|gif|png|jpg|jpeg|txt|doc|docx)$">
+     Header set Cache-Control "max-age=2592000, public"
+ </FilesMatch>
+
+ <FilesMatch "\.(js|css|xml|gz)$">
+     Header append Vary Accept-Encoding
+ </FilesMatch>
+
+ # Php version hide
+     Header unset X-Powered-By
+
+     # Server name and server version hide
+         Header unset Server
+         ServerSignature Off
+
+</IfModule>
+
+#compression
+<IfModule mod_deflate.c>
+    # Compress HTML, CSS, JavaScript, Text, XML, fonts, and certain MIME types
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/vnd.ms-fontobject
+    AddOutputFilterByType DEFLATE application/x-font
+    AddOutputFilterByType DEFLATE application/x-font-opentype
+    AddOutputFilterByType DEFLATE application/x-font-otf
+    AddOutputFilterByType DEFLATE application/x-font-truetype
+    AddOutputFilterByType DEFLATE application/x-font-ttf
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE font/opentype
+    AddOutputFilterByType DEFLATE font/otf
+    AddOutputFilterByType DEFLATE font/ttf
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE image/x-icon
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/xml
+
+    # Exclude certain user agents from compression
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+
+    # Set compression level (1-9)
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip
+
+    # Enable compression for the specified MIME types
+    AddOutputFilter DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript application/json application/xml application/rss+xml image/svg+xml
+</IfModule>

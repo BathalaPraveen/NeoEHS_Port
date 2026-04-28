@@ -1,0 +1,370 @@
+body {
+    color: #000;
+}
+
+.form-input {
+    margin-bottom: 5px;
+}
+
+.page-wrapper {
+    margin-top: 50px;
+}
+
+
+.mainCard {
+    border-top: 4px solid #262b66;
+    border-radius: 10px !important;
+    padding: 15px;
+}
+
+.card-bottom button {
+    float: right;
+    margin-left: 0.5rem;
+}
+
+.dataTables_filter {
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+    float: right;
+}
+
+.saveBtn {
+    float: right;
+}
+
+.dropdown-item.active,
+.dropdown-item:active {
+    color: #fff;
+    text-decoration: none;
+    background-color: #262b66 !important
+}
+
+.switcher-btn {
+    top: 75% !important;
+}
+
+.error {
+    color: red;
+}
+
+.switcher-btn {
+    display: none;
+}
+
+/* Menu bar Color change start */
+
+.simplebar-mask {
+    background: white !important;
+}
+
+html.color-sidebar .sidebar-wrapper .metismenu a {
+    color: #262b66 !important;
+}
+
+html.color-sidebar .sidebar-wrapper .metismenu .mm-active>a,
+html.color-sidebar .sidebar-wrapper .metismenu a:active,
+html.color-sidebar .sidebar-wrapper .metismenu a:focus,
+html.color-sidebar .sidebar-wrapper .metismenu a:hover {
+    background: #262b66 !important;
+    color: white !important;
+    border-radius: 10px !important;
+}
+
+.toggle-icon {
+    color: #262b66 !important;
+}
+
+.back-to-top {
+    background-color: #262b66 !important;
+    text-align: center;
+}
+
+/* Menu bar Color change end */
+
+/* Table page change color start */
+
+.btn-primary {
+    color: #fff !important;
+    background-color: #262b66 !important;
+    border-color: #262b66 !important;
+}
+
+.border-primary {
+    border-color: #262b66 !important;
+    border-radius: 10px !important;
+}
+
+label.require::after {
+    content: '*';
+    color: red;
+}
+
+.card-header-inner {
+    padding-top: 15px;
+}
+
+div.require::after {
+    content: '*';
+    color: red;
+}
+
+.font-weight-bold {
+    font-weight: bold;
+}
+
+.card-header {
+    background-color: #0053A1;
+    color: #fff;
+}
+
+.card-header>h5 {
+    color: #fff;
+}
+
+.select2-container .select2-selection--single {
+    height: 36px;
+    /* Adjust to match Bootstrap's input height */
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 35px;
+}
+
+.selecterror .select2-selection {
+    border-color: red !important;
+}
+
+.form-check-input:disabled {
+    opacity: 1;
+}
+
+.form-check-input:disabled~.form-check-label,
+.form-check-input[disabled]~.form-check-label {
+    opacity: 1;
+}
+
+.fa {
+    color: #262b66 !important;
+    font-size:20px;
+}
+
+a>.fa-eye {
+    color: #262b66;
+    font-size: 20px;
+}
+
+a>.fa-user {
+    color: #262b66;
+    font-size: 20px;
+}
+
+a>.fa-key {
+    color: #262b66;
+    font-size: 20px;
+}
+
+a>.fa-sticky-note-o  {
+    color: #663826;
+    font-size: 20px;
+}
+
+a>.fa-clipboard-list{
+    color: #265266;
+    font-size: 20px;
+}
+
+a>.fa-pen-to-square {
+    color: #007bff !important;
+    font-size:20px;
+}
+
+a>.fa-file-pdf-o {
+    color: #262b66 !important;
+    font-size:20px;
+}
+
+a>.fa-check-to-slot{
+    color: #007bff !important;
+    font-size:20px;
+}
+
+a>.fa-trash {
+    color: #fd3550 !important;
+    font-size:20px;
+}
+
+table.table-bordered.dataTable {
+    /* padding-top: 1rem; */
+}
+
+table.table-bordered.dataTable td,
+table.table-bordered.dataTable th {
+    /* border: 1px solid #ccc; */
+}
+
+table.table-bordered.dataTable tbody th,
+table.table-bordered.dataTable tbody td {
+    /* border-bottom-width: 1px; */
+}
+
+.dropdown-item:focus,
+.dropdown-item:hover {
+    color: #ffffff;
+    background-color: #262b66;
+}
+
+.bootimgheight {
+    width: 270px !important;
+    height: 153px !important;
+    /* margin-top: 30px; */
+}
+
+.file-pop {
+    margin-top: -9rem;
+    margin-left: 7rem;
+    position: absolute;
+    font-size: 20px;
+}
+
+.thumbnail {
+    display: block;
+    padding: 4px;
+    margin-bottom: 20px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-transition: border .2s ease-in-out;
+    -o-transition: border .2s ease-in-out;
+    transition: border .2s ease-in-out;
+}
+
+.fileinput .thumbnail {
+    display: inline-block;
+    margin-bottom: 5px;
+    overflow: hidden;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.mini-txt {
+    text-align: center;
+}
+
+.fileinput img {
+    width: 100%;
+    height: 100%;
+}
+
+.file-pop .fileinput-exists {
+    display: none;
+}
+
+.fa-trash {
+    color: red !important;
+}
+
+.image-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.wrapper.toggled .bx-first-page:before {
+    content: "\ea8e";
+}
+
+.dropdown-large .dropdown-item:hover .notify {
+    background-color: #fff !important;
+}
+
+.dataTable>thead>tr {
+    color: #3375b4 !important;
+    font-size: 14px;
+    background: #b8cde2 !important;
+}
+
+.dataTable>thead>tr>th {
+    color: #3375b4 !important;
+    font-size: 14px;
+    background: #b8cde2 !important;
+}
+
+input[type="checkbox"] {
+    height: 18px;
+    width: 18px;
+    border: 1px solid #ccc;
+}
+
+.form-check-label {
+    display: contents;
+}
+
+.div-striped>.row:nth-child(odd) {
+    background-color: #dee2e6;
+
+}
+
+.bg-style-one {
+    text-align: center;
+    background: #262b66;
+    color: white;
+    padding: 5px 0 5px 0;
+    border-radius: 20px;
+}
+
+.bold {
+    font-weight: 600;
+}
+
+
+/*Icon Design*/
+
+.custon-icon {
+    display: inline-block;
+    height: 25px;
+    width: 25px;
+}
+
+.icon-crane {
+    background-image: url(../images/icons/crane.png);
+}
+
+html.color-sidebar .sidebar-wrapper .metismenu a:hover .icon-crane {
+    background-image: url(../images/icons/crane-alt.png);
+}
+
+
+.text-wrap {
+    white-space: normal;
+}
+.width-50 {
+    width: 50px;
+}
+.width-100 {
+    width: 100px;
+}
+.width-150 {
+    width: 150px;
+}
+.width-200 {
+    width: 200px;
+}
+.width-250 {
+    width: 250px;
+}
+.width-300 {
+    width: 300px;
+}
+.width-350 {
+    width: 350px;
+}
+.width-400 {
+    width: 400px;
+}
+.width-450 {
+    width: 450px;
+}
+.width-500 {
+    width: 500px;
+}
