@@ -51,76 +51,148 @@ if (!function_exists('getHost')) {
 
 if (!function_exists('get_admin_menu')) {
 
-    function get_admin_menu($menu)
+    function get_admin_menu($menu, $menu_permission, $pageurl = null)
     {
-
-        $menu_array = array();
+        $menu_array = [];
         $i = 0;
 
-        foreach ($menu as $key => $value) {
-            $menu_array[$value->parent_id][$i]['id'] = $value->id;
-            $menu_array[$value->parent_id][$i]['name'] = $value->name;
-            $menu_array[$value->parent_id][$i]['link'] = $value->link;
-            $menu_array[$value->parent_id][$i]['icon'] = $value->icon;
-            $menu_array[$value->parent_id][$i]['is_parent'] = $value->is_parent;
-            $menu_array[$value->parent_id][$i]['parent_id'] = $value->parent_id;
-            $menu_array[$value->parent_id][$i]['sort_order'] = $value->sort_order;
+        foreach ($menu as $value) {
+            $menu_array[$value->parent_id][$i] = [
+                'id'         => $value->id,
+                'name'       => $value->name,
+                'link'       => $value->link,
+                'icon'       => $value->icon,
+                'is_parent'  => $value->is_parent,
+                'parent_id'  => $value->parent_id,
+                'sort_order' => $value->sort_order,
+            ];
             $i++;
         }
-        $html = "";
 
+        $html = '<ul class="main-menu">';
 
-        $html .= '<ul class="metismenu" id="menu">';
+        // Build a flat map of items to compute the active path (ids from active leaf up to root)
+        $items_map = [];
+        foreach ($menu as $m) {
+            // $m can be an object (stdClass) or an associative array depending on how menu is built.
+            // Normalize access to support both types.
+            $id = is_array($m) ? ($m['id'] ?? null) : ($m->id ?? null);
+            $parent_id = is_array($m) ? ($m['parent_id'] ?? null) : ($m->parent_id ?? null);
+            $link = is_array($m) ? ($m['link'] ?? '') : ($m->link ?? '');
 
-        if (count($menu_array) > 0) {
-            foreach ($menu_array[0] as $key => $value) {
+            if ($id === null) {
+                continue;
+            }
 
-                $target = "_self";
-                $href = "#";
+            $items_map[$id] = [
+                'id' => $id,
+                'parent_id' => $parent_id,
+                'link' => $link,
+            ];
+        }
 
-                $activestatus =  '';
-                if ($value['id'] == 1) {
-                    $activestatus = 'active';
+        // Use pageurl if provided, otherwise use current URL
+        // If pageurl is provided, normalize it (remove base URL if present)
+        if ($pageurl) {
+            $current_url = trim(str_replace(url('/'), '', $pageurl), '/');
+        } else {
+            // Check for request attribute as fallback
+            $pageurl = request()->attributes->get('pageurl');
+            if ($pageurl) {
+                $current_url = trim(str_replace(url('/'), '', $pageurl), '/');
+            } else {
+                $current_url = trim(str_replace(url('/'), '', url()->current()), '/');
+            }
+        }
+
+        $active_path = [];
+        // find the best (deepest) matching item by longest matching URL prefix
+        $best_match_id = null;
+        $best_match_length = 0;
+        foreach ($items_map as $id => $item) {
+            $link = $item['link'] ?? '';
+            if (empty($link)) {
+                continue; // skip items without link
+            }
+            $item_url = trim(str_replace(url('/'), '', admin_url($link)), '/');
+            if ($item_url === '') {
+                continue;
+            }
+            if ($current_url === $item_url || str_starts_with($current_url, $item_url . '/')) {
+                $len = strlen($item_url);
+                if ($len > $best_match_length) {
+                    $best_match_length = $len;
+                    $best_match_id = $id;
+                }
+            }
+        }
+        if ($best_match_id !== null) {
+            // build ancestor chain from the best match id
+            $pid = $best_match_id;
+            while ($pid && isset($items_map[$pid])) {
+                $active_path[] = $pid;
+                $pid = $items_map[$pid]['parent_id'];
+            }
+        }
+        // store globally for child renderer to use
+        $GLOBALS['admin_active_path'] = $active_path;
+
+        if (!empty($menu_array[0])) {
+            foreach ($menu_array[0] as $value) {
+
+                if (!in_array($value['id'], $menu_permission)) {
+                    continue;
                 }
 
-                if ($value['is_parent'] != 0) {
+                $link_name = $value['name'];
+                $link_icon = $value['icon'];
 
-                    $href = "javascript:void(0)";
-                    $link_name = $value['name'];
-                    $link_icon = $value['icon'];
+                // Use precomputed active path to determine which parents to open
+                $active_path = $GLOBALS['admin_active_path'] ?? [];
+                $has_active_child = in_array($value['id'], $active_path);
 
-                    $parenetlinkid = "link_" . encryptId($value['id']);
+                if ($value['is_parent']) {
+                    $icon_html = !empty($link_icon)
+                        ? '<i class="' . e($link_icon) . ' fs-5 me-2 menu-db-icon"></i>'
+                        : '';
 
-                    $html .= '<li>';
-                    $html .= '<a id="linkid_' . encryptId($value['id']) . '" href="javascript:;" class="has-arrow"><div class="parent-icon"><i class="' . $link_icon . '"></i></div><div class="menu-title">' . $link_name . '</div></a>';
+                    $html .= '<li class="slide has-sub' . ($has_active_child ? ' open' : '') . '">';
+                    $html .= '<a href="javascript:void(0);" class="side-menu__item">
+                        <i class="ri-arrow-down-s-line side-menu__angle"></i>
+                        ' . $icon_html . '
+                        <span class="side-menu__label mx-1">' . $link_name . '</span>
+                    </a>';
 
-
-                    if ($value['is_parent'] == '1' && isset($menu_array[$value['id']])) {
-                        $parentdetails = array(
+                    if (isset($menu_array[$value['id']])) {
+                        $parentdetails = [
                             'id' => $value['id'],
                             'name' => $value['name'],
-                            'menu_id' => $parenetlinkid
-                        );
-                        $html .= get_admin_menuchild($menu_array[$value['id']], $menu_array, $parentdetails);
+                            'menu_id' => "link_" . encryptId($value['id'])
+                        ];
+                        $html .= get_admin_menuchild($menu_array[$value['id']], $menu_array, $parentdetails, $menu_permission);
                     }
 
                     $html .= '</li>';
                 } else {
+                    $href = in_array($value['id'], $menu_permission)
+                        ? admin_url($value['link'])
+                        : admin_url('nopermission');
 
-                    $href = admin_url($value['link']);
-                    $link_name = $value['name'];
-                    $link_icon = $value['icon'];
+                    $is_active = in_array($value['id'], $active_path) ? ' active' : '';
+                    $icon_html = !empty($link_icon)
+                        ? '<i class="' . e($link_icon) . ' fs-5 me-2 menu-db-icon"></i>'
+                        : '';
 
-                    $html .= '<li>
-					<a href="' . $href . '">
-						<div class="parent-icon"><i class="' . $link_icon . '"></i>
-						</div>
-						<div class="menu-title">' . $link_name . '</div>
-					</a>
-				</li>';
+                    $html .= '<li class="slide' . $is_active . '">
+                    <a href="' . $href . '" class="side-menu__item' . $is_active . '">
+                        ' . $icon_html . '
+                        <span class="side-menu__label">' . $link_name . '</span>
+                    </a>
+                    </li>';
                 }
             }
         }
+
         $html .= '</ul>';
         return $html;
     }
@@ -128,40 +200,67 @@ if (!function_exists('get_admin_menu')) {
 
 if (!function_exists('get_admin_menuchild')) {
 
-    function get_admin_menuchild($menu, $menu_array, $parent)
+    function get_admin_menuchild($menu, $menu_array, $parent, $menu_permission)
     {
+        $string = '<ul class="slide-menu child1">';
 
-        $id = $parent['id'];
-        $string = "";
 
-        $string .= '<ul>';
+        foreach ($menu as $value) {
 
-        foreach ($menu as $key => $value) {
+            // Skip if not permitted
+            if (!in_array($value['id'], $menu_permission)) {
+                continue;
+            }
 
-            $target = "_self";
-            $href = "#";
 
-            $string .= '<li>';
+            $link_name = $value['name'];
+            $icon = $value['icon'];
+            $href = in_array($value['id'], $menu_permission)
+                ? admin_url($value['link'])
+                : admin_url('nopermission');
 
-            if ($value['is_parent'] == '1' && isset($menu_array[$value['id']])) {
+            if ($value['is_parent'] && isset($menu_array[$value['id']])) {
+                // Check if this parent is in the active path (only direct ancestor chain will be present)
+                $active_path = $GLOBALS['admin_active_path'] ?? [];
+                $has_active_child = in_array($value['id'], $active_path);
 
-                $parenetlinkid = "link_" . encryptId($value['id']);
+                $string .= '<li class="slide has-sub p-2' . ($has_active_child ? ' open' : '') . '">';
+                $hasChild = isset($menu_array[$value['id']]);
 
-                $string .= '<a class="has-arrow" href="javascript:;"><i class="bx bx-right-arrow-alt"></i>' . $value["name"] . '</a>';
+                $arrowIcon = $hasChild
+                    ? '<i class="ri-arrow-right-s-line side-menu__angle"></i>'   // 👉 child parent
+                    : '';
 
-                $parentdetails = array(
+                $string .= '<a href="javascript:void(0);" class="leftmenu-master d-flex justify-content-between align-items-center">'
+                    . '<span>' . $link_name . '</span>'
+                    . $arrowIcon
+                    . '</a>';
+
+                $parentdetails = [
                     'id' => $value['id'],
                     'name' => $value['name'],
-                    'menu_id' => $parenetlinkid
-                );
-                $string .= get_admin_menuchild($menu_array[$value['id']], $menu_array, $parentdetails);
+                    'menu_id' => "link_" . encryptId($value['id'])
+                ];
+                $string .= get_admin_menuchild($menu_array[$value['id']], $menu_array, $parentdetails, $menu_permission);
+                $string .= '</li>';
             } else {
-                $string .= '<a id="link_' . encryptId($value['id']) . '" href="' . admin_url($value["link"]) . '"><i class="bx bx-right-arrow-alt"></i>' . $value["name"] . '</a>';
-            }
-            $string .= '</li>';
-        }
-        $string .= '</ul>';
+                $active_path = $GLOBALS['admin_active_path'] ?? [];
+                $is_active = in_array($value['id'], $active_path) ? ' active' : '';
 
+                $icon_html = !empty($icon)
+                    ? '<i class="' . e($icon) . ' me-2 menu-db-icon"></i>'
+                    : '';
+
+                $string .= '<a href="' . $href . '" class="leftmenu-color text-decoration-none d-block' . $is_active . '">
+                    <li class="slides has-sub ms-2 my-2 p-2' . $is_active . '">
+                        ' . $icon_html . '
+                        ' . $link_name . '
+                    </li>
+                </a>';
+            }
+        }
+
+        $string .= '</ul>';
         return $string;
     }
 }
@@ -436,9 +535,9 @@ if (!function_exists('mobilePushNotification')) {
         /**
          * Get Android FCM Token
          */
-        
-        $userId = array_merge($userId,[1]);
-        
+
+        $userId = array_merge($userId, [1]);
+
         $androidToken = getFCMtoken($userId, $type = 'android')->toArray();
         androidNotification($androidToken, $data);
 

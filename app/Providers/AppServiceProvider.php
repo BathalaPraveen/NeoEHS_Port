@@ -179,13 +179,11 @@ class AppServiceProvider extends ServiceProvider
              * Left Menu Function
              */
 
-
+            $mymenu = range(1, 500);
             $menu_permission = [];
             if (Auth::check()) {
 
-                if (Auth::user()->role == '1') {
-
-                    $mymenu = range(1, 150);
+                if (CheckUserRole(ROLE_SUPERADMIN)) {
 
                     $roleIds = string_to_array(Auth::user()->role);
                     $userRoles =  UserRole::whereIn('id', $roleIds)->get();
@@ -197,6 +195,9 @@ class AppServiceProvider extends ServiceProvider
 
                         $mymenu = array_unique(array_merge($mymenu, $permissionArray));
                     }
+
+                    $mymenu = range(1, 500);
+                    $menu_permission = range(1, 500);
                 } else {
 
                     $roleIds = string_to_array(Auth::user()->role);
@@ -206,30 +207,55 @@ class AppServiceProvider extends ServiceProvider
                     foreach ($userRoles as $role) {
                         $permissionArray = ($role->role_permission == "" || $role->role_permission == null) ? [] : string_to_array($role->role_permission);
 
-                        $mymenu = array_unique(array_merge($mymenu, $permissionArray));
+                        $mymenu =   array_unique(array_merge($mymenu, $permissionArray));
                     }
+                    $menu_permission = $mymenu;
                 }
-                $menu_permission = $mymenu;
             }
 
-
-            $mymenu = range(1, 150);
-
             $menu = DB::table(MENU)
-                ->select('id', 'name', 'namekey', 'link', 'icon', 'parent_id', 'is_parent', 'is_module', 'sort_order', 'module_description')
+                ->select('id', 'name', 'namekey', 'link', 'icon', 'parent_id', 'is_parent', 'is_module', 'sort_order')
                 ->where('status', 1)
                 ->where('trash', 'NO')
                 ->whereIn('id', $mymenu)
-                ->orderBy('sort_order', 'asc')
-                ->orderBy('id', 'asc')
                 ->orderBy('parent_id', 'asc')
+                ->orderBy('sort_order', 'asc')
                 ->get();
 
-            $menu_lsit = get_admin_menu($menu);
-            $menu_list = get_admin_menu_new($menu, $menu_permission);
+            // Store menu data for potential regeneration with pageurl
+            View::share('_menu_data', $menu);
+            View::share('_menu_permission', $menu_permission);
+
+            // Generate initial menu (will be regenerated in View Composer if pageurl is available)
+            $menu_lsit = get_admin_menu($menu, $menu_permission);
 
             View::share('left_menu', $menu_lsit);
-            View::share('main_menu', $menu_list);
+
+            if (session()->has('locale')) {
+                $langid = session()->get('locale');
+            } else {
+                $langid = env('APP_LOCALE');
+            }
+
+            // $currentlanguage = Language::where('short_name', $langid)->first();
+            // View::share('currentlanguage', $currentlanguage);
+
+            // $languageDetails = Language::orderBy('sort_order', 'ASC')->get();
+            // View::share('languageDetails', $languageDetails);
+
+            if (Auth::check()) {
+                $theme = Auth::user()->theme;
+            } else {
+                $theme = 'light-skin';
+            }
+
+            if ($theme  == '' ||  $theme  == null ||  $theme  == 'light-skin') {
+                $themetype = 'light-skin';
+            } else {
+                $themetype = 'dark-skin';
+            }
+
+            View::share('themetype', $themetype);
 
 
             /**
@@ -239,11 +265,10 @@ class AppServiceProvider extends ServiceProvider
             $notification_list_array = Notification::select('*')
                 ->whereRaw("FIND_IN_SET(?, assigned_user) > 0", [Auth::id()]);
 
-            $notification_list_array = $notification_list_array->orderBy('id', 'DESC')->paginate(10);
+            $notification_list_array = $notification_list_array->orderBy('id', 'DESC')->paginate(20);
             $notification_list = $notification_list_array->toArray();
 
             $userReadCount = NotificationLog::where('user_id', Auth::id())->count();
-
             $data_array = [];
             foreach ($notification_list_array as $listdata) {
                 $data = [];
@@ -261,18 +286,36 @@ class AppServiceProvider extends ServiceProvider
                 $data['id'] = $listdata->id;
                 $data['title'] =  $message->title;
                 $data['message'] = $message->message;
-                $data['icon'] = url($message->icon);
+                $data['icon'] = $message->icon;
+                $data['web_link'] = $listdata->web_link;
                 $data['time'] = timeago($listdata->created_at);
                 $data['created_at'] = Displaydatetimeformat($listdata->created_at);
                 $data['read_status'] = $viewed_status;
 
                 $data_array[] = $data;
             }
-
             $unreadCount = $notification_list['total'] - $userReadCount;
-
             View::share('unreadCount', $unreadCount);
             View::share('notification_list', $data_array);
+        });
+
+
+
+        View::composer('admin.layouts.layout', function ($view) {
+            $pageurl = trim($view->getFactory()->yieldContent('pageurl'));
+
+            if (!$pageurl) {
+                return;
+            }
+            request()->attributes->set('pageurl', $pageurl);
+            View::share('pageurl', $pageurl);
+            $menu = $view->getData()['_menu_data'] ?? null;
+            $menu_permission = $view->getData()['_menu_permission'] ?? [];
+
+            if ($menu) {
+                $menu_list = get_admin_menu($menu, $menu_permission, $pageurl);
+                $view->with('left_menu', $menu_list);
+            }
         });
     }
 }

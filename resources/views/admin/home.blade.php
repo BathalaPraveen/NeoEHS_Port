@@ -1,7 +1,7 @@
 @extends('admin.layouts.layout')
-@section('title', 'Dashboard')
+@section('title', 'Home')
 @section('menu', 'home')
-@section('pageurl', admin_url('dashboard'))
+@section('pageurl', admin_url('home'))
 
 @push('style')
     <style>
@@ -165,6 +165,84 @@
             z-index: 10000;
         }
 
+        .announcement-card {
+            background: #f8f9fb;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* HEADER */
+        .announcement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .announcement-header .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .announcement-header i {
+            color: #2ecc71;
+            font-size: 18px;
+        }
+
+        .announcement-header h5 {
+            margin: 0;
+            font-weight: 600;
+            color: #001145;
+        }
+
+        /* VIEW ALL BUTTON */
+        .view-all-btn {
+            background: #e6f4ea;
+            color: #2e7d32;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .view-all-btn:hover {
+            background: #d4edda;
+            color: #1b5e20;
+        }
+
+        /* BODY */
+        .announcement-body {
+            padding: 10px 5px;
+        }
+
+        .announcement-body .title {
+            font-weight: 600;
+            color: #001145;
+            margin-bottom: 6px;
+        }
+
+        .announcement-body .desc {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        /* DATE */
+        .announcement-body .date {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #777;
+        }
+
+        .announcement-body .date i {
+            font-size: 13px;
+        }
     </style>
 @endpush
 
@@ -175,7 +253,8 @@
             <div class="col-xl-12 text-left">
                 <p class="welcome-content">Welcome to</p>
                 <h1 class="heading">BEACON</h1>
-                <p class="welcome-content">HSE Management System for Bintulu Port Holdings Berhad</p>
+                <p class="welcome-content welcome-content-last"><span class="green-line"></span>HSE Management System for
+                    Bintulu Port Holdings Berhad</p>
 
             </div>
         </div>
@@ -183,38 +262,54 @@
         <div class="container para mt-2">
             <div class="row gy-4">
                 <div class="col-md-8" data-aos="zoom-out" data-aos-delay="100">
-                    <div class="card p-3">
-                        <div class="">
-                            <h4 class="title p-2"
-                                style="border-bottom:1px solid #ccc;color:#001145 !important;font-family: 'Roboto';">
-                                ANNOUNCEMENT</h4>
+
+                    <div class="announcement-card">
+
+                        <!-- HEADER -->
+                        <div class="announcement-header">
+                            <div class="left">
+                                <i class="fa-solid fa-bullhorn"></i>
+                                <h5>ANNOUNCEMENT</h5>
+                            </div>
+
+                            <a href="{{ admin_url('announcement') }}" class="view-all-btn">
+                                View All
+                            </a>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="owl-carousel owl-theme">
-                                    @foreach ($announcementlist as $content)
-                                        <div class="p-2">
-                                            <p class="side-heading">{{ $content->announcement_title }}</p>
-                                            <p class="para-1 ">{{ $content->announcement_content }}</p>
-                                            <div class="container time">
-                                                <small class="text-muted">{{ timeago($content->created_at) }}</small>
-                                            </div>
-                                        </div>
-                                    @endforeach
+                        <!-- BODY -->
+                        <div class="owl-carousel owl-theme mt-3">
+                            @foreach ($announcementlist as $content)
+                                <div class="announcement-body">
+
+                                    <h6 class="title">
+                                        {{ $content->announcement_title }}
+                                    </h6>
+
+                                    <p class="desc">
+                                        {{ $content->announcement_content }}
+                                    </p>
+
+                                    <div class="date">
+                                        <i class="fa-regular fa-calendar"></i>
+                                        <span>{{ \Carbon\Carbon::parse($content->created_at)->format('d F Y') }}</span>
+                                    </div>
+
                                 </div>
-                            </div>
+                            @endforeach
                         </div>
 
                     </div>
+
                 </div>
             </div>
-            <div class=" mt-3">
-
-                {!! $main_menu !!}
-
-            </div>
         </div>
+        <div class=" mt-3">
+
+            {{-- {!! $main_menu !!} --}}
+
+        </div>
+    </div>
     </div>
 
 @endsection
@@ -267,16 +362,16 @@
 
                 $subMenu.slideToggle();
 
-                 var orgheight = $(this).closest('.menu-item').height();
-                    setTimeout(() => {
-                        var parentHeight = $(this).closest('.menu-item').height();
+                var orgheight = $(this).closest('.menu-item').height();
+                setTimeout(() => {
+                    var parentHeight = $(this).closest('.menu-item').height();
 
-                        finalheight = parentHeight - 165 ;
+                    finalheight = parentHeight - 165;
 
-                        $(this).closest('.menu-item').css('margin-top', -finalheight + 'px');
-                        console.log(finalheight)
+                    $(this).closest('.menu-item').css('margin-top', -finalheight + 'px');
+                    console.log(finalheight)
 
-                    }, 400);
+                }, 400);
 
             });
 

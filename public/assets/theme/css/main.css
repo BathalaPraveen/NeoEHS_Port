@@ -726,11 +726,7 @@ section,
   color: floralwhite;
 } */
 
-.hero p.welcome-content {
-    margin: 10px 0 5px 0px;
-    font-size: 16px;
-    color: floralwhite;
-}
+
 
 .menu-item .fa{
     color: #e78d02 !important;
