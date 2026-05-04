@@ -3,23 +3,25 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Exception;
-use Illuminate\Support\Facades\Auth;
-use Session;
-use DB;
-use Str;
-use App\Models\User;
 use App\Models\AdminCountry;
 use App\Models\ATAR\UAUC;
-use App\Models\Master\SliderImage;
+use App\Models\Incident\IncidentNotification;
+use App\Models\Inspection\Inspection;
 use App\Models\Master\Announcement;
 use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Division;
 use App\Models\Master\Location;
+use App\Models\Master\SliderImage;
 use App\Models\Master\SpecificLocation;
+use App\Models\User;
+use DB;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Session;
+use Str;
 
 class AdminController extends Controller
 {
@@ -32,6 +34,8 @@ class AdminController extends Controller
 
     private $slider;
     private $announcement;
+    private $inspection;
+    private $incidentNotification;
 
     private $uauc;
 
@@ -43,10 +47,12 @@ class AdminController extends Controller
         $this->department = new Department();
         $this->location = new Location();
         $this->specificlocation = new SpecificLocation();
+        $this->specificlocation = new SpecificLocation();
 
         $this->slider = new SliderImage();
         $this->announcement = new Announcement();
-
+        $this->inspection = new Inspection();
+        $this->incidentNotification = new IncidentNotification();
         $this->uauc = new UAUC();
     }
 
@@ -54,8 +60,86 @@ class AdminController extends Controller
     {
 
         $announcementlist = $this->announcement->limit(10)->get();
+        $incidentData = [];
+        $inspectionData = [];
+        $inspectionPastMonthCount = $this->inspection
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->whereYear('created_at', now()->subMonth()->year)
+            ->count();
+
+        $inspectionCurrentMonthCount = $this->inspection
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        $inspectionOpenCount = $this->inspection
+            ->where('inspection_status', '!=', 5)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        $inspectionCloseCount = $this->inspection
+            ->where('inspection_status', '=', 5)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        if ($inspectionPastMonthCount > 0) {
+            $percentageChange = (($inspectionCurrentMonthCount - $inspectionPastMonthCount) / $inspectionPastMonthCount) * 100;
+        } else {
+            // handle division by zero
+            $percentageChange = $inspectionCurrentMonthCount > 0 ? 100 : 0;
+        }
+
+        $incidentPastMonthCount = $this->incidentNotification
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->whereYear('created_at', now()->subMonth()->year)
+            ->count();
+
+        $incidentCurrentMonthCount = $this->incidentNotification
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        $incidentOpenCount = $this->incidentNotification
+            ->where('incident_status', '!=', 2)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        $incidentCloseCount = $this->incidentNotification
+            ->where('incident_status', '=', 2)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        if ($incidentPastMonthCount > 0) {
+            $percentageChange = (($incidentCurrentMonthCount - $incidentPastMonthCount) / $incidentPastMonthCount) * 100;
+        } else {
+            // handle division by zero
+            $percentageChange = $incidentCurrentMonthCount > 0 ? 100 : 0;
+        }
+
+
+        $inspectionData = [
+            'current_month_count' => $inspectionCurrentMonthCount,
+            'past_month_count' => $inspectionPastMonthCount,
+            'percentage_change' => round($percentageChange),
+            'OpenCount' => $inspectionOpenCount,
+            'CloseCount' => $inspectionCloseCount,
+        ];
+
+        $incidentData = [
+            'current_month_count' => $incidentCurrentMonthCount,
+            'past_month_count' => $incidentPastMonthCount,
+            'percentage_change' => round($percentageChange),
+            'OpenCount' => $incidentOpenCount,
+            'CloseCount' => $incidentCloseCount,
+        ];
+
+
         $data = [
             'announcementlist' => $announcementlist,
+            'inspectionData' => $inspectionData,
+            'incidentData' => $incidentData,
         ];
 
         return view('admin.home', $data);

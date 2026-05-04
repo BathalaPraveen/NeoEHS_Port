@@ -5,7 +5,7 @@
 
 @section('content')
 
-   <div class="container">
+    <div class="container">
         <div class="container para mt-3">
             <!--breadcrumb-->
             <div class="card page-breadcrumb d-none d-sm-flex p-2 mb-3">
@@ -66,7 +66,9 @@
 @push('script')
     <script type="text/javascript">
         $(function() {
-
+            if ($.fn.DataTable.isDataTable('.datatable-list')) {
+                $('.datatable-list').DataTable().destroy();
+            }
             /* Datatable */
             var table = $('.datatable-list').DataTable({
                 "autoWidth": false,
@@ -112,8 +114,7 @@
                     'pageLength'
                 ],
 
-                columnDefs: [
-                    {
+                columnDefs: [{
                         responsivePriority: 1,
                         targets: 0
                     },

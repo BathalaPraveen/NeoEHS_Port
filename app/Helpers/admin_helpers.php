@@ -54,49 +54,40 @@ if (!function_exists('get_admin_menu')) {
     function get_admin_menu($menu, $menu_permission, $pageurl = null)
     {
         $menu_array = [];
+        $items_map = [];
+        $menu_permission_flip = array_flip($menu_permission);
         $i = 0;
 
         foreach ($menu as $value) {
-            $menu_array[$value->parent_id][$i] = [
-                'id'         => $value->id,
-                'name'       => $value->name,
-                'link'       => $value->link,
-                'icon'       => $value->icon,
-                'is_parent'  => $value->is_parent,
-                'parent_id'  => $value->parent_id,
-                'sort_order' => $value->sort_order,
+            $id = $value->id ?? null;
+            $parent_id = $value->parent_id ?? null;
+
+            $menu_array[$parent_id][$i] = [
+                'id'         => $id,
+                'name'       => $value->name ?? '',
+                'link'       => $value->link ?? '',
+                'icon'       => $value->icon ?? '',
+                'is_parent'  => $value->is_parent ?? 0,
+                'parent_id'  => $parent_id,
+                'sort_order' => $value->sort_order ?? 0,
             ];
+
+            if ($id !== null) {
+                $items_map[$id] = [
+                    'id' => $id,
+                    'parent_id' => $parent_id,
+                    'link' => $value->link ?? '',
+                ];
+            }
             $i++;
         }
 
         $html = '<ul class="main-menu">';
 
-        // Build a flat map of items to compute the active path (ids from active leaf up to root)
-        $items_map = [];
-        foreach ($menu as $m) {
-            // $m can be an object (stdClass) or an associative array depending on how menu is built.
-            // Normalize access to support both types.
-            $id = is_array($m) ? ($m['id'] ?? null) : ($m->id ?? null);
-            $parent_id = is_array($m) ? ($m['parent_id'] ?? null) : ($m->parent_id ?? null);
-            $link = is_array($m) ? ($m['link'] ?? '') : ($m->link ?? '');
-
-            if ($id === null) {
-                continue;
-            }
-
-            $items_map[$id] = [
-                'id' => $id,
-                'parent_id' => $parent_id,
-                'link' => $link,
-            ];
-        }
-
-        // Use pageurl if provided, otherwise use current URL
-        // If pageurl is provided, normalize it (remove base URL if present)
+        // Determine current URL for active path detection
         if ($pageurl) {
             $current_url = trim(str_replace(url('/'), '', $pageurl), '/');
         } else {
-            // Check for request attribute as fallback
             $pageurl = request()->attributes->get('pageurl');
             if ($pageurl) {
                 $current_url = trim(str_replace(url('/'), '', $pageurl), '/');
@@ -105,14 +96,15 @@ if (!function_exists('get_admin_menu')) {
             }
         }
 
+        // Find best matching item and build active path
         $active_path = [];
-        // find the best (deepest) matching item by longest matching URL prefix
         $best_match_id = null;
         $best_match_length = 0;
+
         foreach ($items_map as $id => $item) {
             $link = $item['link'] ?? '';
             if (empty($link)) {
-                continue; // skip items without link
+                continue;
             }
             $item_url = trim(str_replace(url('/'), '', admin_url($link)), '/');
             if ($item_url === '') {
@@ -126,30 +118,28 @@ if (!function_exists('get_admin_menu')) {
                 }
             }
         }
+
         if ($best_match_id !== null) {
-            // build ancestor chain from the best match id
             $pid = $best_match_id;
             while ($pid && isset($items_map[$pid])) {
                 $active_path[] = $pid;
                 $pid = $items_map[$pid]['parent_id'];
             }
         }
-        // store globally for child renderer to use
         $GLOBALS['admin_active_path'] = $active_path;
 
         if (!empty($menu_array[0])) {
-            foreach ($menu_array[0] as $value) {
+            $active_path = $GLOBALS['admin_active_path'] ?? [];
+            $active_flip = array_flip($active_path);
 
-                if (!in_array($value['id'], $menu_permission)) {
+            foreach ($menu_array[0] as $value) {
+                if (!isset($menu_permission_flip[$value['id']])) {
                     continue;
                 }
 
                 $link_name = $value['name'];
                 $link_icon = $value['icon'];
-
-                // Use precomputed active path to determine which parents to open
-                $active_path = $GLOBALS['admin_active_path'] ?? [];
-                $has_active_child = in_array($value['id'], $active_path);
+                $has_active_child = isset($active_flip[$value['id']]);
 
                 if ($value['is_parent']) {
                     $icon_html = !empty($link_icon)
@@ -164,21 +154,13 @@ if (!function_exists('get_admin_menu')) {
                     </a>';
 
                     if (isset($menu_array[$value['id']])) {
-                        $parentdetails = [
-                            'id' => $value['id'],
-                            'name' => $value['name'],
-                            'menu_id' => "link_" . encryptId($value['id'])
-                        ];
-                        $html .= get_admin_menuchild($menu_array[$value['id']], $menu_array, $parentdetails, $menu_permission);
+                        $html .= get_admin_menuchild($menu_array[$value['id']], $menu_array, $value, $menu_permission_flip);
                     }
 
                     $html .= '</li>';
                 } else {
-                    $href = in_array($value['id'], $menu_permission)
-                        ? admin_url($value['link'])
-                        : admin_url('nopermission');
-
-                    $is_active = in_array($value['id'], $active_path) ? ' active' : '';
+                    $href = admin_url($value['link']);
+                    $is_active = isset($active_flip[$value['id']]) ? ' active' : '';
                     $icon_html = !empty($link_icon)
                         ? '<i class="' . e($link_icon) . ' fs-5 me-2 menu-db-icon"></i>'
                         : '';
@@ -203,53 +185,34 @@ if (!function_exists('get_admin_menuchild')) {
     function get_admin_menuchild($menu, $menu_array, $parent, $menu_permission)
     {
         $string = '<ul class="slide-menu child1">';
-
+        $active_path = $GLOBALS['admin_active_path'] ?? [];
+        $active_flip = array_flip($active_path);
 
         foreach ($menu as $value) {
-
             // Skip if not permitted
-            if (!in_array($value['id'], $menu_permission)) {
+            if (!isset($menu_permission[$value['id']])) {
                 continue;
             }
 
-
             $link_name = $value['name'];
             $icon = $value['icon'];
-            $href = in_array($value['id'], $menu_permission)
-                ? admin_url($value['link'])
-                : admin_url('nopermission');
+            $is_active_item = isset($active_flip[$value['id']]);
 
             if ($value['is_parent'] && isset($menu_array[$value['id']])) {
-                // Check if this parent is in the active path (only direct ancestor chain will be present)
-                $active_path = $GLOBALS['admin_active_path'] ?? [];
-                $has_active_child = in_array($value['id'], $active_path);
-
-                $string .= '<li class="slide has-sub p-2' . ($has_active_child ? ' open' : '') . '">';
-                $hasChild = isset($menu_array[$value['id']]);
-
-                $arrowIcon = $hasChild
-                    ? '<i class="ri-arrow-right-s-line side-menu__angle"></i>'   // 👉 child parent
-                    : '';
-
+                $string .= '<li class="slide has-sub p-2' . ($is_active_item ? ' open' : '') . '">';
+                $arrowIcon = '<i class="ri-arrow-right-s-line side-menu__angle"></i>';
                 $string .= '<a href="javascript:void(0);" class="leftmenu-master d-flex justify-content-between align-items-center">'
                     . '<span>' . $link_name . '</span>'
                     . $arrowIcon
                     . '</a>';
-
-                $parentdetails = [
-                    'id' => $value['id'],
-                    'name' => $value['name'],
-                    'menu_id' => "link_" . encryptId($value['id'])
-                ];
-                $string .= get_admin_menuchild($menu_array[$value['id']], $menu_array, $parentdetails, $menu_permission);
+                $string .= get_admin_menuchild($menu_array[$value['id']], $menu_array, $value, $menu_permission);
                 $string .= '</li>';
             } else {
-                $active_path = $GLOBALS['admin_active_path'] ?? [];
-                $is_active = in_array($value['id'], $active_path) ? ' active' : '';
-
+                $is_active = $is_active_item ? ' active' : '';
                 $icon_html = !empty($icon)
                     ? '<i class="' . e($icon) . ' me-2 menu-db-icon"></i>'
                     : '';
+                $href = admin_url($value['link']);
 
                 $string .= '<a href="' . $href . '" class="leftmenu-color text-decoration-none d-block' . $is_active . '">
                     <li class="slides has-sub ms-2 my-2 p-2' . $is_active . '">

@@ -140,7 +140,9 @@
 @push('script')
     <script type="text/javascript">
         $(function() {
-
+            if ($.fn.DataTable.isDataTable('.datatable-list')) {
+                $('.datatable-list').DataTable().destroy();
+            }
             /* Datatable */
             var table = $('.datatable-list').DataTable({
                 "autoWidth": false,
@@ -166,7 +168,7 @@
                         d.divisionid = $("#emp_division_id").val();
                         d.departmentid = $("#emp_department_id").val();
                         d.roleid = $("#emp_user_role").val();
-                        
+
                     }
                 },
                 buttons: [{

@@ -5,82 +5,137 @@
 
 @push('style')
     <style>
-        .pagination {
-            float: right;
+        /* ===== PAGE TITLE ===== */
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 15px;
         }
 
-        .anouncementcard {
-            width: 300px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            margin: 10px;
+        /* ===== CARD ===== */
+        .announcement-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
             overflow: hidden;
             position: relative;
-            max-height: 10em;
-            /* Approx height for 2 lines of text */
-            transition: max-height 0.3s ease;
         }
 
-        .content {
+        /* HOVER EFFECT */
+        .announcement-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        /* ===== HEADER ===== */
+        .announcement-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .announcement-header i {
+            color: #2ecc71;
+            font-size: 16px;
+        }
+
+        /* TITLE */
+        .announcement-title {
+            font-weight: 600;
+            color: #001145;
+            font-size: 15px;
+        }
+
+        /* ===== CONTENT ===== */
+        .announcement-content {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            text-overflow: ellipsis;
+            transition: all 0.3s ease;
+        }
+
+        /* ===== DATE ===== */
+        .announcement-date {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12.5px;
+            color: #777;
+            margin-top: 10px;
+        }
+
+        .announcement-date i {
+            font-size: 12px;
+        }
+
+        /* ===== EXPAND ON HOVER ===== */
+        .announcement-card:hover .announcement-content {
+            -webkit-line-clamp: unset;
+        }
+
+        /* ===== PAGINATION ===== */
+        .pagination {
+            justify-content: flex-end;
+        }
+
+        /* ===== CONTAINER SPACING ===== */
+        .announcement-wrapper {
+            margin-top: 10px;
         }
     </style>
 @endpush
 
 @section('content')
 
-    <div class="container">
+    <div class="container announcement-wrapper">
 
-        <div class="container para">
-            <div class="position-relative">
-                <h5 class="card-title text-white">ANNOUNCEMENT</h5>
-            </div>
+        <!-- TITLE -->
+        <div class="position-relative mb-5">
+            <h5 class="card-title text-white">ANNOUNCEMENT</h5>
+        </div>
 
-            @foreach ($announcementlist as $content)
-                <div class="row mt-2">
-                    <div class="col-md-12" data-aos="zoom-out" data-aos-delay="100">
-                        <div class="icon-box anouncementcard">
-                            <div class="content">
-                                <p class="side-heading">{{ $content->announcement_title }}</p>
-                                <p class="para-1">{{ $content->announcement_content }}</p>
-                                <div class="container time">
-                                    <small class="text-muted">{{ timeago($content->created_at) }}</small>
-                                </div>
-                            </div>
+        <!-- LIST -->
+        @foreach ($announcementlist as $content)
+            <div class="announcement-card">
 
-                        </div>
+                <!-- HEADER -->
+                <div class="announcement-header">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <div class="announcement-title">
+                        {{ $content->announcement_title }}
                     </div>
                 </div>
-            @endforeach
-            <div class="row mt-2 ">
-                <div class="col-md-12">
-                    {{ $announcementlist->links() }}
+
+                <!-- CONTENT -->
+                <div class="announcement-content">
+                    {{ $content->announcement_content }}
                 </div>
+
+                <!-- DATE -->
+                <div class="announcement-date">
+                    <i class="fa-regular fa-calendar"></i>
+                    {{ \Carbon\Carbon::parse($content->created_at)->format('d F Y') }}
+                </div>
+
             </div>
+        @endforeach
+
+        <!-- PAGINATION -->
+        <div class="mt-3">
+            {{ $announcementlist->links() }}
         </div>
-    @endsection
+        ```
 
+    </div>
 
-
-    @push('script')
-        <script>
-            $(document).ready(function() {
-                $('.anouncementcard').hover(
-                    function() {
-                        // Mouse enters the card
-                        $(this).css('max-height', 'none');
-                        $(this).find('.content').css('-webkit-line-clamp', 'unset');
-                    },
-                    function() {
-                        // Mouse leaves the card
-                        $(this).css('max-height', '10em');
-                        $(this).find('.content').css('-webkit-line-clamp', '2');
-                    }
-                );
-            });
-        </script>
-    @endpush
+@endsection

@@ -69,6 +69,13 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    {{-- <link rel="stylesheet" href="{{ asset('assets/libs/flatpickr/flatpickr.min.css') }}">
+    <!-- FlatPickr CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/libs/flatpickr/flatpickr.min.css') }}">
+
+    <!-- FlatPickr CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/libs/flatpickr/flatpickr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/flatpickr/flatpickr.min.css') }}"> --}}
 
     <style>
         .datatable-list td {
@@ -352,7 +359,7 @@
             height: calc(100vh - 50px) !important;
             bottom: auto !important;
 
-             /* ✨ premium effect */
+            /* ✨ premium effect */
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
             border-right: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -1272,79 +1279,79 @@
     <div id="responsive-overlay"></div>
     <!-- Scroll To Top -->
 
+    <div class="modal modal-info fade" id="popupwindowmodal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+            </div>
+        </div>
+    </div>
+    <!----- popup ends----->
+
+    <script src="{{ url('public/assets/theme/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url('public/assets/theme/vendor/php-email-form/validate.js') }}"></script>
+    <script src="{{ url('public/assets/theme/vendor/aos/aos.js') }}"></script>
+    <script src="{{ url('public/assets/theme/vendor/purecounter/purecounter_vanilla.js') }}"></script>
+    <script src="{{ url('public/assets/theme/vendor/glightbox/js/glightbox.min.js') }}"></script>
+    <script src="{{ url('public/assets/theme/vendor/swiper/swiper-bundle.min.js') }}"></script>
+    <script src="{{ url('public/assets/theme/vendor/imagesloaded/imagesloaded.pkgd.min.js') }}"></script>
+    <script src="{{ url('public/assets/theme/vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
+
+    <script src="{{ url('public/assets/theme/js/main.js') }}"></script>
+
+    <script src="{{ url('public/assets/plugins/simplebar/js/simplebar.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/metismenu/js/metisMenu.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/select2/js/select2.min.js') }}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="{{ url('public/assets/plugins/notifications/js/notifications.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/notifications/js/notification-custom-script.js') }}"></script>
+
+    <script src="{{ url('public/assets/plugins/DataTables/datatables.min.js') }}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
+        integrity="sha512-rstIgDs0xPgmG6RX1Aba4KV5cWJbAMcvRCVmglpam9SoHZiUCyQVDdH2LPlxoHtrv17XWblE/V/PP+Tr04hbtA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"
+        integrity="sha512-6S5LYNn3ZJCIm0f9L6BCerqFlQ4f5MwNKq+EthDXabtaJvg3TuFLhpno9pcm+5Ynm6jdA9xfpQoMz2fcjVMk9g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"
+        integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="{{ url('public/assets/js/moment.min.js') }}"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
 
 
+    <script src="{{ url('public/assets/js/custom-validation.js') }}"></script>
+    <script src="{{ url('public/assets/js/script.js') }}"></script>
 
-    <!-- Popper JS -->
-    <script src="{{ asset('assets/admin/libs/@popperjs/core/umd/popper.min.js') }}"></script>
-    <!-- Bootstrap JS -->
-    <script src="{{ asset('assets/admin/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
 
 
-    <script src="{{ asset('assets/plugins/zabuto-calendar/js/zabuto_calendar.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"
+        integrity="sha512-Ixzuzfxv1EqafeQlTCufWfaC6ful6WFqIz4G+dWvK0beHw0NVJwvCKSgafpy5gwNqKmgUfIBraVwkKI+Cz0SEQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/4.0.0/js/jasny-bootstrap.min.js"
+        integrity="sha512-T+qL8JzVjquTv+yKR64v+58O+GVCe7A68gbJTzFVs76I7iAcgwisXKyOTaeKZaekcHeiG65p48NDqcMmPgnvIA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
-    <script src="{{ asset('assets/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clockpicker/0.0.7/bootstrap-clockpicker.js"
+        integrity="sha512-1QoWYDbO//G0JPa2VnQ3WrXtcgOGGCtdpt5y9riMW4NCCRBKQ4bs/XSKJAUSLIIcHmvUdKCXmQGxh37CQ8rtZQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-
-    {{-- <script src="{{ asset('/assets/plugins/jquery/jquery.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('/assets/plugins/jquery/jquery.min.js.bak') }}"></script> --}}
-    {{-- <script src="{{ asset('/assets/plugins/jquery-validation/jquery-validation/dist/jquery.validate.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('/assets/plugins/jquery-validation/jquery-validation/dist/additional-methods.min.js') }}"> --}}
-    <script src="{{ url('/assets/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
-
-    <script src="{{ url('assets/js/rwdImageMaps.js') }}"></script>
-
-
-    <!-- Defaultmenu JS -->
-    <script src="{{ asset('assets/admin/js/defaultmenu.min.js') }}"></script>
-    <!-- Node Waves JS-->
-    <script src="{{ asset('assets/admin/libs/node-waves/waves.min.js') }}"></script>
-    <!-- Sticky JS -->
-    <script src="{{ asset('assets/admin/js/sticky.js') }}"></script>
-    <!-- Simplebar JS -->
-    <script src="{{ asset('assets/admin/libs/simplebar/simplebar.min.js') }}"></script>
-
-    <!-- Auto Complete JS -->
-    <script src="{{ asset('assets/admin/libs/@tarekraafat/autocomplete.js/autoComplete.min.js') }}"></script>
-    <!-- Color Picker JS -->
-    <script src="{{ asset('assets/admin/libs/@simonwep/pickr/pickr.es5.min.js') }}"></script>
-    <!-- Date & Time Picker JS -->
-    <script src="{{ asset('assets/admin/libs/flatpickr/flatpickr.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/sweetalert2/sweetalert2.all.min.js') }}"></script>
-    <!-- Custom JS -->
-    <script src="{{ asset('assets/admin/js/custom.js') }}"></script>
-
-
-    <!-- Custom-Switcher JS -->
-    <script src="{{ asset('assets/admin/js/custom-switcher.min.js') }}"></script>
-    <!-- DataTables -->
-    <script src="{{ url('assets/plugins/DataTables/datatables.min.js') }}"></script>
-    <!-- Select2 -->
-    <script src="{{ url('assets/plugins/select2/js/select2.min.js') }}"></script>
-    <!-- jQuery Validation -->
-    <script src="{{ asset('assets/plugins/jqueryvalidation/jquery.validate.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/jqueryvalidation/additional-methods.min.js') }}"></script>
-    <script src="{{ url('assets/plugins/flatpickr/flatpickr.min.js') }}"></script>
-
-    <script src="{{ asset('assets/plugins/apexcharts-bundle/js/apexcharts.min.js') }}"></script>
-
-    {{-- Funnel --}}
-
-
-    <!-- Clockpicker -->
-    <script src="{{ url('assets/plugins/clockpicker/bootstrap-clockpicker.min.js') }}"></script>
-    <script src="{{ url('assets/plugins/clockpicker/jquery-clockpicker.min.js') }}"></script>
-
-    <!-- Datepicker -->
-    <script src="{{ url('assets/plugins/bootstrap-datepicker/js/datepicker.min.js') }}"></script>
-    <!-- Lightbox -->
-    <script src="{{ asset('assets/plugins/lightbox/js/lightbox.min.js') }}"></script>
-
-    <script src="{{ asset('assets/plugins/crop-js/cropper.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/quill/quill.min.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/highcharts/js/highcharts.js') }}"></script>
+    <script src="{{ url('public/assets/plugins/apexcharts-bundle/js/apexcharts.min.js') }}"></script>
+    {{-- <script src="{{ asset('assets/libs/flatpickr/flatpickr.min.js') }}"></script>
+    <script src="{{ url('assets/plugins/flatpickr/flatpickr.min.js') }}"></script> --}}
 
 
     <script>
@@ -1677,100 +1684,100 @@
 
 
 
-            flatpickr('.date_time', {
-                dateFormat: 'd-m-Y H:i:S',
-                enableTime: true,
-                time_24hr: true,
-            });
+            // flatpickr('.date_time', {
+            //     dateFormat: 'd-m-Y H:i:S',
+            //     enableTime: true,
+            //     time_24hr: true,
+            // });
 
             var startDateFromBackend = "{{ isset($start_date_from_dashboard) ? $start_date_from_dashboard : '' }}";
             var endDateFromBackend = "{{ isset($end_date_from_dashboard) ? $end_date_from_dashboard : '' }}";
 
-            var endDatepickersearch_filter = flatpickr('#enddatepickersearch', {
-                dateFormat: "Y/m/d",
-                altInput: true,
-                altFormat: 'd-m-Y',
-                allowInput: true,
-                // minDate: startDateFromBackend ? new Date(startDateFromBackend) : new Date(),
-                defaultDate: endDateFromBackend || null
-            });
+            // var endDatepickersearch_filter = flatpickr('#enddatepickersearch', {
+            //     dateFormat: "Y/m/d",
+            //     altInput: true,
+            //     altFormat: 'd-m-Y',
+            //     allowInput: true,
+            //     // minDate: startDateFromBackend ? new Date(startDateFromBackend) : new Date(),
+            //     defaultDate: endDateFromBackend || null
+            // });
 
-            flatpickr("#datepickersearch", {
-                dateFormat: "Y/m/d",
-                altInput: true,
-                altFormat: 'd-m-Y',
-                allowInput: true,
-                maxDate: new Date(),
-                defaultDate: startDateFromBackend || null,
-                onChange: function(selectedDates) {
-                    if (selectedDates.length > 0) {
-                        var startDate = selectedDates[0];
-                        var nextDay = new Date(startDate);
-                        nextDay.setDate(nextDay.getDate() + 1);
+            // flatpickr("#datepickersearch", {
+            //     dateFormat: "Y/m/d",
+            //     altInput: true,
+            //     altFormat: 'd-m-Y',
+            //     allowInput: true,
+            //     maxDate: new Date(),
+            //     defaultDate: startDateFromBackend || null,
+            //     onChange: function(selectedDates) {
+            //         if (selectedDates.length > 0) {
+            //             var startDate = selectedDates[0];
+            //             var nextDay = new Date(startDate);
+            //             nextDay.setDate(nextDay.getDate() + 1);
 
-                        endDatepickersearch_filter.set('minDate', nextDay);
-                        endDatepickersearch_filter.clear();
-                    }
-                }
-            });
+            //             endDatepickersearch_filter.set('minDate', nextDay);
+            //             endDatepickersearch_filter.clear();
+            //         }
+            //     }
+            // });
 
-            var endDatepickersearch = flatpickr('.enddatepickersearch', {
-                dateFormat: "d-m-Y",
-                altFormat: 'd-m-Y',
+            // var endDatepickersearch = flatpickr('.enddatepickersearch', {
+            //     dateFormat: "d-m-Y",
+            //     altFormat: 'd-m-Y',
 
-                minDate: startDateFromBackend ? new Date(startDateFromBackend) : new Date(),
-                defaultDate: endDateFromBackend || null
-            });
+            //     minDate: startDateFromBackend ? new Date(startDateFromBackend) : new Date(),
+            //     defaultDate: endDateFromBackend || null
+            // });
 
-            flatpickr(".datepickersearch", {
-                dateFormat: "d-m-Y",
-                altFormat: 'd-m-Y',
+            // flatpickr(".datepickersearch", {
+            //     dateFormat: "d-m-Y",
+            //     altFormat: 'd-m-Y',
 
-                maxDate: new Date(),
-                defaultDate: startDateFromBackend || null,
-                onChange: function(selectedDates) {
-                    if (selectedDates.length > 0) {
-                        var startDate = selectedDates[0];
-                        var nextDay = new Date(startDate);
-                        nextDay.setDate(nextDay.getDate() + 1);
+            //     maxDate: new Date(),
+            //     defaultDate: startDateFromBackend || null,
+            //     onChange: function(selectedDates) {
+            //         if (selectedDates.length > 0) {
+            //             var startDate = selectedDates[0];
+            //             var nextDay = new Date(startDate);
+            //             nextDay.setDate(nextDay.getDate() + 1);
 
-                        endDatepickersearch.set('minDate', nextDay);
-                        endDatepickersearch.clear();
-                    }
-                }
-            });
+            //             endDatepickersearch.set('minDate', nextDay);
+            //             endDatepickersearch.clear();
+            //         }
+            //     }
+            // });
 
-            flatpickr(".date-start-today", {
-                dateFormat: "d-m-Y",
-                minDate: "today",
-                allowInput: true
-            });
+            // flatpickr(".date-start-today", {
+            //     dateFormat: "d-m-Y",
+            //     minDate: "today",
+            //     allowInput: true
+            // });
 
-            flatpickr(".date-all", {
-                dateFormat: "d-m-Y",
-                allowInput: true
-            });
+            // flatpickr(".date-all", {
+            //     dateFormat: "d-m-Y",
+            //     allowInput: true
+            // });
 
-            flatpickr(".date-six-month", {
-                dateFormat: "d-m-Y",
-                minDate: "today",
-                maxDate: new Date(new Date().setMonth(new Date().getMonth() + 6)),
-                allowInput: true
-            });
-            flatpickr(".date-7-days", {
-                dateFormat: "d-m-Y",
-                minDate: "today",
-                maxDate: new Date().fp_incr(7), // flatpickr built-in date increment
-                allowInput: true
-            });
+            // flatpickr(".date-six-month", {
+            //     dateFormat: "d-m-Y",
+            //     minDate: "today",
+            //     maxDate: new Date(new Date().setMonth(new Date().getMonth() + 6)),
+            //     allowInput: true
+            // });
+            // flatpickr(".date-7-days", {
+            //     dateFormat: "d-m-Y",
+            //     minDate: "today",
+            //     maxDate: new Date().fp_incr(7), // flatpickr built-in date increment
+            //     allowInput: true
+            // });
 
 
-            flatpickr(".date-14days", {
-                dateFormat: "d-m-Y",
-                minDate: "today",
-                maxDate: new Date(new Date().setDate(new Date().getDate() + 14)),
-                allowInput: true
-            });
+            // flatpickr(".date-14days", {
+            //     dateFormat: "d-m-Y",
+            //     minDate: "today",
+            //     maxDate: new Date(new Date().setDate(new Date().getDate() + 14)),
+            //     allowInput: true
+            // });
 
             function timepickercall() {
 

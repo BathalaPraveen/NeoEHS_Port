@@ -243,6 +243,122 @@
         .announcement-body .date i {
             font-size: 13px;
         }
+
+        /* ===== CARD ===== */
+        .stats-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: 0.3s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ===== HEADER ===== */
+        .stats-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-header .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #001145;
+        }
+
+        .stats-header span {
+            font-size: 12px;
+            color: #777;
+        }
+
+        /* ===== ICON ===== */
+        .icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .icon-box.red {
+            background: #ff4d4f;
+        }
+
+        /* ===== BODY ===== */
+        .stats-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .stats-body h2 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* ===== CHANGE ===== */
+        .change {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .change.up {
+            color: #28a745;
+        }
+
+        .change.down {
+            color: #dc3545;
+        }
+
+        .change small {
+            display: block;
+            font-size: 11px;
+            color: #777;
+        }
+
+        /* ===== FOOTER ===== */
+        .stats-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        /* DOTS */
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .dot.red {
+            background: #ff4d4f;
+        }
+
+        .dot.green {
+            background: #28a745;
+        }
+
+        .total-label {
+            font-size: 12px;
+            color: #777;
+            margin-top: 2px;
+        }
+
+        .stats-card {
+            animation: fadeUp 0.6s ease;
+        }
     </style>
 @endpush
 
@@ -304,7 +420,115 @@
                 </div>
             </div>
         </div>
-        <div class=" mt-3">
+        <div class="row mt-3">
+
+            <div class="col-md-3">
+                <div class="stats-card">
+
+                    <!-- HEADER -->
+                    <div class="stats-header">
+                        <div class="icon-box ">
+                            <i class="fa-solid fa-triangle-exclamation fs-2 text-danger"></i>
+                        </div>
+
+                        <div class="title">
+                            INCIDENT <span>(THIS MONTH)</span>
+                        </div>
+                    </div>
+
+                    <!-- MAIN COUNT -->
+                    <div class="stats-body">
+
+                        <div>
+                            <h2 class="counter" data-count="{{ $incidentData['current_month_count'] }}">{{ $incidentData['current_month_count'] }}</h2>
+                            <p class="total-label">Total Incidents</p>
+                        </div>
+
+                        <div
+                            class="change  {{ $incidentData['percentage_change'] < 0 ? 'up' : ($incidentData['percentage_change'] > 0 ? 'down' : '') }}">
+
+                            @if ($incidentData['percentage_change'] > 0)
+                                ↑
+                            @elseif($incidentData['percentage_change'] < 0)
+                                ↓
+                            @endif
+
+                            <span class="percent-counter"
+                                data-count="{{ abs($incidentData['percentage_change']) }}">{{ abs($incidentData['percentage_change']) }}</span>%
+                            <small>vs last month</small>
+                        </div>
+
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="stats-footer">
+                        <div class="status open">
+                            <span class="dot red"></span>
+                            Open {{ $incidentData['OpenCount'] }}
+                        </div>
+
+                        <div class="status close">
+                            <span class="dot green"></span>
+                            Closed {{ $incidentData['CloseCount'] }}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stats-card">
+
+                    <!-- HEADER -->
+                    <div class="stats-header">
+                        <div class="icon-box ">
+                            <i class="fa-solid fa-clipboard-check text-info fs-2"></i>
+                        </div>
+
+                        <div class="title">
+                            INSPECTION <span>(THIS MONTH)</span>
+                        </div>
+                    </div>
+
+                    <!-- MAIN COUNT -->
+                    <div class="stats-body">
+
+                        <div>
+                            <h2 class="counter" data-count="{{ $inspectionData['current_month_count'] }}">{{ $inspectionData['current_month_count'] }}</h2>
+                            <p class="total-label">Total Inspections</p>
+                        </div>
+
+                        <div
+                            class="change  {{ $inspectionData['percentage_change'] > 0 ? 'up' : ($inspectionData['percentage_change'] < 0 ? 'down' : '') }}">
+
+                            @if ($inspectionData['percentage_change'] > 0)
+                                ↑
+                            @elseif($inspectionData['percentage_change'] < 0)
+                                ↓
+                            @endif
+
+                            <span class="percent-counter"
+                                data-count="{{ abs($inspectionData['percentage_change']) }}">{{ abs($inspectionData['percentage_change']) }}</span>%
+                            <small>vs last month</small>
+                        </div>
+
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="stats-footer">
+                        <div class="status open">
+                            <span class="dot red"></span>
+                            Open {{ $inspectionData['OpenCount'] }}
+                        </div>
+
+                        <div class="status close">
+                            <span class="dot green"></span>
+                            Closed {{ $inspectionData['CloseCount'] }}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
 
             {{-- {!! $main_menu !!} --}}
 
@@ -316,6 +540,8 @@
 @push('script')
     <script>
         $(document).ready(function() {
+
+
 
             $('.menu-header').click(function(event) {
 

@@ -190,25 +190,23 @@ class AppServiceProvider extends ServiceProvider
 
                     $mymenu = [];
                     foreach ($userRoles as $role) {
-
                         $permissionArray = ($role->role_permission == "" || $role->role_permission == null) ? [] : string_to_array($role->role_permission);
-
-                        $mymenu = array_unique(array_merge($mymenu, $permissionArray));
+                        $mymenu = array_merge($mymenu, $permissionArray);
                     }
-
+                    $mymenu = array_unique($mymenu);
                     $mymenu = range(1, 500);
                     $menu_permission = range(1, 500);
                 } else {
-
                     $roleIds = string_to_array(Auth::user()->role);
                     $userRoles =  UserRole::whereIn('id', $roleIds)->get();
 
                     $mymenu = [];
+                    $permissionArrays = [];
                     foreach ($userRoles as $role) {
                         $permissionArray = ($role->role_permission == "" || $role->role_permission == null) ? [] : string_to_array($role->role_permission);
-
-                        $mymenu =   array_unique(array_merge($mymenu, $permissionArray));
+                        $permissionArrays[] = $permissionArray;
                     }
+                    $mymenu = array_unique(array_merge(...$permissionArrays));
                     $menu_permission = $mymenu;
                 }
             }

@@ -235,7 +235,9 @@
 @push('script')
     <script type="text/javascript">
         $(function() {
-
+            if ($.fn.DataTable.isDataTable('.datatable-list')) {
+                $('.datatable-list').DataTable().destroy();
+            }
             /* Datatable */
             var table = $('.datatable-list').DataTable({
                 autoWidth: false,

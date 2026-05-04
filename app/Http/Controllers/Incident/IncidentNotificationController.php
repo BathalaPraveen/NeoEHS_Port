@@ -14,8 +14,7 @@ use PDF;
 use Mail;
 use Session;
 use Exception;
-use DataTables;
-
+use Yajra\DataTables\Facades\DataTables;
 
 use App\Models\User;
 
@@ -96,7 +95,7 @@ class IncidentNotificationController extends Controller
 
                     $data =  $this->notification->list();
 
-                    $datatables = Datatables::of($data['data'])
+                    $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('incident_date', function ($row) {
                             return Displaydateformat($row->incident_date);
