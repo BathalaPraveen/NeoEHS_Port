@@ -350,6 +350,10 @@
             background: #28a745;
         }
 
+        .dot.blue {
+            background: #007bff;
+        }
+
         .total-label {
             font-size: 12px;
             color: #777;
@@ -440,7 +444,8 @@
                     <div class="stats-body">
 
                         <div>
-                            <h2 class="counter" data-count="{{ $incidentData['current_month_count'] }}">{{ $incidentData['current_month_count'] }}</h2>
+                            <h2 class="counter" data-count="{{ $incidentData['current_month_count'] }}">
+                                {{ $incidentData['current_month_count'] }}</h2>
                             <p class="total-label">Total Incidents</p>
                         </div>
 
@@ -494,8 +499,9 @@
                     <div class="stats-body">
 
                         <div>
-                            <h2 class="counter" data-count="{{ $inspectionData['current_month_count'] }}">{{ $inspectionData['current_month_count'] }}</h2>
-                            <p class="total-label">Total Inspections</p>
+                            <h2 class="counter" data-count="{{ $inspectionData['CloseCount'] }}">
+                                {{ $inspectionData['current_month_count'] }}</h2>
+                            <p class="total-label">Completed</p>
                         </div>
 
                         <div
@@ -517,13 +523,123 @@
                     <!-- FOOTER -->
                     <div class="stats-footer">
                         <div class="status open">
+                            <span class="dot blue"></span>
+                            Planned {{ $inspectionData['current_month_count'] }}
+                        </div>
+
+                        {{-- <div class="status close">
+                            <span class="dot green"></span>
+                            Completed {{ $inspectionData['CloseCount'] }}
+                        </div> --}}
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stats-card">
+
+                    <!-- HEADER -->
+                    <div class="stats-header">
+                        <div class="icon-box ">
+                            <i class="fa-solid fa-triangle-exclamation fs-2 text-danger"></i>
+                        </div>
+
+                        <div class="title">
+                            INCIDENT <span>(THIS MONTH)</span>
+                        </div>
+                    </div>
+
+                    <!-- MAIN COUNT -->
+                    <div class="stats-body">
+
+                        <div>
+                            <h2 class="counter" data-count="{{ $incidentData['current_month_count'] }}">
+                                {{ $incidentData['current_month_count'] }}</h2>
+                            <p class="total-label">Total Incidents</p>
+                        </div>
+
+                        <div
+                            class="change  {{ $incidentData['percentage_change'] < 0 ? 'up' : ($incidentData['percentage_change'] > 0 ? 'down' : '') }}">
+
+                            @if ($incidentData['percentage_change'] > 0)
+                                ↑
+                            @elseif($incidentData['percentage_change'] < 0)
+                                ↓
+                            @endif
+
+                            <span class="percent-counter"
+                                data-count="{{ abs($incidentData['percentage_change']) }}">{{ abs($incidentData['percentage_change']) }}</span>%
+                            <small>vs last month</small>
+                        </div>
+
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="stats-footer">
+                        <div class="status open">
                             <span class="dot red"></span>
-                            Open {{ $inspectionData['OpenCount'] }}
+                            Open {{ $incidentData['OpenCount'] }}
                         </div>
 
                         <div class="status close">
                             <span class="dot green"></span>
-                            Closed {{ $inspectionData['CloseCount'] }}
+                            Closed {{ $incidentData['CloseCount'] }}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="stats-card">
+
+                    <!-- HEADER -->
+                    <div class="stats-header">
+                        <div class="icon-box ">
+                            <i class="fa-solid fa-file-contract fs-2 text-info"></i>
+                        </div>
+
+                        <div class="title">
+                            PERMITS <span>(THIS MONTH)</span>
+                        </div>
+                    </div>
+
+                    <!-- MAIN COUNT -->
+                    <div class="stats-body">
+
+                        <div>
+                            <h2 class="counter" data-count="{{ $ptwData['current_month_count'] }}">
+                                {{ $ptwData['current_month_count'] }}</h2>
+                            <p class="total-label">Issued</p>
+                        </div>
+
+                        <div
+                            class="change  {{ $ptwData['percentage_change'] > 0 ? 'up' : ($ptwData['percentage_change'] < 0 ? 'down' : '') }}">
+
+                            @if ($ptwData['percentage_change'] > 0)
+                                ↑
+                            @elseif($ptwData['percentage_change'] < 0)
+                                ↓
+                            @endif
+
+                            <span class="percent-counter"
+                                data-count="{{ abs($ptwData['percentage_change']) }}">{{ abs($ptwData['percentage_change']) }}</span>%
+                            <small>vs last month</small>
+                        </div>
+
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="stats-footer">
+                        <div class="status open">
+                            <span class="dot blue"></span>
+                            Active {{ $ptwData['OpenCount'] }}
+                        </div>
+
+                        <div class="status close">
+                            <span class="dot red"></span>
+                            Expired {{ $ptwData['CloseCount'] }}
                         </div>
                     </div>
 

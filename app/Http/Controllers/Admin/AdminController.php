@@ -14,6 +14,7 @@ use App\Models\Master\Division;
 use App\Models\Master\Location;
 use App\Models\Master\SliderImage;
 use App\Models\Master\SpecificLocation;
+use App\Models\PTW\General;
 use App\Models\User;
 use DB;
 use Exception;
@@ -36,6 +37,7 @@ class AdminController extends Controller
     private $announcement;
     private $inspection;
     private $incidentNotification;
+    private $general;
 
     private $uauc;
 
@@ -54,6 +56,7 @@ class AdminController extends Controller
         $this->inspection = new Inspection();
         $this->incidentNotification = new IncidentNotification();
         $this->uauc = new UAUC();
+        $this->general = new General();
     }
 
     public function home()
@@ -118,6 +121,34 @@ class AdminController extends Controller
             $percentageChange = $incidentCurrentMonthCount > 0 ? 100 : 0;
         }
 
+        $ptwPastMonthCount = $this->general
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->whereYear('created_at', now()->subMonth()->year)
+            ->count();
+
+        $ptwCurrentMonthCount = $this->general
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        $ptwOpenCount = $this->general
+            ->where('ptw_status', '=', 8)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        $ptwCloseCount = $this->general
+            ->where('ptw_status', '=', 9)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        if ($ptwPastMonthCount > 0) {
+            $percentageChange = (($ptwCurrentMonthCount - $ptwPastMonthCount) / $ptwPastMonthCount) * 100;
+        } else {
+            // handle division by zero
+            $percentageChange = $ptwCurrentMonthCount > 0 ? 100 : 0;
+        }
+
 
         $inspectionData = [
             'current_month_count' => $inspectionCurrentMonthCount,
@@ -135,11 +166,20 @@ class AdminController extends Controller
             'CloseCount' => $incidentCloseCount,
         ];
 
+        $ptwData = [
+            'current_month_count' => $ptwCurrentMonthCount,
+            'past_month_count' => $ptwPastMonthCount,
+            'percentage_change' => round($percentageChange),
+            'OpenCount' => $ptwOpenCount,
+            'CloseCount' => $ptwCloseCount,
+        ];
+
 
         $data = [
             'announcementlist' => $announcementlist,
             'inspectionData' => $inspectionData,
             'incidentData' => $incidentData,
+            'ptwData' => $ptwData,
         ];
 
         return view('admin.home', $data);
