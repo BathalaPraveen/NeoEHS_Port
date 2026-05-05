@@ -488,6 +488,7 @@ class Inspection extends Model
         return $this->where('id', $id)->update($insert_array);
     }
 
+   
 
     protected static function booted()
     {

@@ -213,6 +213,20 @@
             color: #1b5e20;
         }
 
+        .incident-view-all-btn {
+            background: #e6f4ea;
+            color: #8e0625;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-decoration: none;
+        }
+
+        .incident-view-all-btn:hover {
+            background: #d4edda;
+            color: #7d0a0a;
+        }
+
         /* BODY */
         .announcement-body {
             padding: 10px 5px;
@@ -648,6 +662,68 @@
 
             {{-- {!! $main_menu !!} --}}
 
+
+
+
+
+        </div>
+
+
+
+        <div class="col-md-8 mt-5">
+            <div class="card">
+                <div class="d-flex p-2 mx-2
+                ">
+                    <h5 class="mt-2">
+                        <i class="fa-solid fa-shield-halved text-danger"></i>
+                        Recent Incidents
+                    </h5>
+                    <div class="ms-auto mt-2">
+                        <a href="{{ admin_url('incident/notification/list') }}" class="incident-view-all-btn">
+                            View all
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Incident ID</th>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Date</th>
+                                <th>Emergency Incident Tier</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach ($incidentDetails as $details)
+                                <tr>
+                                    <td>{{ $details->incident_id }}</td>
+                                    <td>{{ getIncidentTypeName($details->incident_type) }}</td>
+                                    <td>{{ getIncidentItemName($details->location) }}</td>
+                                    <td>{{ Displaydateformat($details->created_at) }}</td>
+                                    <td>
+                                        @if ($details->emergency_incident_tier == 2)
+                                            <span
+                                                class="badge bg-success">{{ getIncidentItemName($details->emergency_incident_tier) }}</span>
+                                        @elseif ($details->emergency_incident_tier == 1)
+                                            <span
+                                                class=" badge bg-danger">{{ getIncidentItemName($details->emergency_incident_tier) }}</span>
+                                        @endif
+
+                                    </td>
+
+                                    <td>{!! incidentStatus($details->incident_status) !!}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
     </div>

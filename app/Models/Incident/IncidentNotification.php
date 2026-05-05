@@ -206,7 +206,7 @@ class IncidentNotification extends Model
 
             $query->Where('incident_initial_notification.created_by', Auth::id());
         }
-        
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -311,6 +311,13 @@ class IncidentNotification extends Model
         );
 
         return $this->create($insert_array);
+    }
+    public function getRecentdata()
+    {
+        return $this->where('status', 1)
+            ->orderBy('id', 'DESC')
+            ->limit(5)
+            ->get();
     }
 
     protected static function booted()

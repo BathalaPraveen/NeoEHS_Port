@@ -174,11 +174,13 @@ class AdminController extends Controller
             'CloseCount' => $ptwCloseCount,
         ];
 
+        $incidentDetails = $this->incidentNotification->getRecentdata();
 
         $data = [
             'announcementlist' => $announcementlist,
             'inspectionData' => $inspectionData,
             'incidentData' => $incidentData,
+            'incidentDetails' => $incidentDetails,
             'ptwData' => $ptwData,
         ];
 
