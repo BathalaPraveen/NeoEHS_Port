@@ -107,6 +107,7 @@ Route::middleware(['web', 'is_login'])->group(function () {
     Route::post('incident/notification/import/submit', 'Incident\IncidentNotificationController@ImportSubmit');
     Route::get('incident/notification/export/excel', 'Incident\IncidentNotificationController@ExportExcel');
     Route::get('incident/notification/export/pdf', 'Incident\IncidentNotificationController@ExportPdf');
+    Route::get('incident/notification/get-open-close', 'Incident\IncidentNotificationController@getIncidentOpenClose');
 
 
     /**

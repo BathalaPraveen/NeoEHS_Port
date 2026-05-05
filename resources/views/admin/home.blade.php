@@ -777,69 +777,93 @@
 
 
         </div>
+        <div class="row  mt-3">
+            <div class="col-md-6">
+                <div class="recent-card">
 
-        <div class="col-md-6 mt-3">
-            <div class="recent-card">
-
-                <!-- HEADER -->
-                <div class="recent-header">
-                    <h5 class="mt-2">
-                        <i class="fa-solid fa-shield-halved text-danger fs-3 me-2 mb-2"></i>
-                        Recent Incidents
-                    </h5>
-                    <div class="ms-auto mt-2 mb-2">
-                        <a href="{{ admin_url('incident/notification/list') }}" class="incident-view-all-btn">
-                            View all
-                        </a>
+                    <!-- HEADER -->
+                    <div class="recent-header">
+                        <h5 class="mt-2">
+                            <i class="fa-solid fa-shield-halved text-danger fs-3 me-2 mb-2"></i>
+                            Recent Incidents
+                        </h5>
+                        <div class="ms-auto mt-2 mb-2">
+                            <a href="{{ admin_url('incident/notification/list') }}" class="incident-view-all-btn">
+                                View all
+                            </a>
+                        </div>
                     </div>
-                </div>
 
-                <!-- TABLE -->
-                <div class="table-responsive">
-                    <table class="recent-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Type</th>
-                                <th>Location</th>
-                                <th>Date</th>
-                                <th>Severity</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @foreach ($incidentDetails as $details)
+                    <!-- TABLE -->
+                    <div class="table-responsive">
+                        <table class="recent-table">
+                            <thead>
                                 <tr>
-                                    <td>{{ $details->incident_id }}</td>
-
-                                    <td>{{ getIncidentTypeName($details->incident_type) }}</td>
-
-                                    <td>{{ getIncidentItemName($details->location) }}</td>
-
-                                    <td>{{ \Carbon\Carbon::parse($details->created_at)->format('M d, Y') }}</td>
-
-                                    <!-- SEVERITY -->
-                                    <td>
-                                        @if ($details->emergency_incident_tier == 2)
-                                            <span
-                                                class="text-success">{{ getIncidentItemName($details->emergency_incident_tier) }}</span>
-                                        @elseif ($details->emergency_incident_tier == 1)
-                                            <span
-                                                class=" text-danger">{{ getIncidentItemName($details->emergency_incident_tier) }}</span>
-                                        @endif
-
-                                    </td>
-
-                                    <td>{!! incidentStatus($details->incident_status) !!}</td>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Location</th>
+                                    <th>Date</th>
+                                    <th>Severity</th>
+                                    <th>Status</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
 
+                            <tbody>
+                                @foreach ($incidentDetails as $details)
+                                    <tr>
+                                        <td>{{ $details->incident_id }}</td>
+
+                                        <td>{{ getIncidentTypeName($details->incident_type) }}</td>
+
+                                        <td>{{ getIncidentItemName($details->location) }}</td>
+
+                                        <td>{{ \Carbon\Carbon::parse($details->created_at)->format('M d, Y') }}</td>
+
+                                        <!-- SEVERITY -->
+                                        <td>
+                                            @if ($details->emergency_incident_tier == 2)
+                                                <span
+                                                    class="text-success">{{ getIncidentItemName($details->emergency_incident_tier) }}</span>
+                                            @elseif ($details->emergency_incident_tier == 1)
+                                                <span
+                                                    class=" text-danger">{{ getIncidentItemName($details->emergency_incident_tier) }}</span>
+                                            @endif
+
+                                        </td>
+
+                                        <td>{!! incidentStatus($details->incident_status) !!}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="recent-card">
+
+                    <!-- HEADER -->
+                    <div class="recent-header">
+                        <h5 class="mt-2">
+                            <i class="fa-solid fa-triangle-exclamation text-danger fs-3 me-2 mb-2"></i>
+                            Incidents
+                        </h5>
+                        <div class="ms-auto mt-2 mb-2">
+                            <a href="{{ admin_url('incident/notification/list') }}" class="incident-view-all-btn">
+                                View all
+                            </a>
+                        </div>
+                    </div>
+
+                    <div  id="incident_open_close"></div>
+
+                </div>
             </div>
         </div>
+
+
     </div>
     </div>
 
@@ -908,6 +932,30 @@
 
             });
 
+        });
+
+        function IncidentOpenClose() {
+
+            var url =
+                '{{ admin_url('incident/notification/get-open-close') }}';
+            $('#incident_open_close').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: {
+
+
+                },
+                cache: false,
+                success: function(dataAjx) {
+                    $('#incident_open_close').html(dataAjx);
+                },
+            });
+        }
+
+        $(document).ready(function() {
+
+            IncidentOpenClose();
         });
 
 

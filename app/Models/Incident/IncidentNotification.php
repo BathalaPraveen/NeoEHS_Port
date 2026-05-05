@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 
 use App\Scopes\TrashScope;
+use Illuminate\Support\Facades\DB;
 
 class IncidentNotification extends Model
 {
@@ -318,6 +319,40 @@ class IncidentNotification extends Model
             ->orderBy('id', 'DESC')
             ->limit(5)
             ->get();
+    }
+
+    public function getIncidentOpenClose()
+    {
+        $selectColumns = [
+            "SUM(
+            CASE
+                WHEN incident_initial_notification.incident_status IS NULL
+                     OR incident_initial_notification.incident_status IN ('1','3')
+                THEN 1
+                ELSE 0
+            END
+        ) AS incident_open",
+
+            "SUM(
+            CASE
+                WHEN incident_initial_notification.incident_status = '2'
+                THEN 1
+                ELSE 0
+            END
+        ) AS incident_close"
+        ];
+        $query = $this->select(DB::raw(implode(', ', $selectColumns)))
+           
+            ->where('incident_initial_notification.status', 1);
+
+       
+
+        $result = $query->first();
+
+        return [
+            'Incident Open'  => (int) ($result->incident_open ?? 0),
+            'Incident Close' => (int) ($result->incident_close ?? 0),
+        ];
     }
 
     protected static function booted()

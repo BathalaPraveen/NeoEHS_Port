@@ -12,7 +12,7 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 use PDF;
 use Mail;
-use Session;
+use Illuminate\Support\Facades\Session;
 use Exception;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -443,8 +443,10 @@ class IncidentNotificationController extends Controller
 
             return redirect('incident/notification/list');
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/notification/list'));
         }
     }
 
@@ -494,7 +496,10 @@ class IncidentNotificationController extends Controller
             );
             return view('incident.notification.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+          
+            report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/notification/list'));
         }
     }
 
@@ -526,7 +531,7 @@ class IncidentNotificationController extends Controller
             Session::flash('success', 'Incident Norification successfully updated');
             return redirect('incident/notification/list');
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/notification/list'));
         }
@@ -644,6 +649,8 @@ class IncidentNotificationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/notification/list'));
         }
     }
 
@@ -718,6 +725,27 @@ class IncidentNotificationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/notification/list'));
+        }
+    }
+
+    // Incident Open Close
+
+    public function getIncidentOpenClose()
+    {
+        try {
+
+            $incident = $this->notification->getIncidentOpenClose();
+
+            $data = [
+                'incident' => $incident
+            ];
+
+            return view('incident.dashboard.notificationopenclose', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['error' => 'Something went wrong'], 500);
         }
     }
 }
