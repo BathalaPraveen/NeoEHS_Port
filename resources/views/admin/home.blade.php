@@ -214,7 +214,7 @@
         }
 
         .incident-view-all-btn {
-            background: #e6f4ea;
+            background: #f4eae6;
             color: #8e0625;
             padding: 6px 12px;
             border-radius: 8px;
@@ -223,7 +223,7 @@
         }
 
         .incident-view-all-btn:hover {
-            background: #d4edda;
+            background: #edd8d4;
             color: #7d0a0a;
         }
 
@@ -376,6 +376,116 @@
 
         .stats-card {
             animation: fadeUp 0.6s ease;
+        }
+
+        /* ===== CARD ===== */
+        .recent-card {
+            background: #f8f9fb;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* ===== HEADER ===== */
+        .recent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .recent-header .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recent-header h5 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* ICON */
+        .recent-header .icon {
+            background: #ffeaea;
+            color: #ff4d4f;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* VIEW BUTTON */
+        .view-btn {
+            background: #fdeaea;
+            color: #ff4d4f;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .view-btn:hover {
+            background: #ffd6d6;
+        }
+
+        /* ===== TABLE ===== */
+        .recent-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .recent-table th {
+            font-size: 12px;
+            color: #888;
+            text-align: left;
+            padding: 8px 5px;
+        }
+
+        .recent-table td {
+            font-size: 13px;
+            padding: 8px 5px;
+            border-top: 1px solid #eee;
+        }
+
+        /* ===== SEVERITY COLORS ===== */
+        .severity {
+            font-weight: 600;
+        }
+
+        .severity.low {
+            color: #28a745;
+        }
+
+        .severity.medium {
+            color: #f0ad4e;
+        }
+
+        .severity.high {
+            color: #dc3545;
+        }
+
+        /* ===== STATUS ===== */
+        .status {
+            font-weight: 600;
+        }
+
+        /* open */
+        .status.open {
+            color: #dc3545;
+        }
+
+        /* closed */
+        .status.closed {
+            color: #28a745;
+        }
+
+        /* in progress */
+        .status.in-progress {
+            color: #007bff;
         }
     </style>
 @endpush
@@ -668,51 +778,55 @@
 
         </div>
 
+        <div class="col-md-6 mt-3">
+            <div class="recent-card">
 
-
-        <div class="col-md-8 mt-5">
-            <div class="card">
-                <div class="d-flex p-2 mx-2
-                ">
+                <!-- HEADER -->
+                <div class="recent-header">
                     <h5 class="mt-2">
-                        <i class="fa-solid fa-shield-halved text-danger"></i>
+                        <i class="fa-solid fa-shield-halved text-danger fs-3 me-2 mb-2"></i>
                         Recent Incidents
                     </h5>
-                    <div class="ms-auto mt-2">
+                    <div class="ms-auto mt-2 mb-2">
                         <a href="{{ admin_url('incident/notification/list') }}" class="incident-view-all-btn">
                             View all
                         </a>
                     </div>
                 </div>
 
-                <div class="card-body">
-                    <table class="table table-bordered table-striped">
+                <!-- TABLE -->
+                <div class="table-responsive">
+                    <table class="recent-table">
                         <thead>
                             <tr>
-                                <th>Incident ID</th>
+                                <th>ID</th>
                                 <th>Type</th>
                                 <th>Location</th>
                                 <th>Date</th>
-                                <th>Emergency Incident Tier</th>
+                                <th>Severity</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
 
                         <tbody>
-
                             @foreach ($incidentDetails as $details)
                                 <tr>
                                     <td>{{ $details->incident_id }}</td>
+
                                     <td>{{ getIncidentTypeName($details->incident_type) }}</td>
+
                                     <td>{{ getIncidentItemName($details->location) }}</td>
-                                    <td>{{ Displaydateformat($details->created_at) }}</td>
+
+                                    <td>{{ \Carbon\Carbon::parse($details->created_at)->format('M d, Y') }}</td>
+
+                                    <!-- SEVERITY -->
                                     <td>
                                         @if ($details->emergency_incident_tier == 2)
                                             <span
-                                                class="badge bg-success">{{ getIncidentItemName($details->emergency_incident_tier) }}</span>
+                                                class="text-success">{{ getIncidentItemName($details->emergency_incident_tier) }}</span>
                                         @elseif ($details->emergency_incident_tier == 1)
                                             <span
-                                                class=" badge bg-danger">{{ getIncidentItemName($details->emergency_incident_tier) }}</span>
+                                                class=" text-danger">{{ getIncidentItemName($details->emergency_incident_tier) }}</span>
                                         @endif
 
                                     </td>
@@ -723,6 +837,7 @@
                         </tbody>
                     </table>
                 </div>
+
             </div>
         </div>
     </div>
