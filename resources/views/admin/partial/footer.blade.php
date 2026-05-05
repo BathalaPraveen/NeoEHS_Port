@@ -217,6 +217,12 @@
             'todayHighlight': true,
             'endDate': '{{ todayDate() }}',
         });
+        $(".alldatepicker").datepicker({
+
+            'format': "dd-mm-yyyy",
+            'autoclose': true,
+           
+        });
 
 
     }
