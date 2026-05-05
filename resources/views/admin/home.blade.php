@@ -487,7 +487,7 @@
                     <!-- HEADER -->
                     <div class="stats-header">
                         <div class="icon-box ">
-                            <i class="fa-solid fa-clipboard-check text-info fs-2"></i>
+                            <i class="fa-solid fa-clipboard-check text-success fs-2"></i>
                         </div>
 
                         <div class="title">
@@ -542,11 +542,11 @@
                     <!-- HEADER -->
                     <div class="stats-header">
                         <div class="icon-box ">
-                            <i class="fa-solid fa-triangle-exclamation fs-2 text-danger"></i>
+                            <i class="fa-solid fa-circle-exclamation fs-2 text-warning"></i>
                         </div>
 
                         <div class="title">
-                            INCIDENT <span>(THIS MONTH)</span>
+                            UAUC <span>(THIS MONTH)</span>
                         </div>
                     </div>
 
@@ -554,22 +554,22 @@
                     <div class="stats-body">
 
                         <div>
-                            <h2 class="counter" data-count="{{ $incidentData['current_month_count'] }}">
-                                {{ $incidentData['current_month_count'] }}</h2>
-                            <p class="total-label">Total Incidents</p>
+                            <h2 class="counter" data-count="{{ $uaucData['current_month_count'] }}">
+                                {{ $uaucData['current_month_count'] }}</h2>
+                            <p class="total-label">Total UAUC</p>
                         </div>
 
                         <div
-                            class="change  {{ $incidentData['percentage_change'] < 0 ? 'up' : ($incidentData['percentage_change'] > 0 ? 'down' : '') }}">
+                            class="change  {{ $uaucData['percentage_change'] < 0 ? 'up' : ($uaucData['percentage_change'] > 0 ? 'down' : '') }}">
 
-                            @if ($incidentData['percentage_change'] > 0)
+                            @if ($uaucData['percentage_change'] > 0)
                                 ↑
-                            @elseif($incidentData['percentage_change'] < 0)
+                            @elseif($uaucData['percentage_change'] < 0)
                                 ↓
                             @endif
 
                             <span class="percent-counter"
-                                data-count="{{ abs($incidentData['percentage_change']) }}">{{ abs($incidentData['percentage_change']) }}</span>%
+                                data-count="{{ abs($uaucData['percentage_change']) }}">{{ abs($uaucData['percentage_change']) }}</span>%
                             <small>vs last month</small>
                         </div>
 
@@ -579,12 +579,12 @@
                     <div class="stats-footer">
                         <div class="status open">
                             <span class="dot red"></span>
-                            Open {{ $incidentData['OpenCount'] }}
+                            Open {{ $uaucData['OpenCount'] }}
                         </div>
 
                         <div class="status close">
                             <span class="dot green"></span>
-                            Closed {{ $incidentData['CloseCount'] }}
+                            Closed {{ $uaucData['CloseCount'] }}
                         </div>
                     </div>
 

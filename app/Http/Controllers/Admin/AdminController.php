@@ -87,10 +87,10 @@ class AdminController extends Controller
             ->count();
 
         if ($inspectionPastMonthCount > 0) {
-            $percentageChange = (($inspectionCurrentMonthCount - $inspectionPastMonthCount) / $inspectionPastMonthCount) * 100;
+            $inspectionpercentageChange = (($inspectionCurrentMonthCount - $inspectionPastMonthCount) / $inspectionPastMonthCount) * 100;
         } else {
             // handle division by zero
-            $percentageChange = $inspectionCurrentMonthCount > 0 ? 100 : 0;
+            $inspectionpercentageChange = $inspectionCurrentMonthCount > 0 ? 100 : 0;
         }
 
         $incidentPastMonthCount = $this->incidentNotification
@@ -115,10 +115,10 @@ class AdminController extends Controller
             ->count();
 
         if ($incidentPastMonthCount > 0) {
-            $percentageChange = (($incidentCurrentMonthCount - $incidentPastMonthCount) / $incidentPastMonthCount) * 100;
+            $incidentpercentageChange = (($incidentCurrentMonthCount - $incidentPastMonthCount) / $incidentPastMonthCount) * 100;
         } else {
             // handle division by zero
-            $percentageChange = $incidentCurrentMonthCount > 0 ? 100 : 0;
+            $incidentpercentageChange = $incidentCurrentMonthCount > 0 ? 100 : 0;
         }
 
         $ptwPastMonthCount = $this->general
@@ -143,17 +143,45 @@ class AdminController extends Controller
             ->count();
 
         if ($ptwPastMonthCount > 0) {
-            $percentageChange = (($ptwCurrentMonthCount - $ptwPastMonthCount) / $ptwPastMonthCount) * 100;
+            $ptwpercentageChange = (($ptwCurrentMonthCount - $ptwPastMonthCount) / $ptwPastMonthCount) * 100;
         } else {
             // handle division by zero
-            $percentageChange = $ptwCurrentMonthCount > 0 ? 100 : 0;
+            $ptwpercentageChange = $ptwCurrentMonthCount > 0 ? 100 : 0;
+        }
+
+        $uaucPastMonthCount = $this->uauc
+            ->whereMonth('created_at', now()->subMonth()->month)
+            ->whereYear('created_at', now()->subMonth()->year)
+            ->count();
+
+        $uaucCurrentMonthCount = $this->uauc
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        $uaucOpenCount = $this->uauc
+            ->where('atar_status', '!=', 5)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+        $uaucCloseCount = $this->uauc
+            ->where('atar_status', '=', 5)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
+        if ($uaucPastMonthCount > 0) {
+            $uaucpercentageChange = (($uaucCurrentMonthCount - $uaucPastMonthCount) / $uaucPastMonthCount) * 100;
+        } else {
+            // handle division by zero
+            $uaucpercentageChange = $uaucCurrentMonthCount > 0 ? 100 : 0;
         }
 
 
         $inspectionData = [
             'current_month_count' => $inspectionCurrentMonthCount,
             'past_month_count' => $inspectionPastMonthCount,
-            'percentage_change' => round($percentageChange),
+            'percentage_change' => round($inspectionpercentageChange),
             'OpenCount' => $inspectionOpenCount,
             'CloseCount' => $inspectionCloseCount,
         ];
@@ -161,7 +189,7 @@ class AdminController extends Controller
         $incidentData = [
             'current_month_count' => $incidentCurrentMonthCount,
             'past_month_count' => $incidentPastMonthCount,
-            'percentage_change' => round($percentageChange),
+            'percentage_change' => round($incidentpercentageChange),
             'OpenCount' => $incidentOpenCount,
             'CloseCount' => $incidentCloseCount,
         ];
@@ -169,9 +197,17 @@ class AdminController extends Controller
         $ptwData = [
             'current_month_count' => $ptwCurrentMonthCount,
             'past_month_count' => $ptwPastMonthCount,
-            'percentage_change' => round($percentageChange),
+            'percentage_change' => round($ptwpercentageChange),
             'OpenCount' => $ptwOpenCount,
             'CloseCount' => $ptwCloseCount,
+        ];
+
+        $uaucData = [
+            'current_month_count' => $uaucCurrentMonthCount,
+            'past_month_count' => $uaucPastMonthCount,
+            'percentage_change' => round($uaucpercentageChange),
+            'OpenCount' => $uaucOpenCount,
+            'CloseCount' => $uaucCloseCount,
         ];
 
 
@@ -180,6 +216,7 @@ class AdminController extends Controller
             'inspectionData' => $inspectionData,
             'incidentData' => $incidentData,
             'ptwData' => $ptwData,
+            'uaucData' => $uaucData,
         ];
 
         return view('admin.home', $data);
