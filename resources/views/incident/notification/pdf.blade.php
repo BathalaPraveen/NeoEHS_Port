@@ -103,24 +103,22 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->inspection_id }}
+                            {{ $value->incident_id }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->inspectiontype_name }}
+                            {{ getIncidentTypeName($value->incident_type) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->location_name }}
+                            {{ getlocationname($value->location) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->inspection_date }}
-                        </td>
-
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getusername($value->assign_to) }}
+                            {{ Displaydateformat($value->incident_date) }}
                         </td>
 
+                      
+
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->status_name}}
+                           {!! incidentStatus($value->incident_status) !!}
                         </td>
                         
                         <td style='padding: 7px;border: 0.5px solid'>

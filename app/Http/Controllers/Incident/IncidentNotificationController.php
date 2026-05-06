@@ -143,10 +143,13 @@ class IncidentNotificationController extends Controller
 
         $locationDetails = $this->location->get();
         $status = $this->status->get();
+        $incidentId = $this->notification->getall();
 
         $data = array(
             'locationDetails' => $locationDetails,
             'statusDetails' => $status,
+            'incidentId' => $incidentId,
+            'incident_open_close_status' => $request->incident_open_close_status,
         );
 
         return view('incident.notification.list', $data);
@@ -496,7 +499,7 @@ class IncidentNotificationController extends Controller
             );
             return view('incident.notification.edit', $data);
         } catch (Exception $error) {
-          
+
             report($error);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/notification/list'));
@@ -564,7 +567,6 @@ class IncidentNotificationController extends Controller
                 'Incident Type',
                 'Location',
                 'Incident Date',
-                'Assign To',
                 'Status',
                 'Created By',
                 'Created Date',
@@ -578,11 +580,10 @@ class IncidentNotificationController extends Controller
 
                 $export[] =  $i;
                 $export[] =  $data->incident_id;
-                $export[] =  $data->Incidenttype_name;
-                $export[] =  $data->location_name;
-                $export[] =  $data->incident_date;
-                $export[] =  getusername($data->assign_to);
-                $export[] =  $data->status_name;
+                $export[] =  $data->incident_type;
+                $export[] =  getLocationName($data->location);
+                $export[] =  Displaydateformat($data->incident_date);
+                $export[] = incidentStatus($data->incident_status);
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -591,7 +592,7 @@ class IncidentNotificationController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Incident List.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Incident Notification List.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -599,6 +600,8 @@ class IncidentNotificationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/notification/list'));
         }
     }
 
@@ -613,7 +616,6 @@ class IncidentNotificationController extends Controller
                 'Incident Type',
                 'Location',
                 'Incident Date',
-                'Assign To',
                 'Status',
                 'Created By',
                 'Created Date',
@@ -644,15 +646,16 @@ class IncidentNotificationController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Incident List.pdf";
+            $filename = "Incident Notification List.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/notification/list'));
         }
     }
+
+    
 
     public function ExportViewPdf(Request $request)
     {
@@ -724,7 +727,7 @@ class IncidentNotificationController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/notification/list'));
         }

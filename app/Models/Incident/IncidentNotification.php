@@ -71,11 +71,30 @@ class IncidentNotification extends Model
         }
 
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('incident_initial_notification.incident_id', 'LIKE', '%' . $search . '%');
-            });
+      
+
+        // Filter
+        if ($request->has('incident_open_close_status') && $request->incident_open_close_status) {
+            if ($request->incident_open_close_status == encryptId(1)) {
+                $query->whereIn('incident_status', [1, 3]);
+            } else {
+                $query->where('incident_status', decryptId($request->incident_open_close_status));
+            }
+        }
+
+        if ($request->has('incident_type') && $request->incident_type) {
+
+            $query->where('incident_initial_notification.incident_type', decryptId($request->incident_type));
+        }
+
+        if ($request->has('incident_id') && $request->incident_id) {
+            $query->where('incident_initial_notification.incident_id', ($request->incident_id));
+        }
+        if ($request->has('location') && $request->location) {
+            $query->where('incident_initial_notification.location', decryptId($request->location));
+        }
+        if ($request->has('status') && $request->status) {
+            $query->where('incident_initial_notification.incident_status', decryptId($request->status));
         }
         $query = $query->orderBy('id', 'Desc');
 
@@ -199,25 +218,38 @@ class IncidentNotification extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('incident_initial_notification.*', 'incident_master_category.category_name', 'incident_master_item.item_name');
-        $query = $query->leftJoin('incident_master_category', 'incident_initial_notification.category_id', '=', 'incident_master_category.id');
-        $query = $query->leftJoin('incident_master_item', 'incident_initial_notification.item_id', '=', 'incident_master_item.id');
+        $query = $this->select('incident_initial_notification.*');
 
         if (!in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) && !in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) && !in_array(ROLE_GHSE_APPROVER, getUserRoleId(Auth::id()))) {
 
             $query->Where('incident_initial_notification.created_by', Auth::id());
         }
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
+       
 
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('incident_initial_notification.subitem_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('incident_master_category.category_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('incident_master_item.item_name', 'LIKE', '%' . $search . '%');
-            });
+        // Filter
+        if ($request->has('incident_open_close_status') && $request->incident_open_close_status) {
+            if ($request->incident_open_close_status == encryptId(1)) {
+                $query->whereIn('incident_status', [1, 3]);
+            } else {
+                $query->where('incident_status', decryptId($request->incident_open_close_status));
+            }
         }
 
+        if ($request->has('incident_type') && $request->incident_type) {
+
+            $query->where('incident_initial_notification.incident_type', decryptId($request->incident_type));
+        }
+
+        if ($request->has('incident_id') && $request->incident_id) {
+            $query->where('incident_initial_notification.incident_id', ($request->incident_id));
+        }
+        if ($request->has('location') && $request->location) {
+            $query->where('incident_initial_notification.location', decryptId($request->location));
+        }
+        if ($request->has('status') && $request->status) {
+            $query->where('incident_initial_notification.incident_status', decryptId($request->status));
+        }
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();
     }
@@ -342,10 +374,10 @@ class IncidentNotification extends Model
         ) AS incident_close"
         ];
         $query = $this->select(DB::raw(implode(', ', $selectColumns)))
-           
+
             ->where('incident_initial_notification.status', 1);
 
-       
+
 
         $result = $query->first();
 
@@ -353,6 +385,12 @@ class IncidentNotification extends Model
             'Incident Open'  => (int) ($result->incident_open ?? 0),
             'Incident Close' => (int) ($result->incident_close ?? 0),
         ];
+    }
+
+
+    public function getall()
+    {
+        return $this->where('trash', 'NO')->get();
     }
 
     protected static function booted()

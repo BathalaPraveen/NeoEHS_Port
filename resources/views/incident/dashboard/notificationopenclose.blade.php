@@ -27,6 +27,13 @@
         font-weight: bold;
     }
 </style>
+@php
+    // MUST match pie labels exactly
+    $status_map_incident = [
+        'Incident Open' => encryptId(1),
+        'Incident Close' => encryptId(2),
+    ];
+@endphp
 
 <div class="incident-card">
     <div class="d-flex align-items-center">
@@ -42,6 +49,7 @@
 
 <script>
     var incidet_loseData = @json($incident);
+    var encryptedStatusMap = @json($status_map_incident);
 
     var labels = [];
     var series = [];
@@ -69,7 +77,21 @@
         var options = {
             chart: {
                 type: 'donut',
-                height: 195
+                height: 195,
+                events: { // ✅ FIXED: moved inside chart
+                    dataPointSelection: function(event, chartContext, config) {
+
+                        const index = config.dataPointIndex;
+                        const statusLabel = config.w.config.labels[index];
+                        const encryptedStatus = encryptedStatusMap[statusLabel];
+
+                        let url = "{{ admin_url('incident/notification/list') }}";
+
+                     
+
+                        redirectchartUrl(encryptedStatus,url);
+                    }
+                }
             },
 
             series: series,
@@ -103,13 +125,8 @@
                 }
             },
 
-            // OPTIONAL CLICK EVENT
-            events: {
-                dataPointSelection: function(event, chartContext, config) {
-                    const label = labels[config.dataPointIndex];
-                    console.log("Clicked:", label);
-                }
-            }
+
+
         };
 
         var chart = new ApexCharts(

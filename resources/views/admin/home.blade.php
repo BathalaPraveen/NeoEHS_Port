@@ -857,7 +857,7 @@
                         </div>
                     </div>
 
-                    <div  id="incident_open_close"></div>
+                    <div id="incident_open_close"></div>
 
                 </div>
             </div>
@@ -988,5 +988,33 @@
                 }
             }
         });
+
+
+        // Redirect to form Url
+
+        function redirectchartUrl(id, url) {
+
+
+            let form = $('<form>', {
+                method: 'POST',
+                action: url
+            });
+
+            form.append($('<input>', {
+                type: 'hidden',
+                name: '_token',
+                value: '{{ csrf_token() }}'
+            }));
+
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'incident_open_close_status',
+                value: id
+            }));
+
+
+            $('body').append(form);
+            form.submit();
+        }
     </script>
 @endpush
