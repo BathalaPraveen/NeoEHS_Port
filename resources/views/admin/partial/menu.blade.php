@@ -191,34 +191,50 @@
 
             </ul>
         </div>
-        <div class="user-box dropdown">
-            <a class="d-flex align-items-center nav-link dropdown-toggle dropdown-toggle-nocaret ms-2" href="#"
-                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="user-box position-relative">
+
+            <a id="userDropdownBtn" class="d-flex align-items-center nav-link ms-2" href="javascript:void(0);">
+
                 <img src="{{ url(profileImage(Auth::id())) }}" class="user-img" alt="user avatar"
                     style="width: 30px;">
+
                 <div class="user-info ps-3">
-                    <p class="user-name mb-0"> {{ Auth::user()->name }} </p>
-                    <p class="designattion mb-0">{{ Auth::user()?->user_designation_name }} </p>
+                    <p class="user-name mb-0">{{ Auth::user()->name }}</p>
+                    <p class="designattion mb-0">
+                        {{ Auth::user()?->user_designation_name }}
+                    </p>
                 </div>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href=" {{ admin_url('profile') }} "><i
-                            class="bx bx-user"></i><span>Profile</span></a></li>
 
+            <ul id="userDropdownMenu" class="dropdown-menu dropdown-menu-end">
+
+                <li>
+                    <a class="dropdown-item" href="{{ admin_url('profile') }}">
+                        <i class="bx bx-user"></i>
+                        <span>Profile</span>
+                    </a>
                 </li>
+
                 <li>
                     <div class="dropdown-divider mb-0"></div>
                 </li>
+
                 <li>
                     <a class="dropdown-item" href=""
-                        onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                        <i class='bx bx-log-out-circle'></i><span>Logout</span></a>
+                        onclick="event.preventDefault();
+                document.getElementById('logout-form').submit();">
+
+                        <i class='bx bx-log-out-circle'></i>
+                        <span>Logout</span>
+                    </a>
+
                     <form id="logout-form" action="{{ admin_url('logout') }}" method="POST" class="d-none">
                         @csrf
                     </form>
                 </li>
-            </ul>
-        </div>
 
+            </ul>
+
+        </div>
     </div>
 </header>

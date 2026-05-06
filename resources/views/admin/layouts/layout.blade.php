@@ -230,7 +230,7 @@
             padding: 0 0 60px 0 !important;
             overflow: visible !important;
             min-height: calc(100vh - 60px);
-            margin-top: 60px !important;
+            margin-top: 40px !important;
         }
 
         /* Make background image decorative only, never affect layout */
@@ -748,6 +748,25 @@
             margin-right: 10px;
             vertical-align: middle;
             border-radius: 2px;
+        }
+
+        .dropdown-open {
+            display: block;
+            top: 57px;
+            width: 100%;
+        }
+
+        #userDropdownMenu {
+            display: none;
+            position: absolute;
+            top: 57px;
+            right: 0;
+            width: 220px;
+            z-index: 9999;
+        }
+
+        #userDropdownMenu.show {
+            display: block;
         }
     </style>
 
@@ -1353,6 +1372,23 @@
     {{-- <script src="{{ asset('assets/libs/flatpickr/flatpickr.min.js') }}"></script>
     <script src="{{ url('assets/plugins/flatpickr/flatpickr.min.js') }}"></script> --}}
 
+    <script>
+        const dropdownBtn = document.getElementById('userDropdownBtn');
+        const dropdownMenu = document.getElementById('userDropdownMenu');
+
+        dropdownBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', function() {
+            dropdownMenu.classList.remove('show');
+        });
+
+        dropdownMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
