@@ -67,7 +67,9 @@
         var table;
 
         $(function() {
-
+ if ($.fn.DataTable.isDataTable('.datatable-list')) {
+                $('.datatable-list').DataTable().destroy();
+            }
             /* Datatable */
             table = $('.datatable-list').DataTable({
                 "autoWidth": false,

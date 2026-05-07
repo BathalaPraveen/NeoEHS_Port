@@ -19,9 +19,9 @@ use OpenSpout\Common\Entity\Style\BorderPart;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 
 use App\Models\HIRADC\Document;

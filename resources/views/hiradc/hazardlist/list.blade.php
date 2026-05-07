@@ -16,7 +16,7 @@
 
 @section('content')
 
-   <div class="container">
+    <div class="container">
         <div class="container para mt-3">
             <!--breadcrumb-->
             <div class="card page-breadcrumb d-none d-sm-flex p-2 mb-3">
@@ -101,7 +101,9 @@
         var table;
 
         $(function() {
-
+            if ($.fn.DataTable.isDataTable('.datatable-list')) {
+                $('.datatable-list').DataTable().destroy();
+            }
             /* Datatable */
             table = $('.datatable-list').DataTable({
                 "autoWidth": true,
@@ -148,7 +150,7 @@
                 ],
                 processing: true,
                 serverSide: true,
-                searching: true,
+                searching: false,
                 "order": [
                     [0, "asc"]
                 ],
@@ -201,8 +203,7 @@
                             data: 'compliance_obligation',
                             name: 'compliance_obligation'
                         },
-                    @elseif ($type == 'hiradc')
-                        {
+                    @elseif ($type == 'hiradc') {
                             data: 'hazard',
                             name: 'hazard'
                         }, {
@@ -254,17 +255,18 @@
 
                 ],
                 columnDefs: [{
-                    render: function(data, type, full, meta) {
-                        return "<div class='text-wrap width-200'>" + data + "</div>";
+                        render: function(data, type, full, meta) {
+                            return "<div class='text-wrap width-200'>" + data + "</div>";
+                        },
+                        targets: ["_all"]
                     },
-                    targets: ["_all"]
-                },
-                {
-                    render: function(data, type, full, meta) {
-                        return "<div class='text-wrap width-100'>" + data + "</div>";
-                    },
-                    targets: ["0"]
-                }]
+                    {
+                        render: function(data, type, full, meta) {
+                            return "<div class='text-wrap width-100'>" + data + "</div>";
+                        },
+                        targets: ["0"]
+                    }
+                ]
             });
 
             /* Status Change */
