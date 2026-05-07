@@ -109,7 +109,7 @@
                             {{ getIncidentTypeName($value->incident_type) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getlocationname($value->location) }}
+                            {{ getlocationname($value->location_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->incident_date) }}

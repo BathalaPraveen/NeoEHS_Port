@@ -12,9 +12,9 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 use PDF;
 use Mail;
-use Session;
+use Illuminate\Support\Facades\Session;
 use Exception;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 
 
 use App\Models\User;
@@ -169,9 +169,12 @@ class IncidentInvestigationController extends Controller
         $locationDetails = $this->location->get();
         $status = $this->status->get();
 
+        $notification = $this->notification->getall();
+
         $data = array(
             'locationDetails' => $locationDetails,
             'statusDetails' => $status,
+            'notification' => $notification,
         );
 
         return view('incident.investigation.list', $data);
@@ -231,8 +234,7 @@ class IncidentInvestigationController extends Controller
             Session::flash('success', 'Incident successfully Assigned');
             return redirect('incident/investigation/list');
         } catch (Exception $ex) {
-
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/investigation/list'));
         }
@@ -287,8 +289,10 @@ class IncidentInvestigationController extends Controller
 
             return view('incident.investigation.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/investigation/list'));
         }
     }
 
@@ -342,6 +346,8 @@ class IncidentInvestigationController extends Controller
             return view('incident.investigation.addnearmiss', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/investigation/list'));
         }
     }
 
@@ -481,7 +487,7 @@ class IncidentInvestigationController extends Controller
 
             return redirect(admin_url('incident/investigation/list'));
         } catch (Exception $ex) {
-            dd($ex, 'error');
+            report($ex, 'error');
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/investigation/list'));
         }
@@ -864,15 +870,14 @@ class IncidentInvestigationController extends Controller
 
         try {
 
-            $allData = $this->notification->exportdata();
+            $allData = $this->investigation->exportdata();
 
             $header = [
                 'No.',
-                'Inspection ID',
-                'Inspection Type',
+                'Incident ID',
+                'Incident Type',
                 'Location',
-                'Inspection Date',
-                'Assign To',
+                'Incident Date',
                 'Status',
                 'Created By',
                 'Created Date',
@@ -885,12 +890,11 @@ class IncidentInvestigationController extends Controller
                 $export = [];
 
                 $export[] =  $i;
-                $export[] =  $data->inspection_id;
-                $export[] =  $data->inspectiontype_name;
-                $export[] =  $data->location_name;
-                $export[] =  $data->inspection_date;
-                $export[] =  getusername($data->assign_to);
-                $export[] =  $data->status_name;
+                $export[] =  $data->incident_id;
+                $export[] =  getIncidentTypeName($data->incident_type);
+                $export[] =  getLocationName($data->location_id);
+                $export[] =  Displaydateformat($data->incident_date);
+                $export[] =  strip_tags(incidentInvestigationStatus($data->investigation_status));
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -899,7 +903,7 @@ class IncidentInvestigationController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Inspection List.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Incident Investigation.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -907,6 +911,8 @@ class IncidentInvestigationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/investigation/list'));
         }
     }
 
@@ -914,14 +920,13 @@ class IncidentInvestigationController extends Controller
     {
         try {
 
-            $allData = $this->notification->exportdata();
+            $allData = $this->investigation->exportdata();
             $header = [
                 'No.',
-                'Inspection ID',
-                'Inspection Type',
+                'Incident ID',
+                'Incident Type',
                 'Location',
-                'Inspection Date',
-                'Assign To',
+                'Incident Date',
                 'Status',
                 'Created By',
                 'Created Date',
@@ -931,7 +936,7 @@ class IncidentInvestigationController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Inspection Details",
+                'pagetitle' => "Incident Investigation Details",
             );
 
             $property = [
@@ -952,11 +957,12 @@ class IncidentInvestigationController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Inspection List.pdf";
+            $filename = "Incident Investigation.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/investigation/list'));
         }
     }
 

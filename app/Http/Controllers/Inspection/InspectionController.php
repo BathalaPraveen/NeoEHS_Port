@@ -12,9 +12,11 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 use PDF;
 use Mail;
-use Session;
+use Illuminate\Support\Facades\Session;
+
 use Exception;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
+
 
 
 use App\Models\User;

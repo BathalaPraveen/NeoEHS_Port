@@ -9,9 +9,10 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\Auth;
 
 use PDF;
-use Session;
+use Illuminate\Support\Facades\Session;
+
 use Exception;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 
 
 use App\Models\User;
@@ -53,7 +54,7 @@ class InspectionTypeController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time', $ex], 406);
                 }
             }

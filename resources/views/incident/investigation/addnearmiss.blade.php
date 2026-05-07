@@ -1,6 +1,6 @@
 @extends('admin.layouts.layout')
 @section('title', 'investigation Add')
-@section('pageurl', admin_url('incident/investigation/nearmiss'))
+@section('pageurl', admin_url('incident/investigation/list'))
 
 @push('style')
     <style>

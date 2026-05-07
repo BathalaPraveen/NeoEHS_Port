@@ -4,7 +4,7 @@
 
 @section('content')
 
-   <div class="container">
+    <div class="container">
         <div class="container para mt-3">
             <!--breadcrumb-->
             <div class="card page-breadcrumb d-none d-sm-flex p-2 mb-3">
@@ -68,7 +68,9 @@
         var table;
 
         $(function() {
-
+            if ($.fn.DataTable.isDataTable('.datatable-list')) {
+                $('.datatable-list').DataTable().destroy();
+            }
             /* Datatable */
             table = $('.datatable-list').DataTable({
                 "autoWidth": false,
