@@ -41,13 +41,7 @@ class IncidentClassification extends Model
 
         $query = $this->select('incident_master_incident_classification.*', );
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('incident_master_incident_classification.rating_text', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -128,13 +122,7 @@ class IncidentClassification extends Model
 
         $query = $this->select('incident_master_incident_classification.*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('incident_master_incident_classification.rating_text', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();

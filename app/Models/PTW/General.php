@@ -94,13 +94,7 @@ class General extends Model
             $query->whereRaw('FIND_IN_SET(?, ptw_general.sub_work_permit)', [$subpermit]);
         }
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('ptw_id', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         if (!in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) && !in_array(ROLE_ADMIN, getUserRoleId(Auth::id())) && !in_array(ROLE_HSEUSER, getUserRoleId(Auth::id()))) {
 
@@ -410,13 +404,7 @@ class General extends Model
             $query->whereRaw('FIND_IN_SET(?, ptw_general.sub_work_permit)', [$subpermit]);
         }
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('ptw_id', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $query = $query->orderBy('created_at', 'Desc');
         return  $query->get();

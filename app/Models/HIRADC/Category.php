@@ -45,16 +45,7 @@ class Category extends Model
         $query = $query->leftJoin('hiradc_master_document_type', 'hiradc_master_document_type_category.documenttype_id', '=', 'hiradc_master_document_type.id');
 
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-
-                $query->orWhere('hiradc_master_document_type_category.category_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('hiradc_master_document.document_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('hiradc_master_document_type.documenttype_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+        
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -147,16 +138,7 @@ class Category extends Model
         $query = $query->leftJoin('hiradc_master_document_type', 'hiradc_master_document_type_category.documenttype_id', '=', 'hiradc_master_document_type.id');
 
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-
-                $query->orWhere('hiradc_master_document_type_category.category_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('hiradc_master_document.document_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('hiradc_master_document_type.documenttype_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+      
 
 
         $query = $query->orderBy('id', 'Desc');

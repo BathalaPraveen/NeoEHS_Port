@@ -46,13 +46,7 @@ class InspectionDetails extends Model
 
         $query = $this->select('inspection_inspection_list_details.*');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('inspection_inspection_list_details.inspectiontype_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+      
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -158,13 +152,7 @@ class InspectionDetails extends Model
 
         $query = $this->select('inspection_inspection_list_details.*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('inspection_inspection_list_details.inspectiontype_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();

@@ -45,16 +45,7 @@ class PTWItem extends Model
         $query = $query->leftJoin('ptw_master_category', 'ptw_master_item.category_id', '=', 'ptw_master_category.id');
 
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('ptw_master_activity.module', 'LIKE', '%' . $search . '%');
-                $query->orWhere('ptw_master_item.item_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('ptw_master_activity.activity_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('ptw_master_category.category_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -142,17 +133,7 @@ class PTWItem extends Model
         $query = $query->leftJoin('ptw_master_category', 'ptw_master_item.category_id', '=', 'ptw_master_category.id');
 
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('ptw_master_activity.module', 'LIKE', '%' . $search . '%');
-                $query->orWhere('ptw_master_item.item_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('ptw_master_activity.activity_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('ptw_master_category.category_name', 'LIKE', '%' . $search . '%');
-            });
-        }
-
+       
 
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();

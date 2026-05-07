@@ -45,16 +45,7 @@ class HSEHazard extends Model
             ->leftJoin('atar_master_atar_types', 'atar_master_hse_hazard.atar_type', '=', 'atar_master_atar_types.id')
             ->leftJoin('atar_master_zefa_rules', 'atar_master_hse_hazard.zefa_rule', '=', 'atar_master_zefa_rules.id');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-
-                $query->orWhere('atar_master_zefa_rules.zefa_rule', 'LIKE', '%' . $search . '%');
-                $query->orWhere('hse_hazard', 'LIKE', '%' . $search . '%');
-                $query->orWhere('hover_msg', 'LIKE', '%' . $search . '%');
-            });
-        }
+      
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -144,16 +135,7 @@ class HSEHazard extends Model
             ->leftJoin('atar_master_atar_types', 'atar_master_hse_hazard.atar_type', '=', 'atar_master_atar_types.id')
             ->leftJoin('atar_master_zefa_rules', 'atar_master_hse_hazard.zefa_rule', '=', 'atar_master_zefa_rules.id');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-
-                $query->orWhere('atar_master_zefa_rules.zefa_rule', 'LIKE', '%' . $search . '%');
-                $query->orWhere('hse_hazard', 'LIKE', '%' . $search . '%');
-                $query->orWhere('hover_msg', 'LIKE', '%' . $search . '%');
-            });
-        }
+        
 
         $query = $query->orderBy('id', 'Asc');
         return  $query->get();

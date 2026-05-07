@@ -41,15 +41,6 @@ class ProcessTypeDetails extends Model
         $query = $this->select('hiradc_master_process_type_details.*','hiradc_master_process_type.process_type_name');
         $query = $query->leftJoin('hiradc_master_process_type', 'hiradc_hiradc_list_details.process_type_id', '=', 'hiradc_master_process_type.id');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('sub_type_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('hiradc_master_process_type.process_type_name', 'LIKE', '%' . $search . '%');
-            });
-        }
-
         $data_count = $query->count();
         $total_records = $data_count;
 

@@ -41,14 +41,7 @@ class Infringement extends Model
 
         $query = $this->select('atar_master_ssds_infringement.*');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('infringement_no', 'LIKE', '%' . $search . '%');
-                $query->orWhere('type_of_infringement', 'LIKE', '%' . $search . '%');
-            });
-        }
+      
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -131,15 +124,7 @@ class Infringement extends Model
 
         $query = $this->select('atar_master_ssds_infringement.*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('infringement_no', 'LIKE', '%' . $search . '%');
-                $query->orWhere('type_of_infringement', 'LIKE', '%' . $search . '%');
-            });
-        }
-
+       
         $query = $query->orderBy('id', 'Asc');
         return  $query->get();
     }

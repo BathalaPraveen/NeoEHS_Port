@@ -39,14 +39,7 @@ class CompanyActivity extends Model
 
         $query = $this->select('master_company_activity.*');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('activity_id LIKE "%' . $search . '%"');
-                $query->orWhereRaw('activity_name LIKE "%' . $search . '%"');
-            });
-        }
+      
 
         $data_count = $query = $query->orderBy('id', 'ASC');
         $total_records = $data_count->count();
@@ -137,14 +130,7 @@ class CompanyActivity extends Model
 
         $query = $this->select('master_company_activity.*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search['value'];
-
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('activity_id LIKE "%' . $search . '%"');
-                $query->orWhereRaw('activity_name LIKE "%' . $search . '%"');
-            });
-        }
+       
 
         $query = $query->orderBy('id', 'ASC');
         return  $query->get();

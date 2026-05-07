@@ -45,16 +45,7 @@ class ChecklistItem extends Model
         $query = $query->leftJoin('inspection_master_checklist_category', 'inspection_master_checklist_item.category_id', '=', 'inspection_master_checklist_category.id');
 
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-
-                $query->orWhere('inspection_master_checklist_item.item_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('inspection_master_inspection_type.inspectiontype_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('inspection_master_checklist_category.category_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+    
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -208,19 +199,6 @@ class ChecklistItem extends Model
         $query = $this->select('inspection_master_checklist_item.*', 'inspection_master_inspection_type.inspectiontype_name', 'inspection_master_checklist_category.category_name');
         $query = $query->leftJoin('inspection_master_inspection_type', 'inspection_master_checklist_item.inspectiontype_id', '=', 'inspection_master_inspection_type.id');
         $query = $query->leftJoin('inspection_master_checklist_category', 'inspection_master_checklist_item.category_id', '=', 'inspection_master_checklist_category.id');
-
-
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-
-                $query->orWhere('inspection_master_checklist_item.item_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('inspection_master_inspection_type.inspectiontype_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('inspection_master_checklist_category.category_name', 'LIKE', '%' . $search . '%');
-            });
-        }
-
 
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();

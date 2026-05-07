@@ -43,16 +43,7 @@ class Supplier extends Model
 
         $query = $this->select('chemical_master_supplier.*');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('chemical_master_supplier.supplier_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('chemical_master_supplier.address', 'LIKE', '%' . $search . '%');
-                $query->orWhere('chemical_master_supplier.contact_no', 'LIKE', '%' . $search . '%');
-                $query->orWhere('chemical_master_supplier.email_id', 'LIKE', '%' . $search . '%');
-            });
-        }
+        
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -142,16 +133,7 @@ class Supplier extends Model
 
         $query = $this->select('chemical_master_supplier.*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('chemical_master_supplier.supplier_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('chemical_master_supplier.address', 'LIKE', '%' . $search . '%');
-                $query->orWhere('chemical_master_supplier.contact_no', 'LIKE', '%' . $search . '%');
-                $query->orWhere('chemical_master_supplier.email_id', 'LIKE', '%' . $search . '%');
-            });
-        }
+        
 
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();

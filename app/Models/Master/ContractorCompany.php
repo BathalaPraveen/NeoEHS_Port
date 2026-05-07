@@ -65,16 +65,7 @@ class ContractorCompany extends Model
 
         $query = $this->select('master_contractor_company.*');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('master_contractor_company.com_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('con_comp_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('con_email', 'LIKE', '%' . $search . '%')
-                    ->orWhere('con_phone', 'LIKE', '%' . $search . '%');
-            });
-        }
+        
         if ($request->has('com_id') && $request->com_id) {
             $query = $query->where('com_id', 'LIKE', '%' . $request->com_id . '%');
         }
@@ -366,16 +357,7 @@ class ContractorCompany extends Model
 
         $query = $this->select('master_contractor_company.*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('master_company.com_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('con_comp_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('con_email', 'LIKE', '%' . $search . '%')
-                    ->orWhere('con_phone', 'LIKE', '%' . $search . '%');
-            });
-        }
+        
 
         if ($request->has('com_id') && $request->com_id) {
             $query = $query->where('com_id', 'LIKE', '%' . $request->com_id . '%');

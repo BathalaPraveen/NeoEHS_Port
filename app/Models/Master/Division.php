@@ -44,16 +44,7 @@ class Division extends Model
         $query = $this->select('master_company_division.*', 'master_company.company_name')
             ->leftJoin('master_company', 'master_company_division.company_id', '=', 'master_company.id');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('division_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('division_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('division_shortname', 'LIKE', '%' . $search . '%');
-            });
-        }
+      
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -143,16 +134,7 @@ class Division extends Model
         $query = $this->select('master_company_division.*', 'master_company.company_name')
             ->leftJoin('master_company', 'master_company_division.company_id', '=', 'master_company.id');
 
-        if ($request->search != null || $request->search!= '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('division_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('division_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('division_shortname', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $query = $query->orderBy('created_at', 'Desc');
         return  $query->get();

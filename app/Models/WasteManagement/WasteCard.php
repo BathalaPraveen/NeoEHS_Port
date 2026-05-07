@@ -68,14 +68,7 @@ class WasteCard extends Model
         $companyid = getCompanyId($request->company);
         $query->where('wastemanagement_waste_waste_card.company_id', $companyid);
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('wastemanagement_waste_waste_card.wastetype_id', 'LIKE', '%' . $search . '%');
-                $query->orWhere('wastemanagement_waste_waste_card.wastetype_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+      
 
         $data_count = $query->count();
         $total_records = $data_count;
