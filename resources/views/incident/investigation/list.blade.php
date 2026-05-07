@@ -5,7 +5,7 @@
 
 @section('content')
 
-   <div class="container">
+    <div class="container">
         <div class="container para mt-3">
             <!--breadcrumb-->
             <div class="card page-breadcrumb d-none d-sm-flex p-2 mb-3">
@@ -44,18 +44,32 @@
                     <hr />
 
                     <div id="search" class="collapse">
-                        <form action="">
+                        <form action="" id="formsearch">
                             <div class="card-body">
 
                                 <div class="col-md-12">
                                     <div class="row">
 
                                         <div class="col-md-3 form-input">
+                                            <label for="incident_id" class="form-label ">Inspection Type</label>
+                                            <select name="incident_id" id="incident_id" required
+                                                class="form-control select2">
+                                                <option value="">Select Incident Type</option>
+                                                @foreach ($notification as $incident_id)
+                                                    <option value="{{ $incident_id->incident_id }}">
+                                                        {{ $incident_id->incident_id }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 form-input">
                                             <label for="inspectiontype" class="form-label ">Inspection Type</label>
-                                            <select name="inspectiontype" id="inspectiontype" class="form-control select2"
-                                                style="width: 100%">
-                                                <option value="">Select Inspection Type </option>
-
+                                            <select name="incident_type" id="incident_type" required
+                                                class="form-control select2">
+                                                <option value="">Select Incident Type</option>
+                                                <option value="{{ encryptId(1) }}">Near Miss</option>
+                                                <option value="{{ encryptId(2) }}">Accident</option>
+                                                </option>
                                             </select>
                                         </div>
 
@@ -65,9 +79,12 @@
                                             <select name="location" id="location" class="form-control select2"
                                                 style="width: 100%">
                                                 <option value="">Select Location </option>
+                                                @foreach ($locationDetails as $loc)
+                                                    <option value="{{ encryptId($loc->id) }}">{{ $loc->location_name }}
+                                                    </option>
+                                                @endforeach
 
                                             </select>
-
                                         </div>
 
                                         <div class="col-md-3 form-input">
@@ -75,6 +92,11 @@
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control select2">
                                                 <option value="">Select Status</option>
+
+                                                <option value="{{ encryptId(1) }}">Not Assigned</option>
+                                                <option value="{{ encryptId(2) }}">Investigation Pending</option>
+                                                <option value="{{ encryptId(3) }}">Investigation Completed</option>
+                                                <option value="{{ encryptId(4) }}">Approved</option>
 
                                             </select>
                                         </div>
@@ -137,10 +159,9 @@
                             .attr('content')
                     },
                     data: function(d) {
-                        d.inspectiontype = $("#inspectiontype").val();
-                        d.location = $("#location").val();
-                        d.status = $("#status").val();
-
+                        let formData = $('#formsearch').serialize();
+                        let params = new URLSearchParams(formData);
+                        params.forEach((value, key) => d[key] = value);
                     }
                 },
                 columns: [
@@ -198,36 +219,27 @@
                                 extend: 'pdf',
                                 text: 'Pdf',
                                 action: function(e, dt, button, config) {
-                                    var searchValue = $('.dataTables_filter input').val();
-                                    var inspectiontype = $("#inspectiontype").val();
-                                    var location = $("#location").val();
-                                    var status = $("#status").val();
-
-                                    window.location.href =
-                                        "{{ admin_url('incident/investigation/export/pdf') }}" +
-                                        '?search=' + searchValue +
-                                        '&inspectiontype=' + inspectiontype +
-                                        '&location=' + location +
-                                        '&status=' + status;
-
+                                    var searchValue = $('#datatable-list_filter input').val();
+                                    var formData = $('#formsearch').serialize();
+                                    var exportUrl =
+                                        "{{ admin_url('incident/investigation/export/pdf') }}";
+                                    window.location.href = exportUrl + '?search=' +
+                                        searchValue + '&' +
+                                        formData;
                                 }
+
                             },
                             {
                                 extend: 'excel',
                                 text: 'Excel',
                                 action: function(e, dt, button, config) {
-
-                                    var searchValue = $('.dataTables_filter input').val();
-                                    var inspectiontype = $("#inspectiontype").val();
-                                    var location = $("#location").val();
-                                    var status = $("#status").val();
-
-                                    window.location.href =
-                                        "{{ admin_url('incident/investigation/export/excel') }}" +
-                                        '?search=' + searchValue +
-                                        '&inspectiontype=' + inspectiontype +
-                                        '&location=' + location +
-                                        '&status=' + status;
+                                    var searchValue = $('#datatable-list_filter input').val();
+                                    var formData = $('#formsearch').serialize();
+                                    var exportUrl =
+                                        "{{ admin_url('incident/investigation/export/excel') }}";
+                                    window.location.href = exportUrl + '?search=' +
+                                        searchValue + '&' +
+                                        formData;
                                 }
                             },
                         ]

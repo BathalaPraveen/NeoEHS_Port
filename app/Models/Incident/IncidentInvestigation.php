@@ -45,9 +45,9 @@ class IncidentInvestigation extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('incident_investigation.*','incident_initial_notification.location_id','incident_initial_notification.incident_date');
+        $query = $this->select('incident_investigation.*', 'incident_initial_notification.location_id', 'incident_initial_notification.incident_date');
 
-        $query = $query->leftJoin('incident_initial_notification','incident_initial_notification.id', '=','incident_investigation.inc_id');
+        $query = $query->leftJoin('incident_initial_notification', 'incident_initial_notification.id', '=', 'incident_investigation.inc_id');
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -55,7 +55,7 @@ class IncidentInvestigation extends Model
                 $query->orWhere('incident_investigation.incident_id', 'LIKE', '%' . $search . '%');
             });
         }
-        $query = $query->orderBy('id','Desc');
+        $query = $query->orderBy('id', 'Desc');
         $data_count = $query->count();
         $total_records = $data_count;
 
@@ -63,6 +63,21 @@ class IncidentInvestigation extends Model
             $query->offset($request->start)->limit($request->length);
         }
 
+
+        if ($request->has('incident_type') && $request->incident_type) {
+
+            $query->where('incident_investigation.incident_type', decryptId($request->incident_type));
+        }
+
+        if ($request->has('incident_id') && $request->incident_id) {
+            $query->where('incident_investigation.incident_id', ($request->incident_id));
+        }
+        if ($request->has('location') && $request->location) {
+            $query->where('incident_initial_notification.location_id', decryptId($request->location));
+        }
+        if ($request->has('status') && $request->status) {
+            $query->where('incident_investigation.investigation_status', decryptId($request->status));
+        }
         $data = $query->get();
 
         $datas = [
@@ -153,21 +168,25 @@ class IncidentInvestigation extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('incident_investigation.*', 'incident_master_category.category_name', 'incident_master_item.item_name');
-        $query = $query->leftJoin('incident_master_category', 'incident_investigation.category_id', '=', 'incident_master_category.id');
-        $query = $query->leftJoin('incident_master_item', 'incident_investigation.item_id', '=', 'incident_master_item.id');
+        $query = $this->select('incident_investigation.*', 'incident_initial_notification.location_id', 'incident_initial_notification.incident_date');
+
+        $query = $query->leftJoin('incident_initial_notification', 'incident_initial_notification.id', '=', 'incident_investigation.inc_id');
 
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
+        if ($request->has('incident_type') && $request->incident_type) {
 
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('incident_investigation.subitem_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('incident_master_category.category_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('incident_master_item.item_name', 'LIKE', '%' . $search . '%');
-            });
+            $query->where('incident_investigation.incident_type', decryptId($request->incident_type));
         }
 
+        if ($request->has('incident_id') && $request->incident_id) {
+            $query->where('incident_investigation.incident_id', ($request->incident_id));
+        }
+        if ($request->has('location') && $request->location) {
+            $query->where('incident_initial_notification.location_id', decryptId($request->location));
+        }
+        if ($request->has('status') && $request->status) {
+            $query->where('incident_investigation.investigation_status', decryptId($request->status));
+        }
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();
     }

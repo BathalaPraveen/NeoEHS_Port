@@ -1,6 +1,6 @@
 @extends('admin.layouts.layout')
 @section('title', 'General PTW Edit')
-@section('pageurl', admin_url('ptw/general/list'))
+@section('pageurl', admin_url('incident/investigation/list'))
 
 @push('style')
     <style>

@@ -1,6 +1,6 @@
 @extends('admin.layouts.layout')
 @section('title', 'Inspection Add')
-@section('pageurl', admin_url('inspection/inspection/list'))
+@section('pageurl', admin_url('incident/investigation/list'))
 
 @section('content')
 

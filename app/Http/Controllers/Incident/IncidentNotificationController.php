@@ -580,10 +580,10 @@ class IncidentNotificationController extends Controller
 
                 $export[] =  $i;
                 $export[] =  $data->incident_id;
-                $export[] =  $data->incident_type;
-                $export[] =  getLocationName($data->location);
+                $export[] =  getIncidentTypeName($data->incident_type);
+                $export[] =  getLocationName($data->location_id);
                 $export[] =  Displaydateformat($data->incident_date);
-                $export[] = incidentStatus($data->incident_status);
+                $export[] = strip_tags(incidentStatus($data->incident_status));
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
 
@@ -625,7 +625,7 @@ class IncidentNotificationController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Incident Details",
+                'pagetitle' => "Incident Notification Details",
             );
 
             $property = [
@@ -655,7 +655,7 @@ class IncidentNotificationController extends Controller
         }
     }
 
-    
+
 
     public function ExportViewPdf(Request $request)
     {

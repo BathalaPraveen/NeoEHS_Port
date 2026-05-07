@@ -91,7 +91,7 @@ class IncidentNotification extends Model
             $query->where('incident_initial_notification.incident_id', ($request->incident_id));
         }
         if ($request->has('location') && $request->location) {
-            $query->where('incident_initial_notification.location', decryptId($request->location));
+            $query->where('incident_initial_notification.location_id', decryptId($request->location));
         }
         if ($request->has('status') && $request->status) {
             $query->where('incident_initial_notification.incident_status', decryptId($request->status));
@@ -245,7 +245,7 @@ class IncidentNotification extends Model
             $query->where('incident_initial_notification.incident_id', ($request->incident_id));
         }
         if ($request->has('location') && $request->location) {
-            $query->where('incident_initial_notification.location', decryptId($request->location));
+            $query->where('incident_initial_notification.location_id', decryptId($request->location));
         }
         if ($request->has('status') && $request->status) {
             $query->where('incident_initial_notification.incident_status', decryptId($request->status));
