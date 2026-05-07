@@ -245,7 +245,7 @@
                 dom: 'Bfrtip',
                 processing: true,
                 serverSide: true,
-                searching: true,
+                 searching: false,
                 orderin: false,
                 bAutoWidth: false,
                 ajax: {

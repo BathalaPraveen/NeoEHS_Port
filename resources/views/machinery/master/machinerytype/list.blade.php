@@ -123,7 +123,7 @@
                 ],
                 processing: true,
                 serverSide: true,
-                searching: true,
+                 searching: false,
                 "ordering": false,
                 ajax: {
                     url: "{{ admin_url('machinery/master/machinerytype/list') }}",

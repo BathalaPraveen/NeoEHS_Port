@@ -328,7 +328,7 @@
                 dom: 'Bfrtip',
                 processing: true,
                 serverSide: true,
-                searching: true,
+                 searching: false,
                 "ordering": false,
                 aLengthMenu: [
                     [10, 25, 50, 100, -1],

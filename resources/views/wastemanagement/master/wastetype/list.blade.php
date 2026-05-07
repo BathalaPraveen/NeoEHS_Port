@@ -123,7 +123,7 @@
                 ],
                 processing: true,
                 serverSide: true,
-                searching: true,
+                 searching: false,
                 "order": [
                     [0, "asc"]
                 ],
