@@ -9,9 +9,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 use App\Models\User;
 use App\Models\Inspection\InspectionType;
@@ -60,7 +60,7 @@ class ChecklistCategoryController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -84,6 +84,8 @@ class ChecklistCategoryController extends Controller
             return view('inspection.master.category.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/master/checklistcategory/list'));
         }
     }
 
@@ -108,24 +110,14 @@ class ChecklistCategoryController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect()->back()->withErrors($validator)->withInput();
             }
+            $category = $this->checklistcategory->store();
 
-            try {
+            $this->checklistitem->store($category);
 
-                $category = $this->checklistcategory->store();
-
-                $this->checklistitem->store($category);
-
-                Session::flash('success', 'Checklist Category added successfully!');
-            } catch (Exception $ex) {
-
-
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
-
+            Session::flash('success', 'Checklist Category added successfully!');
             return redirect(admin_url('inspection/master/checklistcategory/list'));
         } catch (Exception $ex) {
-
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/master/checklistcategory/list'));
         }
@@ -145,6 +137,8 @@ class ChecklistCategoryController extends Controller
             return view('inspection.master.category.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/master/checklistcategory/list'));
         }
     }
 
@@ -168,8 +162,10 @@ class ChecklistCategoryController extends Controller
 
 
             return view('inspection.master.category.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/master/checklistcategory/list'));
         }
     }
 
@@ -204,27 +200,28 @@ class ChecklistCategoryController extends Controller
             return redirect(admin_url('inspection/master/checklistcategory/list'));
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/master/checklistcategory/list'));
         }
     }
 
-    public function Uniquecheck(Request $request)
-    {
-        if ($request->ajax()) {
-            $email = $request->email;
-            $userid = $request->userid;
-            if ($userid == '') {
-                $user = $this->user->EmailCheck($email);
-            } else {
-                $user = $this->user->ExistEmailCheck($email, $userid);
-            }
-            if ($user->count()) {
-                return Response::json(array('msg' => 'true'));
-            }
-            return Response::json(array('msg' => 'false'));
-        }
-    }
+    // public function Uniquecheck(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $email = $request->email;
+    //         $userid = $request->userid;
+    //         if ($userid == '') {
+    //             $user = $this->user->EmailCheck($email);
+    //         } else {
+    //             $user = $this->user->ExistEmailCheck($email, $userid);
+    //         }
+    //         if ($user->count()) {
+    //             return Response::json(array('msg' => 'true'));
+    //         }
+    //         return Response::json(array('msg' => 'false'));
+    //     }
+    // }
 
     public function StatusChange(Request $request)
     {
@@ -293,6 +290,8 @@ class ChecklistCategoryController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/master/checklistcategory/list'));
         }
     }
 
@@ -340,6 +339,8 @@ class ChecklistCategoryController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/master/checklistcategory/list'));
         }
     }
 

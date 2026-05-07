@@ -13,9 +13,9 @@ use Str;
 use PDF;
 use Mail;
 use File;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 use Response;
 
 use App\Models\Master\Nationality;
@@ -91,7 +91,7 @@ class ContractorController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -164,43 +164,37 @@ class ContractorController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
-
-                $userDetails = User::constore();
-                $id = $userDetails->id;
-
-                $company_id = '';
-
-                if ($request->con_company_id == 0) {
-
-                    $company_id = $this->contractorcompany->CreateNew()->id;
-                }
 
 
-                $contractorDetails = $this->contractor->store($id, $company_id);
+            $userDetails = User::constore();
+            $id = $userDetails->id;
 
+            $company_id = '';
 
-                if ($contractorDetails->cont_email != '' && $contractorDetails->cont_email != null) {
+            if ($request->con_company_id == 0) {
 
-
-                    $condetails =  $this->contractor->selectOne($contractorDetails->id);
-
-                    $con  = $condetails->toArray();
-
-                    Mail::to($contractorDetails->cont_email)->queue(new ContractorRegisterEmail($con));
-                }
-
-                Session::flash('success', 'Contractor  added successfully!');
-            } catch (Exception $ex) {
-
-
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                $company_id = $this->contractorcompany->CreateNew()->id;
             }
+
+
+            $contractorDetails = $this->contractor->store($id, $company_id);
+
+
+            if ($contractorDetails->cont_email != '' && $contractorDetails->cont_email != null) {
+
+
+                $condetails =  $this->contractor->selectOne($contractorDetails->id);
+
+                $con  = $condetails->toArray();
+
+                Mail::to($contractorDetails->cont_email)->queue(new ContractorRegisterEmail($con));
+            }
+
+            Session::flash('success', 'Contractor  added successfully!');
 
             return redirect(admin_url('contractor/list'));
         } catch (Exception $ex) {
-
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('contractor/list'));
         }
@@ -229,6 +223,8 @@ class ContractorController extends Controller
             return view('master.contractor.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('contractor/list'));
         }
     }
 
@@ -253,9 +249,10 @@ class ContractorController extends Controller
             );
 
             return view('master.contractor.edit', $data);
-        } catch (Exception $error) {
-
-            report($error);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('contractor/list'));
         }
     }
 
@@ -305,7 +302,7 @@ class ContractorController extends Controller
             }
 
 
-         
+
 
             $contractorDetails = $this->contractor->updates($id, $company_id);
 
@@ -319,7 +316,7 @@ class ContractorController extends Controller
             Session::flash('success', 'Contractor updated successfully!');
             return redirect(admin_url('contractor/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('contractor/list'));
         }
@@ -525,6 +522,8 @@ class ContractorController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('contractor/list'));
         }
     }
 
@@ -579,6 +578,8 @@ class ContractorController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('contractor/list'));
         }
     }
 
@@ -630,7 +631,7 @@ class ContractorController extends Controller
             Session::flash('success', 'Contractor password updated successfully!');
             return redirect(admin_url('contractor/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('contractor/list'));
         }

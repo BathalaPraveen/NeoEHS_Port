@@ -9,11 +9,10 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
-
-
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Response;
 use App\Models\Master\Announcement;
 
 
@@ -84,6 +83,8 @@ class AnnouncementController extends Controller
             return view('master.announcement.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('settings/announcement/list'));
         }
     }
 
@@ -107,21 +108,14 @@ class AnnouncementController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
 
-                $this->announcement->store();
+            $this->announcement->store();
 
-                Session::flash('success', 'Announcement added successfully!');
-            } catch (Exception $ex) {
-
-
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
+            Session::flash('success', 'Announcement added successfully!');
 
             return redirect(admin_url('settings/announcement/list'));
         } catch (Exception $ex) {
-
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('settings/announcement/list'));
         }
@@ -141,6 +135,8 @@ class AnnouncementController extends Controller
             return view('master.announcement.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('settings/announcement/list'));
         }
     }
 
@@ -157,8 +153,10 @@ class AnnouncementController extends Controller
 
 
             return view('master.announcement.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('settings/announcement/list'));
         }
     }
 
@@ -189,27 +187,28 @@ class AnnouncementController extends Controller
             return redirect(admin_url('settings/announcement/list'));
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('settings/announcement/list'));
         }
     }
 
-    public function Uniquecheck(Request $request)
-    {
-        if ($request->ajax()) {
-            $email = $request->email;
-            $userid = $request->userid;
-            if ($userid == '') {
-                $user = $this->user->EmailCheck($email);
-            } else {
-                $user = $this->user->ExistEmailCheck($email, $userid);
-            }
-            if ($user->count()) {
-                return Response::json(array('msg' => 'true'));
-            }
-            return Response::json(array('msg' => 'false'));
-        }
-    }
+    // public function Uniquecheck(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $email = $request->email;
+    //         $userid = $request->userid;
+    //         if ($userid == '') {
+    //             $user = $this->user->EmailCheck($email);
+    //         } else {
+    //             $user = $this->user->ExistEmailCheck($email, $userid);
+    //         }
+    //         if ($user->count()) {
+    //             return Response::json(array('msg' => 'true'));
+    //         }
+    //         return Response::json(array('msg' => 'false'));
+    //     }
+    // }
 
     public function StatusChange(Request $request)
     {
@@ -219,7 +218,7 @@ class AnnouncementController extends Controller
 
             $this->announcement->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'announcement status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Announcement status changed'], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -233,7 +232,7 @@ class AnnouncementController extends Controller
 
             $this->announcement->deleterecord($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'announcement deleted successfully'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Announcement deleted successfully'], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -283,6 +282,8 @@ class AnnouncementController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('settings/announcement/list'));
         }
     }
 
@@ -305,7 +306,7 @@ class AnnouncementController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Location Details",
+                'pagetitle' => "Announcement Details",
             );
 
             $property = [
@@ -332,6 +333,8 @@ class AnnouncementController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('settings/announcement/list'));
         }
     }
 }

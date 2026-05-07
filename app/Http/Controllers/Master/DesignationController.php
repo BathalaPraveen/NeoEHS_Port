@@ -9,9 +9,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 
 use App\Models\Master\Designation;
@@ -27,7 +27,6 @@ class DesignationController extends Controller
     {
 
         $this->designation = new Designation();
-
     }
 
 
@@ -65,7 +64,7 @@ class DesignationController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -84,6 +83,8 @@ class DesignationController extends Controller
             return view('master.designation.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('designation/list'));
         }
     }
 
@@ -105,21 +106,15 @@ class DesignationController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
-
-                $this->designation->store();
-
-                Session::flash('success', 'Designation added successfully!');
-            } catch (Exception $ex) {
 
 
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
+            $this->designation->store();
 
+            Session::flash('success', 'Designation added successfully!');
             return redirect(admin_url('designation/list'));
         } catch (Exception $ex) {
 
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('designation/list'));
         }
@@ -139,6 +134,8 @@ class DesignationController extends Controller
             return view('master.designation.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('designation/list'));
         }
     }
 
@@ -155,8 +152,10 @@ class DesignationController extends Controller
 
 
             return view('master.designation.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+        } catch (Exception $ex) {
+             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('designation/list'));
         }
     }
 
@@ -185,7 +184,7 @@ class DesignationController extends Controller
             Session::flash('success', 'Designation updated successfully!');
             return redirect(admin_url('designation/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('designation/list'));
         }
@@ -277,6 +276,8 @@ class DesignationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('designation/list'));
         }
     }
 
@@ -324,7 +325,9 @@ class DesignationController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('designation/list'));
         }
     }
 }

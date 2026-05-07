@@ -9,10 +9,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\Auth;
 
 use PDF;
-use Session;
 use Exception;
-use DataTables;
-
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 use App\Models\Incident\IncidentCategory;
 use App\Models\Incident\IncidentItem;

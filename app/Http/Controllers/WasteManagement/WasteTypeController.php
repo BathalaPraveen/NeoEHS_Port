@@ -9,9 +9,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\Auth;
 
 use PDF;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 
 use App\Models\User;
@@ -53,7 +53,7 @@ class WasteTypeController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time', $ex], 406);
                 }
             }
@@ -74,6 +74,8 @@ class WasteTypeController extends Controller
             return view('wastemanagement.master.wastetype.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('wastemanagement/master/wastetype/list'));
         }
     }
 
@@ -98,22 +100,15 @@ class WasteTypeController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
-
-                $this->wastetype->store();
-
-                Session::flash('success', 'Waste Type added successfully!');
-            } catch (Exception $ex) {
 
 
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
+            $this->wastetype->store();
 
+            Session::flash('success', 'Waste Type added successfully!');
             return redirect(admin_url('wastemanagement/master/wastetype/list'));
         } catch (Exception $ex) {
 
             report($ex);
-
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('wastemanagement/master/wastetype/list'));
         }
@@ -135,7 +130,9 @@ class WasteTypeController extends Controller
 
             return view('wastemanagement.master.wastetype.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('wastemanagement/master/wastetype/list'));
         }
     }
 
@@ -164,7 +161,7 @@ class WasteTypeController extends Controller
             Session::flash('success', 'Waste Type updated successfully!');
             return redirect(admin_url('wastemanagement/master/wastetype/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('wastemanagement/master/wastetype/list'));
         }
@@ -222,6 +219,8 @@ class WasteTypeController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('wastemanagement/master/wastetype/list'));
         }
     }
 
@@ -269,6 +268,8 @@ class WasteTypeController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('wastemanagement/master/wastetype/list'));
         }
     }
 }

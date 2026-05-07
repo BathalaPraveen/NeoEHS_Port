@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Master;
 
 use PDF;
 use Exception;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use App\Models\User;
 
 use Illuminate\Http\Request;
@@ -65,7 +65,7 @@ class WorkTypeMasterController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -88,6 +88,8 @@ class WorkTypeMasterController extends Controller
             return view('master.work_type.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('work_type/list'));
         }
     }
 
@@ -105,21 +107,15 @@ class WorkTypeMasterController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
 
-                $this->work_type->store();
+            $this->work_type->store();
 
-                Session::flash('success', 'Work Type added successfully!');
-            } catch (Exception $ex) {
+            Session::flash('success', 'Work Type added successfully!');
 
-
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
 
             return redirect(admin_url('work_type/list'));
         } catch (Exception $ex) {
-
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('work_type/list'));
         }
@@ -139,6 +135,8 @@ class WorkTypeMasterController extends Controller
             return view('master.work_type.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('work_type/list'));
         }
     }
 
@@ -157,7 +155,9 @@ class WorkTypeMasterController extends Controller
             );
             return view('master.work_type.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('work_type/list'));
         }
     }
 
@@ -185,6 +185,7 @@ class WorkTypeMasterController extends Controller
             return redirect(admin_url('work_type/list'));
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('work_type/list'));
         }
@@ -276,6 +277,8 @@ class WorkTypeMasterController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('work_type/list'));
         }
     }
 
@@ -326,6 +329,8 @@ class WorkTypeMasterController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('work_type/list'));
         }
     }
 

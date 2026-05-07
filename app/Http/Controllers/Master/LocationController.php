@@ -9,9 +9,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 use App\Models\Master\Company;
 use App\Models\Master\Location;
@@ -64,7 +64,7 @@ class LocationController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -85,6 +85,8 @@ class LocationController extends Controller
             return view('master.location.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('location/list'));
         }
     }
 
@@ -120,7 +122,7 @@ class LocationController extends Controller
             return redirect(admin_url('location/list'));
         } catch (Exception $ex) {
 
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('location/list'));
         }
@@ -139,7 +141,9 @@ class LocationController extends Controller
             }
             return view('master.location.view', $data);
         } catch (Exception $ex) {
-            report($ex);
+           report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('location/list'));
         }
     }
 
@@ -155,8 +159,10 @@ class LocationController extends Controller
                 'companyDetails' => $companyDetails,
             );
             return view('master.location.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('location/list'));
         }
     }
 
@@ -188,6 +194,7 @@ class LocationController extends Controller
             return redirect(admin_url('location/list'));
         } catch (Exception $ex) {
 
+           report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('location/list'));
         }
@@ -280,7 +287,9 @@ class LocationController extends Controller
                 );
         } catch (Exception $ex) {
 
-            report($ex);
+           report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('location/list'));
         }
     }
 
@@ -331,6 +340,8 @@ class LocationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('location/list'));
         }
     }
 

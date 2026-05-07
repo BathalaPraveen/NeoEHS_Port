@@ -9,9 +9,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 use App\Models\Master\Company;
 use App\Models\Master\Location;
@@ -68,7 +68,7 @@ class SpecificLocationController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -94,6 +94,8 @@ class SpecificLocationController extends Controller
             return view('master.specificlocation.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('specificlocation/list'));
         }
     }
 
@@ -155,6 +157,8 @@ class SpecificLocationController extends Controller
             return view('master.specificlocation.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('specificlocation/list'));
         }
     }
 
@@ -208,6 +212,7 @@ class SpecificLocationController extends Controller
             return redirect(admin_url('specificlocation/list'));
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('specificlocation/list'));
         }
@@ -288,6 +293,8 @@ class SpecificLocationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('specificlocation/list'));
         }
     }
 
@@ -338,6 +345,8 @@ class SpecificLocationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('specificlocation/list'));
         }
     }
 
@@ -361,4 +370,3 @@ class SpecificLocationController extends Controller
         return response()->json($Location);
     }
 }
-

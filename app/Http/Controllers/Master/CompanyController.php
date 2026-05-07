@@ -9,11 +9,11 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
-
+use Illuminate\Support\Facades\Response;
 use App\Models\Master\Company;
 
 
@@ -64,7 +64,7 @@ class CompanyController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -84,6 +84,8 @@ class CompanyController extends Controller
             return view('master.company.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('company/list'));
         }
     }
 
@@ -107,21 +109,14 @@ class CompanyController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
-
-                $this->company->store();
-
-                Session::flash('success', 'Company added successfully!');
-            } catch (Exception $ex) {
 
 
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
+            $this->company->store();
 
+            Session::flash('success', 'Company added successfully!');
             return redirect(admin_url('company/list'));
         } catch (Exception $ex) {
-
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('company/list'));
         }
@@ -141,6 +136,8 @@ class CompanyController extends Controller
             return view('master.company.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('company/list'));
         }
     }
 
@@ -157,8 +154,10 @@ class CompanyController extends Controller
 
 
             return view('master.company.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('company/list'));
         }
     }
 
@@ -188,27 +187,28 @@ class CompanyController extends Controller
             return redirect(admin_url('company/list'));
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('company/list'));
         }
     }
 
-    public function Uniquecheck(Request $request)
-    {
-        if ($request->ajax()) {
-            $email = $request->email;
-            $userid = $request->userid;
-            if ($userid == '') {
-                $user = $this->user->EmailCheck($email);
-            } else {
-                $user = $this->user->ExistEmailCheck($email, $userid);
-            }
-            if ($user->count()) {
-                return Response::json(array('msg' => 'true'));
-            }
-            return Response::json(array('msg' => 'false'));
-        }
-    }
+    // public function Uniquecheck(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $email = $request->email;
+    //         $userid = $request->userid;
+    //         if ($userid == '') {
+    //             $user = $this->user->EmailCheck($email);
+    //         } else {
+    //             $user = $this->user->ExistEmailCheck($email, $userid);
+    //         }
+    //         if ($user->count()) {
+    //             return Response::json(array('msg' => 'true'));
+    //         }
+    //         return Response::json(array('msg' => 'false'));
+    //     }
+    // }
 
     public function ROCUniquecheck(Request $request)
     {
@@ -297,6 +297,8 @@ class CompanyController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('company/list'));
         }
     }
 
@@ -319,7 +321,7 @@ class CompanyController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Location Details",
+                'pagetitle' => "Company Details",
             );
 
             $property = [
@@ -346,6 +348,8 @@ class CompanyController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('company/list'));
         }
     }
 }

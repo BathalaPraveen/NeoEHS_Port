@@ -75,6 +75,8 @@ class InspectionTypeController extends Controller
             return view('inspection.master.inspectiontype.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/master/inspectiontype/list'));
         }
     }
 
@@ -97,21 +99,14 @@ class InspectionTypeController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
 
-                $this->inspectiontype->store();
+            $this->inspectiontype->store();
 
-                Session::flash('success', 'Inspection Type added successfully!');
-            } catch (Exception $ex) {
-
-
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
-
+            Session::flash('success', 'Inspection Type added successfully!');
             return redirect(admin_url('inspection/master/inspectiontype/list'));
         } catch (Exception $ex) {
 
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/master/inspectiontype/list'));
         }
@@ -131,8 +126,10 @@ class InspectionTypeController extends Controller
             );
 
             return view('inspection.master.inspectiontype.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/master/inspectiontype/list'));
         }
     }
 
@@ -160,6 +157,7 @@ class InspectionTypeController extends Controller
             return redirect(admin_url('inspection/master/inspectiontype/list'));
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/master/inspectiontype/list'));
         }
@@ -215,6 +213,8 @@ class InspectionTypeController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/master/inspectiontype/list'));
         }
     }
 
@@ -261,6 +261,8 @@ class InspectionTypeController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/master/inspectiontype/list'));
         }
     }
 }

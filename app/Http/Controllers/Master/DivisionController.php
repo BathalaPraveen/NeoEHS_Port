@@ -9,9 +9,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 
 use App\Models\Master\Company;
@@ -28,7 +28,6 @@ class DivisionController extends Controller
 
         $this->company = new Company();
         $this->division = new Division();
-
     }
 
 
@@ -67,7 +66,7 @@ class DivisionController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -90,6 +89,8 @@ class DivisionController extends Controller
             return view('master.division.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('division/list'));
         }
     }
 
@@ -115,21 +116,15 @@ class DivisionController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
-
-                $this->division->store();
-
-                Session::flash('success', 'Division  added successfully!');
-            } catch (Exception $ex) {
 
 
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
+            $this->division->store();
 
+            Session::flash('success', 'Division  added successfully!');
             return redirect(admin_url('division/list'));
         } catch (Exception $ex) {
 
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('division/list'));
         }
@@ -150,6 +145,8 @@ class DivisionController extends Controller
             return view('master.division.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('division/list'));
         }
     }
 
@@ -165,8 +162,10 @@ class DivisionController extends Controller
                 'companyDetails' => $companyDetails,
             );
             return view('master.division.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('division/list'));
         }
     }
 
@@ -198,7 +197,7 @@ class DivisionController extends Controller
             Session::flash('success', 'Division updated successfully!');
             return redirect(admin_url('division/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('division/list'));
         }
@@ -292,7 +291,9 @@ class DivisionController extends Controller
                 );
         } catch (Exception $ex) {
 
-            report($ex);
+           report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('division/list'));
         }
     }
 
@@ -343,6 +344,8 @@ class DivisionController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('division/list'));
         }
     }
 

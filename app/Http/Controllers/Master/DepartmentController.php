@@ -9,9 +9,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 use App\Models\Master\Company;
 use App\Models\Master\Division;
@@ -34,7 +34,6 @@ class DepartmentController extends Controller
         $this->division = new Division();
         $this->department = new Department();
         $this->users = new User();
-
     }
 
 
@@ -73,7 +72,7 @@ class DepartmentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -99,6 +98,8 @@ class DepartmentController extends Controller
             return view('master.department.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('department/list'));
         }
     }
 
@@ -123,21 +124,14 @@ class DepartmentController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
-
-                $this->department->store();
-
-                Session::flash('success', 'Department added successfully!');
-            } catch (Exception $ex) {
 
 
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
+            $this->department->store();
 
+            Session::flash('success', 'Department added successfully!');
             return redirect(admin_url('department/list'));
         } catch (Exception $ex) {
-
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('department/list'));
         }
@@ -158,6 +152,8 @@ class DepartmentController extends Controller
             return view('master.department.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('department/list'));
         }
     }
 
@@ -181,7 +177,9 @@ class DepartmentController extends Controller
             );
             return view('master.department.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('department/list'));
         }
     }
 
@@ -214,9 +212,7 @@ class DepartmentController extends Controller
             Session::flash('success', 'Department updated successfully!');
             return redirect(admin_url('department/list'));
         } catch (Exception $ex) {
-
-
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('department/list'));
         }
@@ -312,7 +308,9 @@ class DepartmentController extends Controller
                 );
         } catch (Exception $ex) {
 
-            report($ex);
+           report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('department/list'));
         }
     }
 
@@ -363,17 +361,18 @@ class DepartmentController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('department/list'));
         }
     }
 
-    public function list(Request $request){
+    public function list(Request $request)
+    {
 
         $divisionId = decryptId($request->divisionId);
 
         $division = $this->department->ajaxList($divisionId);
         return response()->json($division);
-
     }
 }
-
