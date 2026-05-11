@@ -43,13 +43,7 @@ class WasteCompany extends Model
         $search = '';
         $query = $this->select('*');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('company_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $query->orderBy('id', 'DESC');
         $data_count = $query;
@@ -139,13 +133,7 @@ class WasteCompany extends Model
 
         $query = $this->select('*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('company_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+        
 
         $query = $query->orderBy('created_at', 'Desc');
         return  $query->get();

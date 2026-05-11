@@ -9,9 +9,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 
 use App\Models\User;
@@ -55,8 +55,8 @@ class WasteItemController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
-                    return response()->json(['status' => 'error', 'msg' => 'Please try after some time',$ex], 406);
+                    report($ex);
+                    return response()->json(['status' => 'error', 'msg' => 'Please try after some time', $ex], 406);
                 }
             }
         }
@@ -77,7 +77,6 @@ class WasteItemController extends Controller
                 'categoryList' => $categoryList,
             );
             return view('wastemanagement.master.item.add', $data);
-
         } catch (Exception $ex) {
             report($ex);
         }
@@ -104,21 +103,14 @@ class WasteItemController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
-
-                $this->item->store();
-
-                Session::flash('success', 'Waste Properties Details added successfully!');
-            } catch (Exception $ex) {
 
 
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
+            $this->item->store();
+
 
             return redirect(admin_url('wastemanagement/master/item/list'));
         } catch (Exception $ex) {
-
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('wastemanagement/master/item/list'));
         }
@@ -157,7 +149,9 @@ class WasteItemController extends Controller
 
             return view('wastemanagement.master.item.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('wastemanagement/master/item/list'));
         }
     }
 
@@ -186,7 +180,7 @@ class WasteItemController extends Controller
             Session::flash('success', 'Waste Properties Details updated successfully!');
             return redirect(admin_url('wastemanagement/master/item/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('wastemanagement/master/item/list'));
         }
@@ -295,14 +289,13 @@ class WasteItemController extends Controller
         }
     }
 
-    public function list(Request $request){
+    public function list(Request $request)
+    {
 
         $categoryid = decryptId($request->categoryid);
 
         $category = $this->item->ajaxList($categoryid);
 
         return response()->json($category);
-
     }
-
 }

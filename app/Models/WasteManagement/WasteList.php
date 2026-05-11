@@ -151,13 +151,7 @@ class WasteList extends Model
             ->leftJoin('master_location', 'wastemanagement_waste_list.location_id', '=', 'master_location.id')
             ->leftJoin('master_company', 'wastemanagement_waste_list.company_id', '=', 'master_company.id');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('wastemanagement_waste_list.chemical_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();

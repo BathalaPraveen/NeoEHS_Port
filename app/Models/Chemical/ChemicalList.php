@@ -64,13 +64,7 @@ class ChemicalList extends Model
             ->leftJoin('master_company', 'chemical_chemical_list.company_id', '=', 'master_company.id');
 
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('chemical_chemical_list.chemical_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+     
 
         if (
             !in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) &&

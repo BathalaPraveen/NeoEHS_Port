@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
-use Session;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 use Exception;
 
 
@@ -102,7 +103,7 @@ class UserPermissionController extends Controller
             return response()->json(['status' => 'success', 'userpermission' => $menu_permission_list], 200);
         } catch (Exception $ex) {
 
-
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }

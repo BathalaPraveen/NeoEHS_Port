@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Master;
 
 use PDF;
 use Exception;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use App\Models\User;
 
 use Illuminate\Http\Request;
@@ -65,7 +65,7 @@ class CompanyActivityController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -79,8 +79,7 @@ class CompanyActivityController extends Controller
     public function Add(Request $request)
     {
         try {
-            $data = array(
-            );
+            $data = array();
             return view('master.activity_type.add', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -101,21 +100,13 @@ class CompanyActivityController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
 
-                $this->activity_type->store();
+            $this->activity_type->store();
 
-                Session::flash('success', 'Company activity type added successfully!');
-            } catch (Exception $ex) {
-
-
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
-
+            Session::flash('success', 'Company activity type added successfully!');
             return redirect(admin_url('activity_type/list'));
         } catch (Exception $ex) {
-
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('activity_type/list'));
         }
@@ -135,6 +126,8 @@ class CompanyActivityController extends Controller
             return view('master.activity_type.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('activity_type/list'));
         }
     }
 
@@ -152,8 +145,10 @@ class CompanyActivityController extends Controller
                 'employeeDetails' => $employeeDetails,
             );
             return view('master.activity_type.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('activity_type/list'));
         }
     }
 
@@ -181,6 +176,7 @@ class CompanyActivityController extends Controller
             return redirect(admin_url('activity_type/list'));
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('activity_type/list'));
         }
@@ -269,7 +265,9 @@ class CompanyActivityController extends Controller
                 );
         } catch (Exception $ex) {
 
-            report($ex);
+           report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('activity_type/list'));
         }
     }
 
@@ -318,7 +316,9 @@ class CompanyActivityController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+           report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('activity_type/list'));
         }
     }
 

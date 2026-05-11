@@ -65,15 +65,7 @@ class WasteInventoryDetails extends Model
             $query->where('wastemanagement_waste_inventory_details.waste_code', decryptId($request->wastetype));
         }
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('wastemanagement_master_wastetype.wastetype_id', 'LIKE', '%' . $search . '%');
-                $query->orWhere('wastemanagement_master_wastetype.wastetype_name', 'LIKE', '%' . $search . '%');
-            });
-        }
-
+       
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -116,14 +108,7 @@ class WasteInventoryDetails extends Model
             $query->where('wastemanagement_waste_inventory_details.waste_code', decryptId($request->wastetype));
         }
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('wastemanagement_master_wastetype.wastetype_id', 'LIKE', '%' . $search . '%');
-                $query->orWhere('wastemanagement_master_wastetype.wastetype_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+      
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -165,14 +150,7 @@ class WasteInventoryDetails extends Model
             $query->where('wastemanagement_waste_inventory_details.waste_code', decryptId($request->wastetype));
         }
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('wastemanagement_master_wastetype.wastetype_id', 'LIKE', '%' . $search . '%');
-                $query->orWhere('wastemanagement_master_wastetype.wastetype_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -322,14 +300,7 @@ class WasteInventoryDetails extends Model
 
         $query = $this->select('wastemanagement_waste_inventory_details.*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('wastemanagement_waste_inventory_details.wastetype_id', 'LIKE', '%' . $search . '%');
-                $query->orWhere('wastemanagement_waste_inventory_details.wastetype_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();

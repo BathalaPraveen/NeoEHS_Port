@@ -9,9 +9,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\Auth;
 
 use PDF;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 
 use App\Models\User;
@@ -66,7 +66,7 @@ class WasteRegisterController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time', $ex], 406);
                 }
             }
@@ -134,19 +134,14 @@ class WasteRegisterController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
 
-                $this->wasteregister->store();
 
-                Session::flash('success', 'Waste Register added successfully!');
-            } catch (Exception $ex) {
+            $this->wasteregister->store();
 
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
-
+            Session::flash('success', 'Waste Register added successfully!');
             return redirect(admin_url('wastemanagement/' . $companyid . '/wasteregister/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('wastemanagement/' . $companyid . '/wasteregister/list'));
         }
@@ -217,7 +212,7 @@ class WasteRegisterController extends Controller
             Session::flash('success', 'Waste Type updated successfully!');
             return redirect(admin_url('wastemanagement/' . $companyid . '/wasteregister/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('wastemanagement/' . $companyid . '/wasteregister/list'));
         }

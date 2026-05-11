@@ -42,14 +42,7 @@ class WorkTypeMaster extends Model
 
         $query = $this->select('master_work_type.*');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('work_type_id LIKE "%' . $search . '%"');
-                $query->orWhereRaw('work_type_name LIKE "%' . $search . '%"');
-            });
-        }
+        
 
         $data_count = $query = $query->orderBy('id', 'ASC');
         $total_records = $data_count->count();
@@ -145,14 +138,7 @@ class WorkTypeMaster extends Model
 
         $query = $this->select('master_work_type.*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search['value'];
-
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('work_type_id LIKE "%' . $search . '%"');
-                $query->orWhereRaw('work_type_name LIKE "%' . $search . '%"');
-            });
-        }
+      
 
         $query = $query->orderBy('id', 'ASC');
         return  $query->get();

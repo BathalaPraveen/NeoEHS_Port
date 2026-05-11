@@ -39,13 +39,7 @@ class Document extends Model
 
         $query = $this->select('hiradc_master_document.*');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('category_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+     
 
         $data_count = $query->count();
         $total_records = $data_count;

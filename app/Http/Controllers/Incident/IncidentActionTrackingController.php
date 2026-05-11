@@ -11,9 +11,9 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 use PDF;
 use Mail;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 
 use App\Models\User;
@@ -137,7 +137,7 @@ class IncidentActionTrackingController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -193,8 +193,10 @@ class IncidentActionTrackingController extends Controller
 
             return view('incident.actiontracking.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/actiontracking/list'));
         }
     }
 
@@ -301,11 +303,11 @@ class IncidentActionTrackingController extends Controller
             }
 
 
-            return redirect(admin_url('incident/notification/list'));
+            return redirect(admin_url('incident/actiontracking/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/notification/list'));
+            return redirect(admin_url('incident/actiontracking/list'));
         }
     }
 
@@ -358,6 +360,9 @@ class IncidentActionTrackingController extends Controller
 
             return view('incident.actiontracking.view', $data);
         } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/actiontracking/list'));
         }
     }
 
@@ -410,6 +415,9 @@ class IncidentActionTrackingController extends Controller
 
             return view('incident.actiontracking.view', $data);
         } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/actiontracking/list'));
         }
     }
 
@@ -426,7 +434,6 @@ class IncidentActionTrackingController extends Controller
                 $status = INCIDENT_NOTIFICATION_STATUS_GHSE_APPROVED;
 
                 $this->investgation->store($Incident);
-
             } else if ($request->has('reject')) {
                 $is_reject = 1;
                 $status =  INCIDENT_NOTIFICATION_STATUS_GHSE_REJECTED;
@@ -446,10 +453,11 @@ class IncidentActionTrackingController extends Controller
 
             $this->notification->where('id', $id)->update(['incident_status' => $status, 'incident_rating' => decryptId($request->incident_rating)]);
 
-            return redirect('incident/notification/list');
+            return redirect('incident/actiontracking/list');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/actiontracking/list'));
         }
     }
 
@@ -498,8 +506,10 @@ class IncidentActionTrackingController extends Controller
                 'statuslogs' => $statuslogs,
             );
             return view('incident.actiontracking.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/actiontracking/list'));
         }
     }
 
@@ -529,11 +539,12 @@ class IncidentActionTrackingController extends Controller
             $this->notification->updates($id);
 
             Session::flash('success', 'Incident Norification successfully updated');
-            return redirect('incident/notification/list');
+            return redirect('incident/actiontracking/list');
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/notification/list'));
+            return redirect(admin_url('incident/actiontracking/list'));
         }
     }
 
@@ -599,6 +610,8 @@ class IncidentActionTrackingController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/actiontracking/list'));
         }
     }
 
@@ -649,6 +662,8 @@ class IncidentActionTrackingController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/actiontracking/list'));
         }
     }
 

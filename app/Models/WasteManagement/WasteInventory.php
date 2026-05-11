@@ -59,14 +59,7 @@ class WasteInventory extends Model
             $query->where('wastemanagement_waste_inventory.waste_code', decryptId($request->wastetype));
         }
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('wastemanagement_waste_inventory.wastetype_id', 'LIKE', '%' . $search . '%');
-                $query->orWhere('wastemanagement_waste_inventory.wastetype_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+        
 
         $data_count = $query->count();
         $total_records = $data_count;

@@ -86,17 +86,7 @@ class Employee extends Model
 
 
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('master_company_department.department_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('master_designation.designation_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('emp_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('emp_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+      
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -263,17 +253,7 @@ class Employee extends Model
             $query->whereRaw('FIND_IN_SET(?, master_employee.emp_role_id)', [$roleid]);
         }
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('master_company_division.division_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('master_company_division.division_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('master_company_division.division_shortname', 'LIKE', '%' . $search . '%')
-                    ->orWhere('master_company_department.department_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $query = $query->orderBy('created_at', 'Desc');
         return  $query->get();

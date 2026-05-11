@@ -62,14 +62,7 @@ class Hazard extends Model
         }
 
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('hiradc_master_document.document_name', 'LIKE', '%' . $search . '%');
-            });
-        }
-
+       
         if ($request->documenttype != null || $request->documenttype != '') {
 
             $documenttype = decryptId($request->documenttype);

@@ -71,16 +71,7 @@ class Contractor extends Model
             $con_status = decryptId($request->con_status);
             $query->where('master_contractor.status', $con_status);
         }
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('master_contractor.cont_id', 'LIKE', '%' . $search . '%');
-                $query->orWhere('master_contractor.cont_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('master_contractor_company.con_comp_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('master_contractor.cont_designation', 'LIKE', '%' . $search . '%');
-            });
-        }
+        
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -251,17 +242,7 @@ class Contractor extends Model
             $query->where('master_contractor.status', $con_status);
         }
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('master_contractor_company.con_comp_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('master_contractor.cont_id', 'LIKE', '%' . $search . '%');
-                $query->orWhere('master_contractor.cont_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('master_contractor_company.con_comp_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('master_contractor.cont_designation', 'LIKE', '%' . $search . '%');
-            });
-        }
+        
 
         $query = $query->orderBy('created_at', 'Desc');
         return  $query->get();

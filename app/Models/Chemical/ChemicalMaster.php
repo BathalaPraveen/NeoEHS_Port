@@ -40,14 +40,7 @@ class ChemicalMaster extends Model
 
         $query = $this->select('chemical_master_chemical.*');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('chemical_master_chemical.chemical_name', 'LIKE', '%' . $search . '%');
-            });
-        }
-
+       
         $data_count = $query->count();
         $total_records = $data_count;
 
@@ -131,13 +124,6 @@ class ChemicalMaster extends Model
 
         $query = $this->select('chemical_master_chemical.*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('chemical_master_chemical.chemical_name', 'LIKE', '%' . $search . '%');
-            });
-        }
 
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();

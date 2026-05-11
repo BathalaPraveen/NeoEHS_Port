@@ -86,12 +86,7 @@ class IncidentInvestigationAccident extends Model
         $query = $this->select('incident_investigation_accident.*');
 
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('incident_investigation_accident.incident_id', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -223,15 +218,7 @@ class IncidentInvestigationAccident extends Model
         $query = $query->leftJoin('incident_master_item', 'incident_investigation_accident.item_id', '=', 'incident_master_item.id');
 
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('incident_investigation_accident.subitem_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('incident_master_category.category_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('incident_master_item.item_name', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();

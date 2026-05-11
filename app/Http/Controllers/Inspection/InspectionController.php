@@ -12,9 +12,8 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 use PDF;
 use Mail;
-use Illuminate\Support\Facades\Session;
-
 use Exception;
+use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 
 
@@ -113,7 +112,7 @@ class InspectionController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn  = '<a href="' . admin_url('inspection/inspection/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            if ($row->inspection_status == INSPECTION_STATUS_INSPECTION_COMPLETED && (CheckUserRole(ROLE_SUPERADMIN) || (CheckUserRole(ROLE_HOD)) )) {
+                            if ($row->inspection_status == INSPECTION_STATUS_INSPECTION_COMPLETED && (CheckUserRole(ROLE_SUPERADMIN) || (CheckUserRole(ROLE_HOD)))) {
                                 $btn .= '<a href="' . admin_url('inspection/inspection/approvereject/' . encryptId($row->id)) . '"   class="" title="Approve / Reject"><i class="fa-solid fa-check-to-slot"></i></a> ';
                             }
 
@@ -178,6 +177,8 @@ class InspectionController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/inspection/list'));
         }
     }
 
@@ -201,31 +202,22 @@ class InspectionController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            try {
-
-                $inspection =  $this->inspection->createinspection();
-
-                $insert_array = array(
-                    'inspection_id' => $inspection->id,
-                    'from_status' => 0,
-                    'to_status' => INSPECTION_STATUS_ASSIGNED,
-                    'is_reject' => 0,
-                    'remarks' => "New Inspection created",
-                    'created_by' => Auth::id(),
-                );
-                $this->statuslog->create($insert_array);
 
 
-            } catch (Exception $ex) {
+            $inspection =  $this->inspection->createinspection();
 
-                dd($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
-
-
-            return redirect(admin_url('inspection/inspection/add/'.encryptId($inspection->id)));
+            $insert_array = array(
+                'inspection_id' => $inspection->id,
+                'from_status' => 0,
+                'to_status' => INSPECTION_STATUS_ASSIGNED,
+                'is_reject' => 0,
+                'remarks' => "New Inspection created",
+                'created_by' => Auth::id(),
+            );
+            $this->statuslog->create($insert_array);
+            return redirect(admin_url('inspection/inspection/add/' . encryptId($inspection->id)));
         } catch (Exception $ex) {
-            //
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/inspection/list'));
         }
@@ -243,7 +235,7 @@ class InspectionController extends Controller
             $inspectiontypeDetails = $this->inspectiontype->get();
             $inspectionDetails = $this->inspection->selectOne($id);
 
-           $inspectiontype =   $this->inspectiontype->find($inspectionDetails->inspection_type);
+            $inspectiontype =   $this->inspectiontype->find($inspectionDetails->inspection_type);
 
             $data = array(
                 'locationDetails' => $locationDetails,
@@ -257,6 +249,8 @@ class InspectionController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/inspection/list'));
         }
     }
 
@@ -270,7 +264,7 @@ class InspectionController extends Controller
         );
 
         $inspectiontypeDetails = $this->inspectiontype->find($inspectiontype);
-        $checklistCategoryDetails =  $this->checklistcategory->where($where)->orderBy('sort_order','ASC')->get();
+        $checklistCategoryDetails =  $this->checklistcategory->where($where)->orderBy('sort_order', 'ASC')->get();
         $checklistItemList = $this->checklistitem->where($where)->get();
 
         $checklistItemDetails = [];
@@ -403,14 +397,14 @@ class InspectionController extends Controller
                     Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 }
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
 
             return redirect(admin_url('inspection/inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/inspection/list'));
         }
@@ -466,6 +460,9 @@ class InspectionController extends Controller
 
             return view('inspection.inspection.view', $data);
         } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/inspection/list'));
         }
     }
 
@@ -522,6 +519,8 @@ class InspectionController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/inspection/list'));
         }
     }
 
@@ -609,8 +608,10 @@ class InspectionController extends Controller
             );
 
             return view('inspection.inspection.view', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/inspection/list'));
         }
     }
 
@@ -712,6 +713,8 @@ class InspectionController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/inspection/list'));
         }
     }
 
@@ -762,6 +765,8 @@ class InspectionController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/inspection/list'));
         }
     }
 
@@ -836,6 +841,8 @@ class InspectionController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/inspection/list'));
         }
     }
 }

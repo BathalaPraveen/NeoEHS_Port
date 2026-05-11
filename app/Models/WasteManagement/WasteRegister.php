@@ -60,16 +60,7 @@ class WasteRegister extends Model
             $query->where('wastemanagement_waste_register.waste_code', decryptId($request->wastetype));
         }
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('wastemanagement_master_wastetype.wastetype_id', 'LIKE', '%' . $search . '%');
-                $query->orWhere('wastemanagement_master_wastetype.wastetype_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('wastemanagement_master_item.item_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('wastemanagement_waste_register.notification_no', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         $data_count = $query->count();
         $total_records = $data_count;

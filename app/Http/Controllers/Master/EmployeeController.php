@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Master;
 use PDF;
 use Str;
 use Exception;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use Response;
 
 use App\Models\Master\EmployeeCategory;
@@ -113,7 +113,7 @@ class EmployeeController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -157,6 +157,8 @@ class EmployeeController extends Controller
             return view('master.employee.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('employee/list'));
         }
     }
 
@@ -253,6 +255,8 @@ class EmployeeController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('employee/list'));
         }
     }
 
@@ -306,6 +310,8 @@ class EmployeeController extends Controller
         } catch (Exception $error) {
 
             report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('employee/list'));
         }
     }
 
@@ -356,7 +362,7 @@ class EmployeeController extends Controller
             Session::flash('success', 'Employee updated successfully!');
             return redirect(admin_url('employee/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('employee/list'));
         }
@@ -377,6 +383,8 @@ class EmployeeController extends Controller
         } catch (Exception $error) {
 
             report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('employee/list'));
         }
     }
 
@@ -411,6 +419,7 @@ class EmployeeController extends Controller
             return redirect(admin_url('employee/list'));
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('employee/list'));
         }
@@ -624,7 +633,7 @@ class EmployeeController extends Controller
                 $export['Designation'] =  $data->designation_name;
                 $export['User Role'] =  $data->role_name;
                 $export['Created Date'] =  Displaydateformat($data->created_at);
-                $export['Status'] = ($data->status == 1)? "Active" : "Inactive" ;
+                $export['Status'] = ($data->status == 1) ? "Active" : "Inactive";
 
                 $exportData[] = $export;
 
@@ -638,7 +647,9 @@ class EmployeeController extends Controller
                 );
         } catch (Exception $ex) {
 
-            report($ex);
+             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('employee/list'));
         }
     }
 
@@ -700,7 +711,9 @@ class EmployeeController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+           report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('employee/list'));
         }
     }
 
@@ -755,6 +768,8 @@ class EmployeeController extends Controller
             return view('master.employee.change_details', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('employee/list'));
         }
     }
     public function change_details_submit(Request $request)
@@ -797,12 +812,12 @@ class EmployeeController extends Controller
                 $emp  = $empdetails_old->toArray();
 
                 Mail::to($empdetails_old->emp_email_id)->queue(new EmployeeDetailsChangeEmail($emp));
-
             }
 
             Session::flash('success', 'Employee Details Changed successfully!');
             return redirect(admin_url('home'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('home'));
         }
@@ -823,12 +838,12 @@ class EmployeeController extends Controller
         return response()->json($employeeDetails);
     }
 
-    public function list(Request $request){
+    public function list(Request $request)
+    {
 
         $departmentId = decryptId($request->departmentId);
 
         $employeeDetails = $this->employee->ajaxEmployeeList($departmentId);
         return response()->json($employeeDetails);
-
     }
 }

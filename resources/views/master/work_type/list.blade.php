@@ -126,7 +126,7 @@
                 ],
                 processing: true,
                 serverSide: true,
-                searching: true,
+                 searching: false,
                 "ordering": false,
                 ajax: {
                     url: "{{ admin_url('work_type/list') }}",

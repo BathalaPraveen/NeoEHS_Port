@@ -49,12 +49,7 @@ class IncidentInvestigation extends Model
 
         $query = $query->leftJoin('incident_initial_notification', 'incident_initial_notification.id', '=', 'incident_investigation.inc_id');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('incident_investigation.incident_id', 'LIKE', '%' . $search . '%');
-            });
-        }
+      
         $query = $query->orderBy('id', 'Desc');
         $data_count = $query->count();
         $total_records = $data_count;

@@ -9,10 +9,10 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Storage;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 
 use App\Models\UploadLog;
@@ -73,7 +73,7 @@ class UploadLogController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -95,7 +95,7 @@ class UploadLogController extends Controller
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
-                       ->rawColumns(['action', 'uploadstatus', 'created_by', 'status'])
+                        ->rawColumns(['action', 'uploadstatus', 'created_by', 'status'])
                         ->setFilteredRecords($data['total_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -121,8 +121,7 @@ class UploadLogController extends Controller
 
         $file = UploadLog::where('id', $file_id)->first();
 
-        return response()->download($file->file_path,$file->file_orgname);
-
+        return response()->download($file->file_path, $file->file_orgname);
     }
 
     public function ExportExcel(Request $request)
@@ -157,7 +156,7 @@ class UploadLogController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
-
+          
             report($ex);
         }
     }

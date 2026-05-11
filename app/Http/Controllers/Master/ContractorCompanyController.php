@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Master;
 
 use PDF;
 use Exception;
-use DataTables;
+use Yajra\DataTables\Facades\DataTables;
 use App\Models\User;
 
 use Illuminate\Http\Request;
@@ -80,7 +80,7 @@ class ContractorCompanyController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -148,20 +148,15 @@ class ContractorCompanyController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
-
-                $this->contractorcompany->store();
-
-                Session::flash('success', 'Contractor Company added successfully!');
-            } catch (Exception $ex) {
 
 
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
+            $this->contractorcompany->store();
+
+            Session::flash('success', 'Contractor Company added successfully!');
 
             return redirect(admin_url('contractor/company/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('contractor/company/list'));
         }
@@ -183,6 +178,8 @@ class ContractorCompanyController extends Controller
             return view('master.contractorcompany.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('contractor/company/list'));
         }
     }
 
@@ -201,6 +198,8 @@ class ContractorCompanyController extends Controller
             return view('master.contractorcompany.approval', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('contractor/company/list'));
         }
     }
 
@@ -218,8 +217,10 @@ class ContractorCompanyController extends Controller
             );
 
             return view('master.contractorcompany.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('contractor/company/list'));
         }
     }
 
@@ -254,6 +255,7 @@ class ContractorCompanyController extends Controller
             return redirect(admin_url('contractor/company/list'));
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('contractor/company/list'));
         }
@@ -279,84 +281,79 @@ class ContractorCompanyController extends Controller
 
             $id = decryptId($request->id);
 
-            try {
-                $this->contractorcompany->hse_approval($id);
-                $conCompDetails = $this->contractorcompany->find($id);
 
-                if ($request->action == 1) {
+            $this->contractorcompany->hse_approval($id);
+            $conCompDetails = $this->contractorcompany->find($id);
 
-                    $user_role = ROLE_IT_DEPARTMENT;
+            if ($request->action == 1) {
 
-                    $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-                    $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+                $user_role = ROLE_IT_DEPARTMENT;
 
-                    $mailsubject = "[Contractor Company Notification - " . $conCompDetails->com_id . " ] " . 'Approved';
-                    $message = 'Contractor Company - ' . $conCompDetails->com_id . ' Approved by HSE';
-                    $web_link = admin_url('contractor/company/approval/' . encryptId($conCompDetails->id));
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
-                    if (count($userids) > 0) {
+                $mailsubject = "[Contractor Company Notification - " . $conCompDetails->com_id . " ] " . 'Approved';
+                $message = 'Contractor Company - ' . $conCompDetails->com_id . ' Approved by HSE';
+                $web_link = admin_url('contractor/company/approval/' . encryptId($conCompDetails->id));
 
-                        /**
-                         * Send Web notification
-                         */
+                if (count($userids) > 0) {
 
-                        $notificationData = array(
-                            'notification_type' => 1,
-                            'module_type' => 2,
-                            'notification_message' => $mailsubject,
-                            'mobile_notification' => json_encode(array(
-                                'title' => $mailsubject,
-                                'message' => $message,
-                                'icon' => 'public/assets/images/icons/permit_to_work.png',
-                                'id' => $conCompDetails->id,
-                                'module' => 2,
-                            )),
-                            'web_link' =>  $web_link,
-                            'assigned_user' => array_to_string($userids),
-                            'created_by' => auth()->id(),
-                        );
-                        notificationSave($notificationData);
+                    /**
+                     * Send Web notification
+                     */
 
-                        /**
-                         * Send Mobile Push notification
-                         */
-
-                        $userId = $userids;
-                        $notifydata = [
+                    $notificationData = array(
+                        'notification_type' => 1,
+                        'module_type' => 2,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode(array(
                             'title' => $mailsubject,
                             'message' => $message,
-                        ];
-                        mobilePushNotification($userId, $notifydata);
-                    }
-                } else {
+                            'icon' => 'public/assets/images/icons/permit_to_work.png',
+                            'id' => $conCompDetails->id,
+                            'module' => 2,
+                        )),
+                        'web_link' =>  $web_link,
+                        'assigned_user' => array_to_string($userids),
+                        'created_by' => auth()->id(),
+                    );
+                    notificationSave($notificationData);
 
-                    $mailsubject = "[Contractor Company Notification - " . $conCompDetails->com_id . " ] " . 'Rejected';
-                    $message = 'Contractor Company - ' . $conCompDetails->com_id . ' Rejected by HSE';
-                    $email_id = $conCompDetails->con_email;
+                    /**
+                     * Send Mobile Push notification
+                     */
 
-                    if ($email_id != '' || $email_id != null) {
-
-                        $mailArray['con_comp_name'] =  $conCompDetails->con_comp_name;
-                        $mailArray['con_email'] =  $conCompDetails->con_email;
-                        $mailArray['con_phone'] =  $conCompDetails->con_phone;
-                        $mailArray['remarks'] =  $conCompDetails->hse_remarks;
-                        $mailArray['roc_no'] =  $conCompDetails->roc_no;
-                        $mailArray['message'] =  $message;
-                        $mailArray['mail_subject'] = $mailsubject;
-
-                        Mail::to($mailArray['con_email'])->queue(new ContractorMail($mailArray));
-                    }
+                    $userId = $userids;
+                    $notifydata = [
+                        'title' => $mailsubject,
+                        'message' => $message,
+                    ];
+                    mobilePushNotification($userId, $notifydata);
                 }
+            } else {
 
-                Session::flash('success', 'Contractor company approval action done successfully!');
-            } catch (Exception $ex) {
-                dd($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                $mailsubject = "[Contractor Company Notification - " . $conCompDetails->com_id . " ] " . 'Rejected';
+                $message = 'Contractor Company - ' . $conCompDetails->com_id . ' Rejected by HSE';
+                $email_id = $conCompDetails->con_email;
+
+                if ($email_id != '' || $email_id != null) {
+
+                    $mailArray['con_comp_name'] =  $conCompDetails->con_comp_name;
+                    $mailArray['con_email'] =  $conCompDetails->con_email;
+                    $mailArray['con_phone'] =  $conCompDetails->con_phone;
+                    $mailArray['remarks'] =  $conCompDetails->hse_remarks;
+                    $mailArray['roc_no'] =  $conCompDetails->roc_no;
+                    $mailArray['message'] =  $message;
+                    $mailArray['mail_subject'] = $mailsubject;
+
+                    Mail::to($mailArray['con_email'])->queue(new ContractorMail($mailArray));
+                }
             }
 
+            Session::flash('success', 'Contractor company approval action done successfully!');
             return redirect(admin_url('contractor/company/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('contractor/company/list'));
         }
@@ -381,59 +378,53 @@ class ContractorCompanyController extends Controller
 
             $id = decryptId($request->id);
 
-            try {
-                $this->contractorcompany->it_approval($id);
-                $conCompDetails = $this->contractorcompany->find($id);
 
-                if ($request->action == 1) {
+            $this->contractorcompany->it_approval($id);
+            $conCompDetails = $this->contractorcompany->find($id);
 
-                    $mailsubject = "[Contractor Company Notification - " . $conCompDetails->com_id . " ] " . 'Approved';
-                    $message = 'Contractor Company - ' . $conCompDetails->com_id . ' Approved by IT-Department';
-                    $email_id = $conCompDetails->con_email;
+            if ($request->action == 1) {
 
-                    $contractorDetails = $this->contractor->getEmployeeUsingCompId($conCompDetails->id);
+                $mailsubject = "[Contractor Company Notification - " . $conCompDetails->com_id . " ] " . 'Approved';
+                $message = 'Contractor Company - ' . $conCompDetails->com_id . ' Approved by IT-Department';
+                $email_id = $conCompDetails->con_email;
 
-                    if ($contractorDetails != '' && $conCompDetails != null) {
-                        $enable_contractor = $this->contractor->enableEmployee($contractorDetails->id);
-                        $enable_user = $this->user->enableEmployee($contractorDetails->login_id);
+                $contractorDetails = $this->contractor->getEmployeeUsingCompId($conCompDetails->id);
 
-                        if ($contractorDetails->cont_email != '' && $contractorDetails->cont_email != null) {
+                if ($contractorDetails != '' && $conCompDetails != null) {
+                    $enable_contractor = $this->contractor->enableEmployee($contractorDetails->id);
+                    $enable_user = $this->user->enableEmployee($contractorDetails->login_id);
+
+                    if ($contractorDetails->cont_email != '' && $contractorDetails->cont_email != null) {
 
 
-                            $condetails =  $this->contractor->selectOne($contractorDetails->id);
+                        $condetails =  $this->contractor->selectOne($contractorDetails->id);
 
-                            $con  = $condetails->toArray();
+                        $con  = $condetails->toArray();
 
-                            Mail::to($contractorDetails->cont_email)->queue(new ContractorRegisterEmail($con));
-                        }
+                        Mail::to($contractorDetails->cont_email)->queue(new ContractorRegisterEmail($con));
                     }
-                } else {
-
-                    $mailsubject = "[Contractor Company Notification - " . $conCompDetails->com_id . " ] " . 'Rejected';
-                    $message = 'Contractor Company - ' . $conCompDetails->com_id . ' Rejected by IT-Department';
-                    $email_id = $conCompDetails->con_email;
                 }
+            } else {
 
-                if ($email_id != '' || $email_id != null) {
-
-                    $mailArray['con_comp_name'] =  $conCompDetails->con_comp_name;
-                    $mailArray['con_email'] =  $conCompDetails->con_email;
-                    $mailArray['con_phone'] =  $conCompDetails->con_phone;
-                    $mailArray['roc_no'] =  $conCompDetails->roc_no;
-                    $mailArray['remarks'] =  $conCompDetails->it_remarks;
-                    $mailArray['message'] =  $message;
-                    $mailArray['mail_subject'] = $mailsubject;
-
-                    Mail::to($mailArray['con_email'])->queue(new ContractorMail($mailArray));
-                }
-
-                Session::flash('success', 'Contractor company approval action done successfully!');
-            } catch (Exception $ex) {
-
-                report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                $mailsubject = "[Contractor Company Notification - " . $conCompDetails->com_id . " ] " . 'Rejected';
+                $message = 'Contractor Company - ' . $conCompDetails->com_id . ' Rejected by IT-Department';
+                $email_id = $conCompDetails->con_email;
             }
 
+            if ($email_id != '' || $email_id != null) {
+
+                $mailArray['con_comp_name'] =  $conCompDetails->con_comp_name;
+                $mailArray['con_email'] =  $conCompDetails->con_email;
+                $mailArray['con_phone'] =  $conCompDetails->con_phone;
+                $mailArray['roc_no'] =  $conCompDetails->roc_no;
+                $mailArray['remarks'] =  $conCompDetails->it_remarks;
+                $mailArray['message'] =  $message;
+                $mailArray['mail_subject'] = $mailsubject;
+
+                Mail::to($mailArray['con_email'])->queue(new ContractorMail($mailArray));
+            }
+
+            Session::flash('success', 'Contractor company approval action done successfully!');
             return redirect(admin_url('contractor/company/list'));
         } catch (Exception $ex) {
 
@@ -548,6 +539,8 @@ class ContractorCompanyController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('contractor/company/list'));
         }
     }
 
@@ -596,8 +589,9 @@ class ContractorCompanyController extends Controller
             $filename = "Contractor Company.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('contractor/company/list'));
         }
     }
 }

@@ -10,10 +10,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use PDF;
 use Mail;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
-
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 use App\Models\User;
 use App\Models\Master\Location;

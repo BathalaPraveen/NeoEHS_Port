@@ -40,15 +40,7 @@ class AtarTypes extends Model
 
         $query = $this->select('atar_master_atar_types.*');
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-
-                $query->orWhere('atar_type', 'LIKE', '%' . $search . '%');
-
-            });
-        }
+        
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -75,14 +67,7 @@ class AtarTypes extends Model
 
         $query = $this->select('*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('type_name', 'LIKE', '%' . $search . '%');
-                $query->orWhere('atar_type', 'LIKE', '%' . $search . '%');
-            });
-        }
+        
 
         $query = $query->orderBy('id', 'Asc');
         return  $query->get();

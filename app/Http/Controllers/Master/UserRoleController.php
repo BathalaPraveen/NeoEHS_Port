@@ -9,9 +9,9 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 
 use PDF;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
 
 
 use App\Models\User;
@@ -57,7 +57,7 @@ class UserRoleController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -76,6 +76,8 @@ class UserRoleController extends Controller
             return view('master.role.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('user/role/list'));
         }
     }
 
@@ -96,22 +98,12 @@ class UserRoleController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
-            try {
-
                 UserRole::store();
 
                 Session::flash('success', 'User Role added successfully!');
-            } catch (Exception $ex) {
-
-
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
-
             return redirect(admin_url('user/role/list'));
         } catch (Exception $ex) {
-
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('user/role/list'));
         }
@@ -131,6 +123,8 @@ class UserRoleController extends Controller
             return view('master.role.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('user/role/list'));
         }
     }
 
@@ -146,7 +140,9 @@ class UserRoleController extends Controller
             );
             return view('master.role.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('user/role/list'));
         }
     }
 
@@ -174,27 +170,28 @@ class UserRoleController extends Controller
             return redirect(admin_url('user/role/list'));
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('user/role/list'));
         }
     }
 
-    public function Uniquecheck(Request $request)
-    {
-        if ($request->ajax()) {
-            $email = $request->email;
-            $userid = $request->userid;
-            if ($userid == '') {
-                $user = $this->user->EmailCheck($email);
-            } else {
-                $user = $this->user->ExistEmailCheck($email, $userid);
-            }
-            if ($user->count()) {
-                return Response::json(array('msg' => 'true'));
-            }
-            return Response::json(array('msg' => 'false'));
-        }
-    }
+    // public function Uniquecheck(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $email = $request->email;
+    //         $userid = $request->userid;
+    //         if ($userid == '') {
+    //             $user = $this->user->EmailCheck($email);
+    //         } else {
+    //             $user = $this->user->ExistEmailCheck($email, $userid);
+    //         }
+    //         if ($user->count()) {
+    //             return Response::json(array('msg' => 'true'));
+    //         }
+    //         return Response::json(array('msg' => 'false'));
+    //     }
+    // }
 
     public function StatusChange(Request $request)
     {
@@ -263,6 +260,8 @@ class UserRoleController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('user/role/list'));
         }
     }
 
@@ -311,6 +310,8 @@ class UserRoleController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('user/role/list'));
         }
     }
 }

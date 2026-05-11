@@ -10,9 +10,10 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use PDF;
 use Mail;
 use Illuminate\Support\Facades\Auth;
-use Session;
 use Exception;
-use DataTables;
+use Illuminate\Support\Facades\Session;
+use Yajra\DataTables\Facades\DataTables;
+
 
 
 use App\Models\User;
@@ -159,6 +160,8 @@ class DivingPTWController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ptw/diving/list'));
         }
     }
 
@@ -527,11 +530,9 @@ class DivingPTWController extends Controller
                         'message' => 'Diving PTW - ' . $permit->sub_permit_id . ' is Approved',
                     ];
 
-                    
+
                     mobilePushNotification($assigned_user, $notifydata);
                 }
-
-
             }
 
             $insert_array = array(
@@ -588,7 +589,9 @@ class DivingPTWController extends Controller
 
             return view('ptw.diving.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ptw/diving/list'));
         }
     }
 
@@ -805,6 +808,8 @@ class DivingPTWController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ptw/diving/list'));
         }
     }
 
@@ -855,6 +860,8 @@ class DivingPTWController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ptw/diving/list'));
         }
     }
 
@@ -952,6 +959,8 @@ class DivingPTWController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ptw/diving/list'));
         }
     }
 }

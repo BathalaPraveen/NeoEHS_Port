@@ -79,13 +79,7 @@ class Lifting extends Model
             $query->Where('ptw_sub_permit_lifting.location', $location);
         }
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('sub_permit_id', 'LIKE', '%' . $search . '%');
-            });
-        }
+       
 
         if (!in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) && !in_array(ROLE_ADMIN, getUserRoleId(Auth::id()))) {
 
@@ -241,13 +235,7 @@ class Lifting extends Model
             $query->Where('ptw_sub_permit_lifting.location', $location);
         }
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('sub_permit_id', 'LIKE', '%' . $search . '%');
-            });
-        }
+    
 
         if (!in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) && !in_array(ROLE_ADMIN, getUserRoleId(Auth::id()))) {
 

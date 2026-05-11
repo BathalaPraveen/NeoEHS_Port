@@ -46,13 +46,7 @@ class IncidentNotificationCasualtyFatality extends Model
 
         $query = $this->select('incident_notification_casualty_fatality.*', );
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
-            $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('incident_notification_casualty_fatality.rating_text', 'LIKE', '%' . $search . '%');
-            });
-        }
+   
 
         $data_count = $query->count();
         $total_records = $data_count;
@@ -133,14 +127,7 @@ class IncidentNotificationCasualtyFatality extends Model
 
         $query = $this->select('incident_notification_casualty_fatality.*');
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('incident_notification_casualty_fatality.rating_text', 'LIKE', '%' . $search . '%');
-            });
-        }
-
+       
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();
     }

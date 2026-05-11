@@ -5,7 +5,8 @@ namespace App\Http\Controllers\PTW;
 use PDF;
 use Mail;
 use Exception;
-use DataTables;
+
+use Yajra\DataTables\Facades\DataTables;
 
 use App\Models\User;
 use App\Models\PTW\Gas;
