@@ -17,7 +17,7 @@
                 color: white !important;
             }
 
-            
+
         </style>
     @endpush
 
@@ -48,6 +48,14 @@
                 <span class="ml-auto"><a href="{{ admin_url('password/forgot') }}" class="forgot-pass ">Forgot
                         Password</a></span>
             </div>
+            <div class="col-md-6">
+
+            </div>
+            <div class="col-md-6" style="text-align:right">
+                <span class="ml-auto"><a class="" href="{{ admin_url('contractor/registration') }}" role="button">
+                     Contractor Registration
+                </a></span>
+            </div>
 
         </div>
 
@@ -57,8 +65,8 @@
             </div>
         </div>
         <hr>
-        <div class="form-row d-flex flex-column align-items-center mt-1 mb-5">
-            
+        {{-- <div class="form-row d-flex flex-column align-items-center mt-1 mb-5">
+
             <div class="d-flex justify-content-center gap-3">
 
                 <a class="btn btn-primary" href="{{ admin_url('auth/microsoft') }}" role="button">
@@ -68,7 +76,7 @@
                      Contractor Registration
                 </a>
             </div>
-        </div>
+        </div> --}}
 
 
     </form>
