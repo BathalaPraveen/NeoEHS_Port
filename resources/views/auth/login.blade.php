@@ -31,9 +31,9 @@
             <label for="password">Password</label>
             <div class="input-group date form-input">
                 <input type="password" required="" class="form-control" id="password" name="password">
-                <div class="input-group-addon input-group-text" id="password_view">
-                    <span style="color:#0053a1" class="fa fa-eye"></span>
-                </div>
+                <span class="input-group-text bg-white border-left-0">
+                    <i class="fa fa-eye-slash text-primary" id="togglePassword" style="cursor: pointer;"></i>
+                </span>
             </div>
         </div>
 
@@ -157,6 +157,24 @@
                     form.submit();
                 }
             });
+        });
+    </script>
+@endpush
+@push('script')
+    <script>
+        document.getElementById("togglePassword").addEventListener("click", function() {
+            let passwordField = document.getElementById("password");
+            let icon = this;
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            } else {
+                passwordField.type = "password";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            }
         });
     </script>
 @endpush
