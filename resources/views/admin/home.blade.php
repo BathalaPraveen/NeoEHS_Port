@@ -496,9 +496,8 @@
         <div class="row justify-content-left" data-aos="zoom-out">
             <div class="col-xl-12 text-left">
                 <p class="welcome-content">Welcome to</p>
-                <h1 class="heading">BEACON</h1>
-                <p class="welcome-content welcome-content-last"><span class="green-line"></span>HSE Management System for
-                    Bintulu Port Holdings Berhad</p>
+                <h1 class="heading">NeoEHS Port</h1>
+                <p class="welcome-content welcome-content-last"><span class="green-line"></span>HSE Management System</p>
 
             </div>
         </div>
