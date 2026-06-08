@@ -36,6 +36,7 @@ class PortSecurityMasterController extends Controller
                 try {
 
                     $data =  $this->securitymaster->list();
+                    // dd(  $data );
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -53,6 +54,7 @@ class PortSecurityMasterController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd( $ex);
 
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
