@@ -16,9 +16,9 @@
                                 <a href="{{ admin_url('home') }}"><i class="bx bx-home-alt"></i></a>
                             </li>
 
-                            <li class="breadcrumb-item active" aria-current="page">Incident</li>
+                            <li class="breadcrumb-item active" aria-current="page">Port Security Access</li>
                             <li class="breadcrumb-item active" aria-current="page">Master</li>
-                            <li class="breadcrumb-item active" aria-current="page">Category</li>
+                            <li class="breadcrumb-item active" aria-current="page">Port Security Access</li>
                         </ol>
                     </nav>
                 </div>
@@ -31,7 +31,7 @@
                     <div class="d-lg-flex align-items-center gap-3">
 
                         <div class="position-relative">
-                            <h5 class="card-title">Incident Category List</h5>
+                            <h5 class="card-title">Port Security Access List</h5>
                         </div>
                         <div class="ms-auto">
 
@@ -47,7 +47,11 @@
                             <thead>
                                 <tr>
                                     <th>No.</th>
-                                    <th>Category Name</th>
+                                    <th>PSS ID</th>
+                                    <th>Name</th>
+                                    <th>IC/Passport No</th>
+                                    <th>Company Name</th>
+                                    <th>Location Name</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -123,7 +127,7 @@
                     [0, "asc"]
                 ],
                 ajax: {
-                    url: "{{ admin_url('incident/master/category/list') }}",
+                    url: "{{ admin_url('portsecurity/master/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -141,8 +145,24 @@
                         searchable: false
                     },
                     {
-                        data: 'category_name',
-                        name: 'category_name'
+                        data: 'unique_id',
+                        name: 'unique_id'
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'passport_number',
+                        name: 'passport_number'
+                    },
+                    {
+                        data: 'company_name',
+                        name: 'company_name'
+                    },
+                    {
+                        data: 'location_name',
+                        name: 'location_name'
                     },
                     {
                         data: 'action',

@@ -41,18 +41,44 @@ class SecurityMaster extends Model
         'trash' => 'NO',
     ];
 
-    public function list()
+
+  public function list()
     {
         $request = request();
         $search = '';
 
-        $query = $this->select('incident_master_category.*');
+        $query = $this->select(SECMAS .'.*', 'master_company.company_name', 'master_location.location_name', 'master_designation.designation_name')
+            ->leftJoin('master_company', SECMAS .'.company_id', '=', 'master_company.id')
+            ->leftJoin('master_location', SECMAS .'.location_id', '=', 'master_location.id')
+            ->leftJoin('master_designation',SECMAS . '.designation_id', '=', 'master_designation.id');
+
+        // if ($request->companyid != '' && $request->companyid != null) {
+        //     $conpanyId = decryptId($request->companyid);
+        //     $query->where('master_employee.company_id', $conpanyId);
+        // }
+
+        // if ($request->divisionid != '' && $request->divisionid != null) {
+        //     $divisionid = decryptId($request->divisionid);
+        //     $query->where('master_employee.emp_division_id', $divisionid);
+        // }
+
+        // if ($request->departmentid != '' && $request->departmentid != null) {
+        //     $departmentid = decryptId($request->departmentid);
+        //     $query->where('master_employee.location_id', $departmentid);
+        // }
+
+        // if ($request->roleid != '' && $request->roleid != null) {
+        //     $roleid = decryptId($request->roleid);
+        //     $query->whereRaw('FIND_IN_SET(?, master_employee.emp_role_id)', [$roleid]);
+        // }
+
+
+
+
+
 
         $data_count = $query->count();
         $total_records = $data_count;
-
-        $query->orderBy('id', 'DESC');
-
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
