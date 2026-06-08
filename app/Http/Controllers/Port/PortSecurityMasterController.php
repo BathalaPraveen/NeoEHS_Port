@@ -73,7 +73,7 @@ class PortSecurityMasterController extends Controller
             $data = array(
 
             );
-            return view('incident.master.category.add', $data);
+            return view('port.master.add', $data);
 
         } catch (Exception $ex) {
             report($ex);

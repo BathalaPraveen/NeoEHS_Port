@@ -35,6 +35,31 @@ Route::middleware(['web', 'is_login'])->group(function () {
     Route::post('portsecurity/master/delete', 'Port\PortSecurityMasterController@Delete');
     Route::get('portsecurity/master/export/excel', 'Port\PortSecurityMasterController@ExportExcel');
     Route::get('portsecurity/master/export/pdf', 'Port\PortSecurityMasterController@ExportPdf');
+    Route::get('portsecurity/master/add', 'Port\PortSecurityMasterController@Add');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     Route::get('portsecurity/security_access/list', 'Port\PortSecurityController@index');
