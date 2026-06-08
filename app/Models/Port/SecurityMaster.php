@@ -30,6 +30,10 @@ class SecurityMaster extends Model
         'vehicle_type',
         'vehicle_number',
         'purpose',
+        'vehicle_entry_date',
+        'vehicle_entry_time',
+        'vehicle_exit_date',
+        'vehicle_exit_time',
         'status',
         'trash',
         'created_by',
@@ -46,46 +50,26 @@ class SecurityMaster extends Model
     {
         $request = request();
         $search = '';
-
         $query = $this->select(SECMAS .'.*', 'master_company.company_name', 'master_location.location_name', 'master_designation.designation_name')
             ->leftJoin('master_company', SECMAS .'.company_id', '=', 'master_company.id')
             ->leftJoin('master_location', SECMAS .'.location_id', '=', 'master_location.id')
             ->leftJoin('master_designation',SECMAS . '.designation_id', '=', 'master_designation.id');
 
-        // if ($request->companyid != '' && $request->companyid != null) {
-        //     $conpanyId = decryptId($request->companyid);
-        //     $query->where('master_employee.company_id', $conpanyId);
-        // }
-
-        // if ($request->divisionid != '' && $request->divisionid != null) {
-        //     $divisionid = decryptId($request->divisionid);
-        //     $query->where('master_employee.emp_division_id', $divisionid);
-        // }
-
-        // if ($request->departmentid != '' && $request->departmentid != null) {
-        //     $departmentid = decryptId($request->departmentid);
-        //     $query->where('master_employee.location_id', $departmentid);
-        // }
-
-        // if ($request->roleid != '' && $request->roleid != null) {
-        //     $roleid = decryptId($request->roleid);
-        //     $query->whereRaw('FIND_IN_SET(?, master_employee.emp_role_id)', [$roleid]);
-        // }
-
-
-
-
-
-
+        if ($request->passport_id != '' && $request->passport_id != null) {
+            $passportId = $request->passport_id;
+            $query->where(SECMAS .'.passport_number', $passportId);
+        }
+        if ($request->sec_name != '' && $request->sec_name != null) {
+            $sec_name = $request->sec_name;
+            $query->where(SECMAS .'.name', $sec_name);
+        }
+        $query = $query->orderBy('id', 'Desc');
         $data_count = $query->count();
         $total_records = $data_count;
-
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
-
         $data = $query->get();
-
         $datas = [
             'data' => $data,
             'total_records' => $total_records
@@ -93,7 +77,20 @@ class SecurityMaster extends Model
 
         return $datas;
     }
+       public function selectOne($id)
+    {
 
+        $data = $this->select('*')
+            ->where('id', $id)
+            ->first();
+
+        return $data;
+    }
+
+    public function getall()
+    {
+        return $this->where('trash', 'NO')->get();
+    }
     public function store()
     {
         $request = request();
@@ -125,24 +122,6 @@ class SecurityMaster extends Model
         return $this->where('id', $id)->update($update_array);
     }
 
-    public function statuschange($id)
-    {
-        $request = request();
-
-        $type = $request->types;
-        if ($type == 1) {
-            $update_data = array(
-                'status' => 0,
-            );
-        } else {
-            $update_data = array(
-                'status' => 1,
-            );
-        }
-
-        return $this->where('id', $id)->update($update_data);
-    }
-
     public function deleterecord($id)
     {
 
@@ -154,38 +133,40 @@ class SecurityMaster extends Model
         return $this->where('id', $id)->update($update_data);
     }
 
-    public function exportdata()
+
+
+
+ public function exportdata()
     {
         $request = request();
         $search = '';
 
-        $query = $this->select('incident_master_category.*');
+        $query = $this->select(SECMAS .'.*', 'master_company.company_name', 'master_location.location_name', 'master_designation.designation_name')
+            ->leftJoin('master_company', SECMAS .'.company_id', '=', 'master_company.id')
+            ->leftJoin('master_location', SECMAS .'.location_id', '=', 'master_location.id')
+            ->leftJoin('master_designation',SECMAS . '.designation_id', '=', 'master_designation.id');
 
-
-
+        // Filter
+         if ($request->passport_id != '' && $request->passport_id != null) {
+            $passportId = $request->passport_id;
+            $query->where(SECMAS .'.passport_number', $passportId);
+        }
+        if ($request->sec_name != '' && $request->sec_name != null) {
+            $sec_name = $request->sec_name;
+            $query->where(SECMAS .'.name', $sec_name);
+        }
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();
     }
+    // public function selectOneWhere($where)
+    // {
 
-    public function selectOne($id)
-    {
+    //     $data = $this->select('*')
+    //         ->where($where)
+    //         ->first();
 
-        $data = $this->select('*')
-            ->where('id', $id)
-            ->first();
-
-        return $data;
-    }
-
-    public function selectOneWhere($where)
-    {
-
-        $data = $this->select('*')
-            ->where($where)
-            ->first();
-
-        return $data;
-    }
+    //     return $data;
+    // }
 
     public function ajaxList()
     {

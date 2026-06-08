@@ -191,12 +191,12 @@ class Cert_Security extends Model
         return  $query->get();
     }
 
-    public function selectOne($id)
+    public function selectcerticatedata($id)
     {
 
         $data = $this->select('*')
-            ->where('id', $id)
-            ->first();
+            ->where('port_fk_id', $id)
+            ->get();
 
         return $data;
     }

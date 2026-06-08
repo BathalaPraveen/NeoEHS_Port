@@ -31,6 +31,10 @@ Route::middleware(['web', 'is_login'])->group(function () {
 
     Route::get('portsecurity/master/list', 'Port\PortSecurityMasterController@index');
     Route::post('portsecurity/master/list', 'Port\PortSecurityMasterController@index');
+    Route::get('portsecurity/master/view/{id}', 'Port\PortSecurityMasterController@View');
+    Route::post('portsecurity/master/delete', 'Port\PortSecurityMasterController@Delete');
+    Route::get('portsecurity/master/export/excel', 'Port\PortSecurityMasterController@ExportExcel');
+    Route::get('portsecurity/master/export/pdf', 'Port\PortSecurityMasterController@ExportPdf');
     Route::get('portsecurity/master/add', 'Port\PortSecurityMasterController@Add');
     Route::post('portsecurity/master/add/submit', 'Port\PortSecurityMasterController@Store');
 
@@ -60,10 +64,11 @@ Route::middleware(['web', 'is_login'])->group(function () {
 
 
 
-
-
-
-
+    Route::get('portsecurity/security_access/list', 'Port\PortSecurityController@index');
+    Route::post('portsecurity/security_access/list', 'Port\PortSecurityController@index');
+    Route::get('portsecurity/security_access/view/{id}', 'Port\PortSecurityController@View');
+    Route::get('portsecurity/security_access/export/excel', 'Port\PortSecurityController@ExportExcel');
+    Route::get('portsecurity/security_access/export/pdf', 'Port\PortSecurityController@ExportPdf');
 
 
 
@@ -76,11 +81,9 @@ Route::middleware(['web', 'is_login'])->group(function () {
     Route::post('incident/master/category/edit/submit', 'Incident\IncidentCategoryController@Update');
     Route::post('incident/master/category/unique', 'Incident\IncidentCategoryController@Uniquecheck');
     Route::post('incident/master/category/status', 'Incident\IncidentCategoryController@StatusChange');
-    Route::post('incident/master/category/delete', 'Incident\IncidentCategoryController@Delete');
+
     Route::get('incident/master/category/import', 'Incident\IncidentCategoryController@Import');
     Route::post('incident/master/category/import/submit', 'Incident\IncidentCategoryController@ImportSubmit');
-    Route::get('incident/master/category/export/excel', 'Incident\IncidentCategoryController@ExportExcel');
-    Route::get('incident/master/category/export/pdf', 'Incident\IncidentCategoryController@ExportPdf');
 
 
     /**

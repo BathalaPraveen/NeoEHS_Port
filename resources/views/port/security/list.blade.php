@@ -1,6 +1,6 @@
 @extends('admin.layouts.layout')
 @section('title', 'Port Security Access Master List')
-@section('pageurl', admin_url('portsecurity/master/list'))
+@section('pageurl', admin_url('portsecurity/security_access/list'))
 @section('content')
     <div class="container">
         <div class="container para mt-3">
@@ -13,8 +13,7 @@
                                 <a href="{{ admin_url('home') }}"><i class="bx bx-home-alt"></i></a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">Port Security Access</li>
-                            <li class="breadcrumb-item active" aria-current="page">Master</li>
-                            <li class="breadcrumb-item active" aria-current="page">Port Security Access</li>
+                            <li class="breadcrumb-item active" aria-current="page">Port Security Access List</li>
                         </ol>
                     </nav>
                 </div>
@@ -129,7 +128,7 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var formData = $('#formsearch').serialize();
                                     var exportUrl =
-                                        "{{ admin_url('portsecurity/master/export/pdf') }}";
+                                        "{{ admin_url('portsecurity/security_access/export/pdf') }}";
                                     window.location.href = exportUrl + '?search=' +
                                         searchValue + '&' +
                                         formData;
@@ -142,7 +141,7 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var formData = $('#formsearch').serialize();
                                     var exportUrl =
-                                        "{{ admin_url('portsecurity/master/export/excel') }}";
+                                        "{{ admin_url('portsecurity/security_access/export/excel') }}";
                                     window.location.href = exportUrl + '?search=' +
                                         searchValue + '&' +
                                         formData;
@@ -168,7 +167,7 @@
                     [0, "asc"]
                 ],
                 ajax: {
-                    url: "{{ admin_url('portsecurity/master/list') }}",
+                    url: "{{ admin_url('portsecurity/security_access/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -219,67 +218,7 @@
             $(document).on('click', '#resetform', function() {
                 table.draw();
             });
-            /* Delete Record */
-            $(document).on('click', '.recordDelete', function() {
-                var id = $(this).data('id');
-                var title = 'Do you want to delete the Port Security Access';
-                var text = 'Delete';
-                var btncolor = '#dc3545'
-                Swal.fire({
-                    title: title,
-                    showDenyButton: false,
-                    showCancelButton: true,
-                    confirmButtonText: text,
-                    confirmButtonColor: btncolor,
-                    denyButtonColor: '#28a745',
-                    customClass: {
-                        confirmButton: 'btn-skew',
-                        cancelButton: 'btn-skew'
-                    },
-                }).then((result) => {
-                    if (result.value) {
-                        $.ajax({
-                            url: "{{ admin_url('portsecurity/master/delete') }}",
-                            type: 'post',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                    .attr('content')
-                            },
-                            data: {
-                                id: id,
-                            },
-                            success: function(response) {
-                                const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'top-right',
-                                    showConfirmButton: false,
-                                    timer: 3000,
-                                    timerProgressBar: true,
-                                    didOpen: (toast) => {
-                                        toast.addEventListener(
-                                            'mouseenter',
-                                            Swal.stopTimer)
-                                        toast.addEventListener(
-                                            'mouseleave',
-                                            Swal.resumeTimer
-                                        )
-                                    }
-                                });
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: response.msg
-                                });
-                                table.draw();
-                            },
-                            error: function(data) {
-                                $.notify(data.responseJSON.msg, "error");
-                            }
-                        });
-                    } else if (result.isDenied) {
-                        Swal.fire('Something went wrong', '', 'info');
-                    }
-                })
-            });
+
         });
     </script>
 @endpush

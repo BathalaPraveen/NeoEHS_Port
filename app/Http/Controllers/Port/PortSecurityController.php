@@ -12,24 +12,23 @@ use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
-use App\Models\Master\Company;
-use App\Models\Master\Designation;
+
 use App\Models\User;
 
 use App\Models\Port\SecurityMaster;
 use App\Models\Port\Cert_Security;
 
-class PortSecurityMasterController extends Controller
+class PortSecurityController extends Controller
 {
 
     private $securitymaster;
-    private $securitycertificate;
+    private $certificate;
 
     public function __construct()
     {
 
         $this->securitymaster = new SecurityMaster();
-        $this->securitycertificate = new Cert_Security();
+        $this->certificate = new Cert_Security();
     }
 
     public function index(Request $request)
@@ -42,9 +41,8 @@ class PortSecurityMasterController extends Controller
                         ->addIndexColumn()
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('portsecurity/master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('portsecurity/security_access/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('employee/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -63,19 +61,18 @@ class PortSecurityMasterController extends Controller
         $data = array(
              'securitydata' => $securitydata,
         );
-        return view('port.master.list', $data);
+        return view('port.security.list', $data);
     }
 
     public function Add(Request $request)
     {
+
         try {
-            $companyList =  Company::get();
-            $designationList =  Designation::get();
+
             $data = array(
-                'companyList' => $companyList,
-                'designationList' => $designationList,
+
             );
-            return view('port.master.add', $data);
+            return view('incident.master.category.add', $data);
 
         } catch (Exception $ex) {
             report($ex);
@@ -85,51 +82,35 @@ class PortSecurityMasterController extends Controller
     public function Store(Request $request)
     {
         try {
-            $rules = [
-                'unique_id'          => 'required',
-                'name'               => 'required',
-                'id_type'            => 'required',
-                'passport_number'    => 'required',
-                'company_id'         => 'required',
-                'location'           => 'required',
-                'designation_id'     => 'required',
-                'induction_date'     => 'required',
-                'induction_duedate'  => 'required',
 
+            $rules = [
+                'category_name' => 'required',
             ];
             $messages = [
-                'unique_id.required'         => 'Please enter Unique ID',
-                'name.required'              => 'Please enter Name',
-                'id_type.required'           => 'Please select ID Type',
-                'passport_number.required'   => 'Please enter IC/Passport No',
-                'company_id.required'        => 'Please select Company',
-                'location.required'          => 'Please select Location',
-                'designation_id.required'    => 'Please select Designation',
-                'induction_date.required'    => 'Please select Induction Date',
-                'induction_duedate.required' => 'Please select Induction Due Date',
-
+                'category_name.required' => 'Please enter Location Name',
             ];
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                Session::flash('error', 'Something went wrong, Please try after sometime!');
-                return redirect()->back()
-                    ->withErrors($validator)
-                    ->withInput();
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                return redirect()->back()->withErrors($validator)->withInput();
             }
 
             try {
-                $id = $this->securitymaster->store();
-                $this->securitycertificate->store($id);
+                $this->securitymaster->store();
+
                 Session::flash('success', 'Incident Category added successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
-            return redirect(admin_url('portsecurity/master/list'));
+
+            return redirect(admin_url('incident/master/category/list'));
         } catch (Exception $ex) {
-            dd($ex);
+
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('portsecurity/master/list'));
+            return redirect(admin_url('incident/master/category/list'));
         }
     }
 
@@ -139,35 +120,31 @@ class PortSecurityMasterController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $securitydata = $this->securitymaster->selectOne($id);
-                $certifiactedata = $this->securitycertificate->selectcerticatedata($id);
+                $certifiactedata = $this->certificate->selectcerticatedata($id);
                 $data = array(
                     'securitydata' => $securitydata,
                     'certifiactedata' => $certifiactedata,
                 );
             }
-            return view('port.master.view', $data);
+            return view('port.security.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
     }
 
-    public function Edit($id)
+    public function Edit(Request $request)
     {
         try {
-            $id = decryptId($id);
-            $companyList     = Company::get();
-            $designationList = Designation::get();
-            $editData = $this->securitymaster->find($id);
-            $competencyList = $this->securitycertificate->where('contractor_id', $id)->get();
+            $id = decryptId($request->id);
+
+            $category = $this->securitymaster->selectOne($id);
             $data = array(
-                'companyList'     => $companyList,
-                'designationList' => $designationList,
-                'editData'        => $editData,
-                'competencyList'  => $competencyList,
+                'category' => $category,
             );
-            return view('port.master.edit', $data);
-        } catch (Exception $ex) {
-            report($ex);
+
+            return view('incident.master.category.edit', $data);
+        } catch (Exception $error) {
+            report($error->getMessage());
         }
     }
 
@@ -217,16 +194,7 @@ class PortSecurityMasterController extends Controller
         }
     }
 
-    public function Delete(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $this->securitymaster->deleterecord($id);
-            return response()->json(['status' => 'success', 'msg' => 'Port Security Access deleted successfully'], 200);
-        } catch (Exception $ex) {
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
+
 
     public function ExportExcel(Request $request)
     {
@@ -266,7 +234,6 @@ class PortSecurityMasterController extends Controller
 
     public function ExportPdf(Request $request)
     {
-
         try {
             $allData = $this->securitymaster->exportdata();
             $header = [
@@ -292,7 +259,7 @@ class PortSecurityMasterController extends Controller
             ];
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
-            $view = view('port.master.pdf', $data);
+            $view = view('port.security.pdf', $data);
             $html = $view->render();
             $mpdf->WriteHTML($html);
             $filename = "Port Security Access.pdf";
@@ -302,4 +269,5 @@ class PortSecurityMasterController extends Controller
             report($ex);
         }
     }
+
 }
