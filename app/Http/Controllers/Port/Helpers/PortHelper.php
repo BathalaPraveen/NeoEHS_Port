@@ -3,9 +3,44 @@
 use Illuminate\Support\Facades\DB;
 use App\Models\User;
 
-use App\Models\Incident\IncidentCategory;
-use App\Models\Incident\IncidentItem;
-use App\Models\Incident\IncidentSubItem;
+
+
+if (!function_exists('getIdType')) {
+
+    function getIdType($id)
+    {
+        $id_type = '';
+
+        switch ($id) {
+            case 1:
+                $id_type = 'IC NO';
+                break;
+            case 2:
+                $id_type = 'Passport No';
+                break;
+        }
+        return $id_type;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 if (!function_exists('incidentStatus')) {
@@ -140,23 +175,5 @@ if (!function_exists('incidentInvestigationStatus')) {
                 break;
         }
         return  $status;
-    }
-}
-
-if (!function_exists('getNearMissStatus')) {
-
-    function getNearMissStatus($id)
-    {
-        $incident_type = '';
-
-        switch ($id) {
-            case 1:
-                $incident_type = 'Open';
-                break;
-            case 0:
-                $incident_type = 'Close';
-                break;
-        }
-        return $incident_type;
     }
 }

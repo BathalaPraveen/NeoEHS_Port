@@ -18,7 +18,7 @@ use App\Models\User;
 use App\Models\Port\SecurityMaster;
 use App\Models\Port\Cert_Security;
 
-class PortSecurityMasterController extends Controller
+class PortSecurityController extends Controller
 {
 
     private $securitymaster;
@@ -41,9 +41,8 @@ class PortSecurityMasterController extends Controller
                         ->addIndexColumn()
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('portsecurity/master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('portsecurity/security_access/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('employee/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -62,7 +61,7 @@ class PortSecurityMasterController extends Controller
         $data = array(
              'securitydata' => $securitydata,
         );
-        return view('port.master.list', $data);
+        return view('port.security.list', $data);
     }
 
     public function Add(Request $request)
@@ -127,7 +126,7 @@ class PortSecurityMasterController extends Controller
                     'certifiactedata' => $certifiactedata,
                 );
             }
-            return view('port.master.view', $data);
+            return view('port.security.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -195,16 +194,7 @@ class PortSecurityMasterController extends Controller
         }
     }
 
-    public function Delete(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $this->securitymaster->deleterecord($id);
-            return response()->json(['status' => 'success', 'msg' => 'Port Security Access deleted successfully'], 200);
-        } catch (Exception $ex) {
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
+
 
     public function ExportExcel(Request $request)
     {
@@ -244,7 +234,6 @@ class PortSecurityMasterController extends Controller
 
     public function ExportPdf(Request $request)
     {
-
         try {
             $allData = $this->securitymaster->exportdata();
             $header = [
@@ -270,7 +259,7 @@ class PortSecurityMasterController extends Controller
             ];
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
-            $view = view('port.master.pdf', $data);
+            $view = view('port.security.pdf', $data);
             $html = $view->render();
             $mpdf->WriteHTML($html);
             $filename = "Port Security Access.pdf";
@@ -280,4 +269,5 @@ class PortSecurityMasterController extends Controller
             report($ex);
         }
     }
+
 }

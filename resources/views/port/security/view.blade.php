@@ -1,6 +1,6 @@
 @extends('admin.layouts.layout')
 @section('title', 'Port Security Access View')
-@section('pageurl', admin_url('portsecurity/master/list'))
+@section('pageurl', admin_url('portsecurity/security_access/list'))
 @push('style')
     <style>
         label {
@@ -19,7 +19,6 @@
                             <li class="breadcrumb-item"><a href="{{ admin_url('home') }}"><i class="bx bx-home-alt"></i></a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">Port Security Access</li>
-                            <li class="breadcrumb-item active" aria-current="page">Master</li>
                             <li class="breadcrumb-item active" aria-current="page">Port Security Access View</li>
                         </ol>
                     </nav>
@@ -35,7 +34,7 @@
                                     <h5 class="card-title">Port Security Access View</h5>
                                 </div>
                                 <div class="ms-auto">
-                                    <a href="{{ admin_url('portsecurity/master/list') }}" data-bs-toggle="tooltip"
+                                    <a href="{{ admin_url('portsecurity/security_access/list') }}" data-bs-toggle="tooltip"
                                         title="Back" class="btn btn-primary">
                                         Back
                                     </a>
@@ -87,7 +86,7 @@
                                         <div class="col-md-4 form-input">
                                             <label for="incidenttime" class="form-label">Induction Due Date</label>
                                             <div>
-                                                {{ displayDateformat($securitydata->induction_duedate) }}
+                                                {{ displayDateformat($securitydata->induction_duedate)}}
                                             </div>
                                         </div>
                                         <div class="col-md-4 form-input">
@@ -100,6 +99,34 @@
                                             <label for="location" class="form-label">Location Name</label>
                                             <div>
                                                 {{ getLocationName($securitydata->location_id) }}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 form-input">
+                                            <label for="location" class="form-label">Vehicle Entry Date</label>
+                                            <div>
+                                                {{ !empty($securitydata->vehicle_entry_date) ? displayDateformat($securitydata->vehicle_entry_date) : '-' }}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 form-input">
+                                            <label for="location" class="form-label">Vehicle Entry Time</label>
+                                            <div>
+                                                {{ !empty($securitydata->vehicle_entry_time) ? Displaytimeformat($securitydata->vehicle_entry_time) : '-' }}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 form-input">
+                                            <label for="location" class="form-label">Vehicle Exit Date</label>
+                                            <div>
+                                                {{ !empty($securitydata->vehicle_exit_date) ? displayDateformat($securitydata->vehicle_exit_date) : '-' }}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 form-input">
+                                            <label for="location" class="form-label">Vehicle Exit Time</label>
+                                            <div>
+                                                {{ !empty($securitydata->vehicle_exit_time) ? Displaytimeformat($securitydata->vehicle_exit_time) : '-' }}
                                             </div>
                                         </div>
                                     </div>
