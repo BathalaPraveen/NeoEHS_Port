@@ -2,12 +2,12 @@
 
 namespace App\Models\Port;
 
+use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-
-
-use App\Scopes\TrashScope;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class Cert_Security extends Model
 {
@@ -65,17 +65,75 @@ class Cert_Security extends Model
         return $datas;
     }
 
-    public function store()
+    public function store($id)
     {
-
         $request = request();
 
-        $insert_array = array(
-            'category_name' => $request->category_name,
-            'created_by' => Auth::id()
-        );
+        $cert_name       = $request->cert_name;
+        $cert_start_date = $request->cert_start_date;
+        $cert_end_date   = $request->cert_end_date;
+        $files           = $request->file('other_competency_certi');
 
-        return $this->create($insert_array);
+        $destinationPath = storage_path('app/public/contractors');
+
+        if (!File::exists($destinationPath)) {
+            File::makeDirectory($destinationPath, 0777, true);
+        }
+
+        if (is_array($cert_name) && count($cert_name) > 0) {
+
+            foreach ($cert_name as $key => $value) {
+
+                // STORE ONLY IF DATA EXISTS
+                if (
+                    !empty($cert_name[$key]) ||
+                    !empty($cert_start_date[$key]) ||
+                    !empty($cert_end_date[$key]) ||
+                    !empty($files[$key])
+                ) {
+
+                    $fileName = null;
+                    $fileExt  = null;
+                    $fileSize = null;
+                    $filePath = null;
+
+                    // FILE STORE
+                    if (isset($files[$key]) && $files[$key] != null) {
+
+                        $file = $files[$key];
+
+                        $fileName = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+
+                        $fileExt  = $file->getClientOriginalExtension();
+
+                        $fileSize = $file->getSize();
+
+                        $file->move($destinationPath, $fileName);
+
+                        $filePath = 'storage/contractors/' . $fileName;
+                    }
+
+                    $insert_array = array(
+
+                        'port_fk_id'             => $id,
+                        'cert_name'                 => $cert_name[$key] ?? null,
+                        'cert_start_date'           => DBdateformat($cert_start_date[$key]) ?? null,
+                        'cert_end_date'             => DBdateformat($cert_end_date[$key]) ?? null,
+
+                        'cert_path'   => $filePath,
+                        'cert_file_name'                 => $fileName,
+                        'cert_ext'                  => $fileExt,
+                        'cert_size'                 => $fileSize,
+
+                        'created_by'                => Auth::id()
+
+                    );
+                    $this->create($insert_array);
+                }
+            }
+        }
+
+        return true;
     }
 
     public function updates($id)

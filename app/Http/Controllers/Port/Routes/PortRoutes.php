@@ -32,6 +32,8 @@ Route::middleware(['web', 'is_login'])->group(function () {
     Route::get('portsecurity/master/list', 'Port\PortSecurityMasterController@index');
     Route::post('portsecurity/master/list', 'Port\PortSecurityMasterController@index');
     Route::get('portsecurity/master/add', 'Port\PortSecurityMasterController@Add');
+    Route::post('portsecurity/master/add/submit', 'Port\PortSecurityMasterController@Store');
+
 
 
 

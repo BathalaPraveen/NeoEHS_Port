@@ -15,6 +15,76 @@
         .col-md-3 label {
             font-weight: bold;
         }
+
+        .competency-main-card {
+            border: 1px solid #dce3ea !important;
+            background: #fff;
+        }
+
+        .competency-header {
+            background: #0d5cab;
+            padding: 15px 20px;
+            border-radius: 8px;
+        }
+
+        .competency-row {
+            border: 1px solid #dbe4ee;
+            background: #f8fafc;
+            border-radius: 10px;
+            position: relative;
+            transition: 0.3s;
+            padding: 20px !important;
+        }
+
+        .competency-row:hover {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .addMorcerti {
+            background: #28a745 !important;
+            border: none !important;
+            color: #fff !important;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 6px;
+        }
+
+        .addMorcerti i {
+            color: #fff !important;
+            margin-right: 6px;
+        }
+
+        .removeCompetency {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none !important;
+            background: #dc3545 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 99;
+            transition: all .3s ease;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.35);
+        }
+
+        .removeCompetency:hover {
+            background: #b02a37 !important;
+            transform: scale(1.05);
+        }
+
+        .removeCompetency i {
+            color: #fff !important;
+            font-size: 16px !important;
+        }
+
+        .fileinput-preview img {
+            object-fit: contain;
+        }
     </style>
 @endpush
 
@@ -55,8 +125,8 @@
                                 </div>
                                 <div class="ms-auto">
 
-                                    <a href="{{ admin_url('portsecurity/master/list') }}" data-bs-toggle="tooltip" title="Back"
-                                        class="btn btn-primary">
+                                    <a href="{{ admin_url('portsecurity/master/list') }}" data-bs-toggle="tooltip"
+                                        title="Back" class="btn btn-primary">
                                         Back
                                     </a>
                                 </div>
@@ -65,13 +135,141 @@
 
                             <form class="" id="port_add" novalidate method="POST" enctype="multipart/form-data"
                                 action="{{ admin_url('portsecurity/master/add/submit') }}">
-
                                 <div class="p-4 border rounded ">
                                     <div class="row g-3">
                                         @csrf
                                         <div class="card-header card-header-inner ">
                                             <h6 class="text-white text-uppercase">Port Security Access</h6>
                                         </div>
+                                        <div class="col-md-4 form-input">
+                                            <label for="unique_id" class="form-label require">Unique Id</label>
+                                            <input type="text" name="unique_id" class="form-control" readonly
+                                                id="unique_id" value="{{ getsequenceforport('port_unique_id') }}" required>
+                                        </div>
+                                        <div class="col-md-4 form-input">
+                                            <label for="name" class="form-label require">Name</label>
+                                            <input type="text" name="name" class="form-control" id="name"
+                                                value="" required>
+                                        </div>
+                                        <div class="col-md-4 form-input">
+                                            <label for="id_type" class="form-label require">
+                                                ID Type
+                                            </label>
+                                            <select name="id_type" id="id_type" required
+                                                class="form-control select2 othersshow">
+                                                <option value="">Select ID Type</option>
+                                                <option value="1">IC No</option>
+                                                <option value="2">Passport No</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 form-input">
+                                            <label for="passport_number" class="form-label require">IC/Passport No</label>
+                                            <input type="text" name="passport_number" class="form-control"
+                                                id="passport_number" value="" required>
+                                        </div>
+                                        <div class="col-md-4 form-input">
+                                            <label for="company" class="form-label require">Company</label>
+                                            <select name="company_id" id="company_id" class="form-control select2">
+                                                <option value="">Select Company</option>
+                                                @foreach ($companyList as $company)
+                                                    <option value="{{ encryptId($company->id) }}"
+                                                        data-address="{{ $company->address }}"
+                                                        data-city="{{ $company->city }}" data-state="{{ $company->state }}"
+                                                        data-pincode="{{ $company->pincode }}"
+                                                        data-dosh="{{ $company->dosh_reg_no }}"
+                                                        data-roc="{{ $company->roc_no }}"
+                                                        data-cos="{{ $company->code_of_sector }}"
+                                                        data-coi="{{ $company->class_of_industry }}">
+                                                        {{ $company->full_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 form-input">
+                                            <label for="location" class="form-label require">Location</label>
+                                            <select name="location" id="location" required class="form-control select2">
+                                                <option value="">Select Location</option>
+
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 form-input">
+                                            <label for="designation_id" class="form-label require">Designation</label>
+                                            <select name="designation_id" id="designation_id" class="form-control select2">
+                                                <option value="">Select Designation</option>
+                                                @foreach ($designationList as $designation)
+                                                    <option value="{{ encryptId($designation->id) }}">
+                                                        {{ $designation->designation_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="induction_date" class="form-label require">Induction Date</label>
+                                            <input type="text" name="induction_date"
+                                                class="form-control prep_date datepicker" id="induction_date" readonly>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="induction_duedate" class="form-label require">Induction Due
+                                                Date</label>
+                                            <input type="text" name="induction_duedate"
+                                                class="form-control prep_date datepicker" id="induction_duedate" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 border rounded mt-3 competency-main-card">
+                                    <div class="d-flex justify-content-between align-items-center competency-header mb-3">
+                                        <h6 class="text-white mb-0 text-uppercase">
+                                            Other Competency Details
+                                        </h6>
+                                        <button type="button" class="btn btn-success btn-sm addMorcerti">
+                                            <i class="fa fa-plus-circle"></i> Add More
+                                        </button>
+                                    </div>
+                                    <div id="competencyContainer">
+                                        <div class="competency-row card shadow-sm mb-3 p-3 border-0">
+                                            <div class="row g-3">
+                                                <div class="col-md-4 form-input">
+                                                    <label class="form-label">Name</label>
+                                                    <input type="text" name="cert_name[]"
+                                                        class="form-control cert_name">
+                                                </div>
+                                                <div class="col-md-4 form-input">
+                                                    <label class="form-label">Start Date</label>
+                                                    <input type="text" name="cert_start_date[]"
+                                                        class="form-control datepicker cert_start_date" readonly>
+                                                </div>
+                                                <div class="col-md-4 form-input pe-5" style="padding-right:70px;">
+                                                    <label class="form-label">End Date</label>
+                                                    <input type="text" name="cert_end_date[]"
+                                                        class="form-control datepicker cert_end_date" readonly>
+                                                </div>
+                                                <div class="col-md-4 mt-2 form-input">
+                                                    <label class="form-label">
+                                                        Competency Certificate
+                                                    </label>
+                                                    <div class="fileinput fileinput-new" data-provides="fileinput">
+                                                        <div class="fileinput-preview img-thumbnail"
+                                                            data-trigger="fileinput"
+                                                            style="width:200px;height:150px;overflow:hidden;">
+                                                            <img src="{{ url('public/assets/images/common/camera.png') }}"
+                                                                style="width:100%;height:100%;object-fit:contain;">
+                                                        </div>
+                                                        <div class="mt-2">
+                                                            <span class="btn-file">
+                                                                <span class="btn btn-primary btn-sm fileinput-new">
+                                                                    Upload Attachment
+                                                                </span>
+                                                                <span class="btn btn-warning btn-sm fileinput-exists">
+                                                                    Change
+                                                                </span>
+                                                                <input type="file" name="other_competency_certi[]"
+                                                                    class="form-control other_competency_certi">
+                                                            </span>
+                                                        </div>
+                                                        <span class="text-danger other_competency_certi_error"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row card-bottom">
                                     <div class="col-12 mt-2 mb-3">
@@ -121,199 +319,312 @@
         $("#immidiate_action").hide();
 
         $(function() {
+
+            $.validator.addMethod("noSpace", function(value, element) {
+                return value.trim().length > 0 && value.indexOf(" ") !== 0;
+            }, "First space is not allowed");
+
             $('#port_add').validate({
+
+                ignore: [],
+
                 rules: {
-                    reporter_name: {
-                        required: true,
+
+                    unique_id: {
+                        required: true
                     },
-                    reporter_email: {
+
+                    name: {
                         required: true,
+                        noSpace: true
                     },
-                    reporter_company: {
+
+                    id_type: {
+                        required: true
+                    },
+
+                    passport_number: {
                         required: true,
+                        noSpace: true
                     },
-                    reporter_division: {
-                        required: true,
+
+                    company_id: {
+                        required: true
                     },
-                    reporter_department: {
-                        required: true,
-                    },
-                    dateandtime: {
-                        required: true,
-                    },
+
                     location: {
-                        required: true,
+                        required: true
                     },
-                    specific_location: {
-                        required: true,
+
+                    designation_id: {
+                        required: true
                     },
-                    uauc_category: {
-                        required: true,
+
+                    induction_date: {
+                        required: true
                     },
-                    uauc_category_po: {
-                        required: true,
-                    },
-                    hse_hazard: {
-                        required: true,
-                    },
-                    usee_remarks: {
-                        required: true,
-                    },
-                    action_taken: {
-                        required: true,
-                    },
-                    company: {
-                        required: true,
-                    },
-                    division: {
-                        required: true,
-                    },
-                    department: {
-                        required: true,
-                    },
-                    job_owner: {
-                        required: true,
-                    },
-                    infringement: {
-                        required: true,
-                    },
-                    uact_remarks: {
-                        required: true,
-                    },
-                    other_speclocation: {
-                        required: true,
-                    },
-                    ssds_serial_number: {
-                        required: true,
-                    },
-                    job_owner_name: {
-                        required: true,
-                    },
-                    // 'uactimage[]': {
-                    //     required: true,
-                    // }
+
+                    induction_duedate: {
+                        required: true
+                    }
 
                 },
+
                 messages: {
-                    reporter_name: {
-                        required: "Please enter Reporter Name",
+
+                    unique_id: {
+                        required: "Please enter Unique ID"
                     },
-                    reporter_email: {
-                        required: "Please enter Reporter Email",
+
+                    name: {
+                        required: "Please enter Name",
+                        noSpace: "First space is not allowed"
                     },
-                    reporter_company: {
-                        required: "Please enter Reporter Company",
+
+                    id_type: {
+                        required: "Please select ID Type"
                     },
-                    reporter_division: {
-                        required: "Please enter Reporter Division",
+
+                    passport_number: {
+                        required: "Please enter IC/Passport No",
+                        noSpace: "First space is not allowed"
                     },
-                    reporter_department: {
-                        required: "Please enter Reporter Department",
+
+                    company_id: {
+                        required: "Please select Company"
                     },
-                    dateandtime: {
-                        required: "Please enter Date & Time",
-                    },
+
                     location: {
-                        required: "Please select Location",
+                        required: "Please select Location"
                     },
-                    specific_location: {
-                        required: "Please select Specific Location"
+
+                    designation_id: {
+                        required: "Please select Designation"
                     },
-                    uauc_category: {
-                        required: "Please select UAUC Category",
+
+                    induction_date: {
+                        required: "Please select Induction Date"
                     },
-                    uauc_category_po: {
-                        required: "Please select UAUC Category",
-                    },
-                    hse_hazard: {
-                        required: "Please select HSE Hazard",
-                    },
-                    usee_remarks: {
-                        required: "Please enter U-See Description",
-                    },
-                    action_taken: {
-                        required: "Please select Action Taken",
-                    },
-                    company: {
-                        required: "Please select Company",
-                    },
-                    division: {
-                        required: "Please select Division",
-                    },
-                    department: {
-                        required: "Please select Department",
-                    },
-                    job_owner: {
-                        required: "Please select Job Owner",
-                    },
-                    infringement: {
-                        required: "Please select Infringement",
-                    },
-                    uact_remarks: {
-                        required: "Please enter U-ACT Description",
-                    },
-                    other_speclocation: {
-                        required: "Please enter Other Location",
-                    },
-                    ssds_serial_number: {
-                        required: "Please enter the SSDS Serial Number",
-                    },
-                    job_owner_name: {
-                        required: "Job Owner is required",
-                    },
-                    // 'uactimage[]': {
-                    //     required: "Please select Image",
-                    // },
+
+                    induction_duedate: {
+                        required: "Please select Induction Due Date"
+                    }
 
                 },
+
                 errorElement: 'span',
+
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
                     element.closest('.form-input').append(error);
                 },
-                highlight: function(element, errorClass, validClass) {
+
+                highlight: function(element) {
                     $(element).addClass('is-invalid');
                     $(element).closest(".form-input").addClass("selecterror");
                 },
-                unhighlight: function(element, errorClass, validClass) {
+
+                unhighlight: function(element) {
                     $(element).removeClass('is-invalid');
                     $(element).closest(".form-input").removeClass("selecterror");
-                },
+                }
+
             });
+
         });
 
 
-        $('#company').change(function() {
+        $('select[name=company_id]').change(function() {
             var companyId = $(this).val();
             if (companyId) {
                 $.ajax({
-                    url: "{{ admin_url('division/list/') }}" + companyId,
+                    url: "{{ admin_url('location/list/') }}" + companyId,
                     type: 'GET',
                     dataType: 'json',
                     success: function(data) {
-                        $('#division').empty().append(
-                            '<option value="">Select Division</option>');
+                        $('#location').empty().append(
+                            '<option value="">Select Location</option>');
                         $.each(data, function(key, value) {
-                            $('#division').append('<option value="' + value.id + '">' +
+                            $('#location').append('<option value="' + value.id +
+                                '">' +
                                 value
                                 .name + '</option>');
                         });
 
+                        $('#location').trigger('change.select2');
 
                     }
                 });
+            } else {
+                $('#location').empty().append('<option value="">Select Location</option>');
+                $('#location').trigger('change.select2');
             }
-            $('#division').empty().append('<option value="">Select Division</option>');
-            $('#division').trigger('change.select2');
-
-            $('#department').empty().append('<option value="">Select Department</option>');
-            $('#department').trigger('change.select2');
-
-            $('#job_owner_name').val('');
-            $('#job_owner').empty().append('<option value=""></option>');
-            $('#job_owner').trigger('change.select2');
         });
 
+        function initializeDateValidation(row) {
+
+            let startDate = row.find('.cert_start_date');
+
+            let endDate = row.find('.cert_end_date');
+
+
+
+            // DESTROY OLD DATEPICKER
+            startDate.datepicker('destroy');
+
+            endDate.datepicker('destroy');
+
+
+
+            // START DATE
+            startDate.datepicker({
+                format: 'dd-mm-yyyy',
+                autoclose: true,
+                todayHighlight: true
+            }).on('changeDate', function(selected) {
+
+                let start = selected.date;
+
+                // END DATE START LIMIT
+                endDate.datepicker('setStartDate', start);
+
+                let end = endDate.datepicker('getDate');
+
+                if (end && end < start) {
+                    endDate.val('');
+                }
+
+            });
+
+
+
+            // END DATE
+            endDate.datepicker({
+                format: 'dd-mm-yyyy',
+                autoclose: true,
+                todayHighlight: true
+            }).on('changeDate', function(selected) {
+
+                let end = selected.date;
+
+                // START DATE END LIMIT
+                startDate.datepicker('setEndDate', end);
+
+                let start = startDate.datepicker('getDate');
+
+                if (start && start > end) {
+                    startDate.val('');
+                }
+
+            });
+
+        }
+        // INITIAL LOAD
+        $('.competency-row').each(function() {
+            initializeDateValidation($(this));
+        });
+        $(document).off('click.addCompetency').on('click.addCompetency', '.addMorcerti', function(e) {
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            let html = `
+
+    <div class="competency-row card shadow-sm mb-3 p-3 border-0">
+
+        <button type="button" class="removeCompetency">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+
+        <div class="row g-3">
+
+            <div class="col-md-4 form-input">
+                <label class="form-label">Name</label>
+
+                <input type="text"
+                    name="cert_name[]"
+                    class="form-control cert_name"
+                    >
+            </div>
+
+            <div class="col-md-4 form-input">
+                <label class="form-label">Start Date</label>
+
+                <input type="text"
+                    name="cert_start_date[]"
+                    class="form-control datepicker cert_start_date"
+                    readonly
+                    >
+            </div>
+
+            <div class="col-md-4 form-input" style="padding-right:70px;">
+                <label class="form-label">End Date</label>
+
+                <input type="text"
+                    name="cert_end_date[]"
+                    class="form-control datepicker cert_end_date"
+                    readonly
+                    >
+            </div>
+
+            <div class="col-md-4 mt-2 form-input">
+
+                <label class="form-label">
+                    Competency Certificate
+                </label>
+
+                <div class="fileinput fileinput-new"
+                    data-provides="fileinput">
+
+                    <div class="fileinput-preview img-thumbnail"
+                        data-trigger="fileinput"
+                        style="width:200px;height:150px;overflow:hidden;">
+
+                        <img src="{{ url('public/assets/images/common/camera.png') }}"
+                            style="width:100%;height:100%;object-fit:contain;">
+
+                    </div>
+
+                    <div class="mt-2">
+
+                        <span class="btn-file">
+
+                            <span class="btn btn-primary btn-sm fileinput-new">
+                                Upload Attachment
+                            </span>
+
+                            <span class="btn btn-warning btn-sm fileinput-exists">
+                                Change
+                            </span>
+
+                            <input type="file"
+                                name="other_competency_certi[]"
+                                class="form-control other_competency_certi"
+                                >
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    `;
+
+            $('#competencyContainer').append(html);
+            let newRow = $('#competencyContainer .competency-row').last();
+            initializeDateValidation(newRow);
+
+
+        });
+
+        $(document).on('click', '.removeCompetency', function() {
+            $(this).closest('.competency-row').remove();
+        });
         window.onbeforeunload = function(event) {
             //return confirm("Confirm refresh");
         };
