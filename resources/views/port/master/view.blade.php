@@ -130,14 +130,14 @@
                                                         <td>
                                                             <div class="fileinput-preview img-thumbnail"
                                                                 style="width: 200px; height: 150px; text-align: center;">
-                                                                @php $ext = strtolower(pathinfo($certificate->cert_path, PATHINFO_EXTENSION)); @endphp
+                                                                @php $ext = strtolower(pathinfo('public/'. $certificate->cert_path, PATHINFO_EXTENSION)); @endphp
                                                                 @if ($ext === 'pdf')
-                                                                    <a href="{{ asset($certificate->cert_path) }}"
+                                                                    <a href="{{ asset('public/'. $certificate->cert_path) }}"
                                                                         target="_blank" class="btn btn-sm btn-info">
                                                                         <i class="bx bx-file"></i> View PDF
                                                                     </a>
                                                                 @else
-                                                                    <img src="{{ asset($certificate->cert_path) }}"
+                                                                    <img src="{{ asset('public/'. $certificate->cert_path) }}"
                                                                         style="max-width: 100%; max-height: 100%; border-radius: 5px;" />
                                                                 @endif
                                                             </div>

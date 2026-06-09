@@ -29,9 +29,7 @@
                              <button data-bs-toggle="collapse" data-bs-target="#search" class="btn btn-primary"><i
                                     class="fa-solid fa-magnifying-glass" data-bs-toggle="tooltip" title="Search"></i>
                             </button>
-                            <a href="{{ admin_url('incident/master/category/add') }}" class="btn btn-primary popupwindow">
-                                New
-                            </a>
+                           
                         </div>
                     </div>
                     <hr />

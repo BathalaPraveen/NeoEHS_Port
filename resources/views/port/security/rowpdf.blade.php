@@ -1,7 +1,7 @@
 @php
     $logo =
         '<img src="' .
-        url('public/assets/images/Logo-Mini.png') .
+        url('public/assets/theme/img/logo.png') .
         '" style="width:15%;">
 ';
 
@@ -85,6 +85,16 @@
             border: 0.5px solid;
             border-collapse: collapse;
         }
+
+        .table-border td,
+        .table-border th{
+            border:0.5px solid #000;
+            padding:5px;
+        }
+
+        .table-border td{
+            vertical-align:top;
+        }
     </style>
 </head>
 
@@ -140,7 +150,7 @@
                 </td>
             </tr>
         </table>
-        <table width="100%" style="width:100%;border: 0.5px solid">
+        <table width="100%" class="table-border" style="width:100%;border: 0.5px solid">
             <tr>
                 <td width="20%" style="padding:5px;"><b>PSS ID</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -149,7 +159,7 @@
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="25%" style="padding:5px;"> {{ getIdType($securitydata->id_type) }}</td>
             </tr>
-           
+
             <tr>
 
                 <td width="20%" style="padding:5px;"><b>IC/Passport No</b></td>
@@ -205,40 +215,53 @@
             </tr>
         </table>
 
-          <table class="table table-bordered" style="width: 100%; margin-bottom: 0;">
-            <thead style="background: #f1f1f1;">
-                <tr>
-                    <th style="width: 25%;">Competency Certificate Name
-                    </th>
-                    <th style="width: 15%;">Start Date</th>
-                    <th style="width: 15%;">End Date</th>
-                    <th style="width: 35%;">Competency Certificate</th>
+         <table width="100%" class="table-border" style="width:100%;">
+            <thead>
+                <tr style="background:#f1f1f1;">
+                    <th width="25%" style="padding:5px;">Competency Certificate Name</th>
+                    <th width="15%" style="padding:5px;">Start Date</th>
+                    <th width="15%" style="padding:5px;">End Date</th>
+                    <th width="45%" style="padding:5px;">Competency Certificate</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($certifiactedata as $certificate)
+
+                    @php
+                        $ext = strtolower(pathinfo('public/'.$certificate->cert_path, PATHINFO_EXTENSION));
+                    @endphp
+
                     <tr>
-                        <td>{{ $certificate->cert_name ?? '-' }}</td>
-                        <td>{{ Displaydateformat($certificate->cert_start_date) ?? '-' }}
+                        <td style="padding:5px; vertical-align:top;">
+                            {{ $certificate->cert_name ?? '-' }}
                         </td>
-                        <td>{{ Displaydateformat($certificate->cert_end_date) ?? '-' }}
+
+                        <td style="padding:5px; vertical-align:top; text-align:center;">
+                            {{ Displaydateformat($certificate->cert_start_date) ?? '-' }}
                         </td>
-                        <td>
-                            <div class="fileinput-preview img-thumbnail"
-                                style="width: 200px; height: 150px; text-align: center;">
-                                @php $ext = strtolower(pathinfo($certificate->cert_path, PATHINFO_EXTENSION)); @endphp
-                                @if ($ext === 'pdf')
-                                    <a href="{{ asset($certificate->cert_path) }}"
-                                        target="_blank" class="btn btn-sm btn-info">
-                                        <i class="bx bx-file"></i> View PDF
-                                    </a>
-                                @else
-                                    <img src="{{ asset($certificate->cert_path) }}"
-                                        style="max-width: 100%; max-height: 100%; border-radius: 5px;" />
-                                @endif
-                            </div>
+
+                        <td style="padding:5px; vertical-align:top; text-align:center;">
+                            {{ Displaydateformat($certificate->cert_end_date) ?? '-' }}
+                        </td>
+
+                        <td style="padding:5px; text-align:center; vertical-align:middle;">
+
+                            @if ($ext == 'pdf')
+
+                                <a href="{{ asset('public/'.$certificate->cert_path) }}">
+                                    View PDF
+                                </a>
+
+                            @else
+
+                                <img src="{{ asset('public/'.$certificate->cert_path) }}"
+                                    style="width:250px; height:auto; border:1px solid #ccc;" />
+
+                            @endif
+
                         </td>
                     </tr>
+
                 @endforeach
             </tbody>
         </table>

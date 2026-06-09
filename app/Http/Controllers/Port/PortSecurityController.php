@@ -289,23 +289,17 @@ class PortSecurityController extends Controller
                 'margin_right' => 10,
                 'margin_top' => 10,
             ];
-
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
-
             $view = view('port.security.rowpdf', $data);
             $html = $view->render();
-
             $mpdf->WriteHTML($html);
-
-            $filename = $securitydata->unique_id . ".pdf";
+            $filename = "Port Security Access - ". $securitydata->unique_id . ".pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/inspection/list'));
         }
     }
-
 }

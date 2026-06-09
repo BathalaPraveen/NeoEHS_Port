@@ -1,5 +1,5 @@
 @php
-    $logo = '<img src="' . url('public/assets/images/common/Logo.png') . '" style="width:30%;">';
+    $logo = '<img src="' . url('public/assets/theme/img/logo.png') . '" style="width:30%;">';
 
 @endphp
 
