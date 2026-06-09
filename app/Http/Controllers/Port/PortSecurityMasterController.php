@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
-
+use App\Models\Master\Company;
+use App\Models\Master\Designation;
 use App\Models\User;
 
 use App\Models\Port\SecurityMaster;
@@ -22,13 +23,13 @@ class PortSecurityMasterController extends Controller
 {
 
     private $securitymaster;
-    private $certificate;
+    private $securitycertificate;
 
     public function __construct()
     {
 
         $this->securitymaster = new SecurityMaster();
-        $this->certificate = new Cert_Security();
+        $this->securitycertificate = new Cert_Security();
     }
 
     public function index(Request $request)
@@ -42,7 +43,7 @@ class PortSecurityMasterController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('portsecurity/master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('employee/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('portsecurity/master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
@@ -67,11 +68,12 @@ class PortSecurityMasterController extends Controller
 
     public function Add(Request $request)
     {
-
         try {
-
+            $companyList =  Company::get();
+            $designationList =  Designation::get();
             $data = array(
-
+                'companyList' => $companyList,
+                'designationList' => $designationList,
             );
             return view('port.master.add', $data);
 
@@ -83,35 +85,51 @@ class PortSecurityMasterController extends Controller
     public function Store(Request $request)
     {
         try {
-
             $rules = [
-                'category_name' => 'required',
+                'unique_id'          => 'required',
+                'name'               => 'required',
+                'id_type'            => 'required',
+                'passport_number'    => 'required',
+                'company_id'         => 'required',
+                'location'           => 'required',
+                'designation_id'     => 'required',
+                'induction_date'     => 'required',
+                'induction_duedate'  => 'required',
+
             ];
             $messages = [
-                'category_name.required' => 'Please enter Location Name',
-            ];
+                'unique_id.required'         => 'Please enter Unique ID',
+                'name.required'              => 'Please enter Name',
+                'id_type.required'           => 'Please select ID Type',
+                'passport_number.required'   => 'Please enter IC/Passport No',
+                'company_id.required'        => 'Please select Company',
+                'location.required'          => 'Please select Location',
+                'designation_id.required'    => 'Please select Designation',
+                'induction_date.required'    => 'Please select Induction Date',
+                'induction_duedate.required' => 'Please select Induction Due Date',
 
+            ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-                return redirect()->back()->withErrors($validator)->withInput();
+                Session::flash('error', 'Something went wrong, Please try after sometime!');
+                return redirect()->back()
+                    ->withErrors($validator)
+                    ->withInput();
             }
 
             try {
-                $this->securitymaster->store();
-
+                $id = $this->securitymaster->store();
+                $this->securitycertificate->store($id);
                 Session::flash('success', 'Incident Category added successfully!');
             } catch (Exception $ex) {
-
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
-
-            return redirect(admin_url('incident/master/category/list'));
+            return redirect(admin_url('portsecurity/master/list'));
         } catch (Exception $ex) {
-
-
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/master/category/list'));
+            return redirect(admin_url('portsecurity/master/list'));
         }
     }
 
@@ -121,7 +139,7 @@ class PortSecurityMasterController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $securitydata = $this->securitymaster->selectOne($id);
-                $certifiactedata = $this->certificate->selectcerticatedata($id);
+                $certifiactedata = $this->securitycertificate->selectcerticatedata($id);
                 $data = array(
                     'securitydata' => $securitydata,
                     'certifiactedata' => $certifiactedata,
@@ -133,19 +151,26 @@ class PortSecurityMasterController extends Controller
         }
     }
 
-    public function Edit(Request $request)
+    public function Edit($id)
     {
         try {
-            $id = decryptId($request->id);
-
-            $category = $this->securitymaster->selectOne($id);
+            $id = decryptId($id);
+            $companyList     = Company::get();
+            $designationList = Designation::get();
+            $editData = $this->securitymaster->find($id);
+                        // dd($editData);
+            $competencyList = $this->securitycertificate->where('port_fk_id', $id)->get();
+            // dd($competencyList);
             $data = array(
-                'category' => $category,
+                'companyList'     => $companyList,
+                'designationList' => $designationList,
+                'editData'        => $editData,
+                'competencyList'  => $competencyList,
             );
-
-            return view('incident.master.category.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
+            return view('port.master.edit', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
         }
     }
 
