@@ -43,6 +43,7 @@ class PortSecurityController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('portsecurity/security_access/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('employee/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('portsecurity/security_access/pdf/' . encryptId($row->id)) . '" class=" " title="Pdf"><i class="fa fa-file-pdf-o"></i></a> ';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -267,6 +268,43 @@ class PortSecurityController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+        }
+    }
+
+     public function ExportViewPdf(Request $request)
+    {
+
+        try {
+            $id = decryptId($request->id);
+            $securitydata = $this->securitymaster->selectOne($id);
+            $certifiactedata = $this->certificate->selectcerticatedata($id);
+            $data = array(
+                'securitydata' => $securitydata,
+                'certifiactedata' => $certifiactedata,
+            );
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('port.security.rowpdf', $data);
+            $html = $view->render();
+
+            $mpdf->WriteHTML($html);
+
+            $filename = $securitydata->unique_id . ".pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/inspection/list'));
         }
     }
 
