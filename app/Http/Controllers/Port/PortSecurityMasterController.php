@@ -121,7 +121,7 @@ class PortSecurityMasterController extends Controller
             try {
                 $id = $this->securitymaster->store();
                 $this->securitycertificate->store($id);
-                Session::flash('success', 'Incident Category added successfully!');
+                Session::flash('success', 'Port Security Access added successfully!');
             } catch (Exception $ex) {
                 dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -210,7 +210,7 @@ class PortSecurityMasterController extends Controller
             $id = $request->edit_id;
             $this->securitymaster->updates($id);
             $this->securitycertificate->updates($id);
-            Session::flash('success', 'Incident Category updated successfully!');
+            Session::flash('success', 'Port Security Access updated successfully!');
             return redirect(admin_url('portsecurity/master/list'));
         } catch (Exception $ex) {
             dd($ex);

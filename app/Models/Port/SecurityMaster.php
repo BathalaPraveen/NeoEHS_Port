@@ -164,46 +164,6 @@ class SecurityMaster extends Model
         $query = $query->orderBy('id', 'Desc');
         return  $query->get();
     }
-    // public function selectOneWhere($where)
-    // {
-
-    //     $data = $this->select('*')
-    //         ->where($where)
-    //         ->first();
-
-    //     return $data;
-    // }
-
-    public function ajaxList()
-    {
-
-        $query = $this->select('id', 'category_name');
-
-        $datas = $query->get();
-
-        $list = [];
-        foreach ($datas as $data) {
-            $listvalue = [];
-            $listvalue['id'] = encryptId($data->id);
-            $listvalue['name'] = $data->category_name;
-
-            $list[] = $listvalue;
-        }
-        return $list;
-    }
-
-    public function getWhere()
-    {
-
-        $query = $this->select('id', 'category_name', 'input_type', 'required', 'other_params');
-
-        $datas = $query->get();
-
-
-        return $datas;
-    }
-
-
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope(SECMAS));
