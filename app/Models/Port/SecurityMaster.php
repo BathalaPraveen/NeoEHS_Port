@@ -111,12 +111,18 @@ class SecurityMaster extends Model
 
     public function updates($id)
     {
-
         $request = request();
-
         $update_array = array(
-            'category_name' => $request->category_name,
-            'updated_by' => Auth::id()
+            'unique_id'         => $request->unique_id,
+            'name'              => $request->name,
+            'id_type'           => $request->id_type,
+            'passport_number'   => $request->passport_number,
+            'company_id'        => decryptId($request->company_id),
+            'location_id'          => decryptId($request->location),
+            'designation_id'    => decryptId($request->designation_id),
+            'induction_date'    => DBdateformat($request->induction_date),
+            'induction_duedate' => DBdateformat($request->induction_duedate),
+            'updated_by'        => Auth::id()
         );
 
         return $this->where('id', $id)->update($update_array);

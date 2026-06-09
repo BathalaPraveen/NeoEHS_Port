@@ -15,7 +15,7 @@ class Cert_Security extends Model
 
 
     protected $table = SECCERT;
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'comp_cert_id';
     protected $fillable = [
         'port_fk_id',
         'cert_name',
@@ -138,15 +138,84 @@ class Cert_Security extends Model
 
     public function updates($id)
     {
-
         $request = request();
+        $cert_ids        = $request->cert_id ?? [];
+        $cert_names      = $request->cert_name ?? [];
+        $cert_start_dates = $request->cert_start_date ?? [];
+        $cert_end_dates  = $request->cert_end_date ?? [];
+        $files           = $request->file('other_competency_certi') ?? [];
+        $destinationPath = storage_path('app/public/contractors');
 
-        $update_array = array(
-            'category_name' => $request->category_name,
-            'updated_by' => Auth::id()
-        );
+        if (!File::exists($destinationPath)) {
+            File::makeDirectory($destinationPath, 0777, true);
+        }
 
-        return $this->where('id', $id)->update($update_array);
+        foreach ($cert_names as $key => $certName) {
+
+            // Skip completely empty rows
+            if (
+                empty($certName) &&
+                empty($cert_start_dates[$key]) &&
+                empty($cert_end_dates[$key]) &&
+                empty($files[$key])
+            ) {
+                continue;
+            }
+
+            $certId    = $cert_ids[$key] ?? null;
+            $isExisting = !empty($certId); // has encrypted ID = existing record
+
+            $fileName = null;
+            $fileExt  = null;
+            $fileSize = null;
+            $filePath = null;
+
+            // Handle new file upload if provided for this index
+            if (isset($files[$key]) && $files[$key] instanceof \Illuminate\Http\UploadedFile) {
+
+                $file     = $files[$key];
+                $fileName = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                $fileExt  = $file->getClientOriginalExtension();
+                $fileSize = $file->getSize();
+                $file->move($destinationPath, $fileName);
+                $filePath = 'storage/contractors/' . $fileName;
+            }
+
+            if ($isExisting) {
+
+                $updateData = [
+                    'cert_name'       => $certName ?? null,
+                    'cert_start_date' => DBdateformat($cert_start_dates[$key]) ?? null,
+                    'cert_end_date'   => DBdateformat($cert_end_dates[$key]) ?? null,
+                    'updated_by'      => Auth::id(),
+                ];
+
+                // Only update file fields if a new file was uploaded
+                if ($filePath) {
+                    $updateData['cert_path']      = $filePath;
+                    $updateData['cert_file_name'] = $fileName;
+                    $updateData['cert_ext']       = $fileExt;
+                    $updateData['cert_size']      = $fileSize;
+                }
+                $this->where('comp_cert_id', $certId)->update($updateData);
+            } else {
+
+                // INSERT new record
+                $insertData = [
+                    'port_fk_id'      => $id,
+                    'cert_name'       => $certName ?? null,
+                    'cert_start_date' => DBdateformat($cert_start_dates[$key]) ?? null,
+                    'cert_end_date'   => DBdateformat($cert_end_dates[$key]) ?? null,
+                    'cert_path'       => $filePath,
+                    'cert_file_name'  => $fileName,
+                    'cert_ext'        => $fileExt,
+                    'cert_size'       => $fileSize,
+                    'created_by'      => Auth::id(),
+                ];
+
+                $this->create($insertData);
+            }
+        }
     }
 
     public function statuschange($id)

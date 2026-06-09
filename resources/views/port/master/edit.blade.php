@@ -132,7 +132,7 @@
                             <form class="" id="port_edit" novalidate method="POST" enctype="multipart/form-data"
                                 action="{{ admin_url('portsecurity/master/edit/submit') }}">
                                 @csrf
-                                <input type="hidden" name="edit_id" value="{{ encryptId($editData->id) }}">
+                                <input type="hidden" name="edit_id" value="{{ $editData->id }}">
 
                                 <div class="p-4 border rounded">
                                     <div class="row g-3">
@@ -157,8 +157,10 @@
                                             <select name="id_type" id="id_type" required
                                                 class="form-control select2 othersshow">
                                                 <option value="">Select ID Type</option>
-                                                <option value="1" {{ $editData->id_type == 1 ? 'selected' : '' }}>IC No</option>
-                                                <option value="2" {{ $editData->id_type == 2 ? 'selected' : '' }}>Passport No</option>
+                                                <option value="1" {{ $editData->id_type == 1 ? 'selected' : '' }}>IC No
+                                                </option>
+                                                <option value="2" {{ $editData->id_type == 2 ? 'selected' : '' }}>
+                                                    Passport No</option>
                                             </select>
                                         </div>
 
@@ -219,7 +221,8 @@
                                         </div>
 
                                         <div class="col-md-4">
-                                            <label for="induction_duedate" class="form-label require">Induction Due Date</label>
+                                            <label for="induction_duedate" class="form-label require">Induction Due
+                                                Date</label>
                                             <input type="text" name="induction_duedate"
                                                 class="form-control prep_date datepicker" id="induction_duedate"
                                                 value="{{ $editData->induction_duedate ? \Carbon\Carbon::parse($editData->induction_duedate)->format('d-m-Y') : '' }}"
@@ -269,8 +272,11 @@
                                                             </div>
                                                             <div class="mt-2">
                                                                 <span class="btn-file">
-                                                                    <span class="btn btn-primary btn-sm fileinput-new">Upload Attachment</span>
-                                                                    <span class="btn btn-warning btn-sm fileinput-exists">Change</span>
+                                                                    <span
+                                                                        class="btn btn-primary btn-sm fileinput-new">Upload
+                                                                        Attachment</span>
+                                                                    <span
+                                                                        class="btn btn-warning btn-sm fileinput-exists">Change</span>
                                                                     <input type="file" name="other_competency_certi[]"
                                                                         class="form-control other_competency_certi">
                                                                 </span>
@@ -280,13 +286,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                         @else
                                             {{-- Existing competency rows from DB --}}
                                             @foreach ($competencyList as $cert)
                                                 <div class="competency-row card shadow-sm mb-3 p-3 border-0">
 
-                                                    <input type="hidden" name="cert_id[]" value="{{ encryptId($cert->id) }}">
+                                                    <input type="hidden" name="cert_id[]"
+                                                        value="{{ $cert->comp_cert_id }}">
 
                                                     <button type="button" class="removeCompetency">
                                                         <i class="fas fa-trash-alt"></i>
@@ -314,78 +320,79 @@
                                                                 readonly>
                                                         </div>
                                                         <div class="col-md-4 mt-2 form-input">
+                                                            <label class="form-label">Competency Certificate</label>
 
-    <label class="form-label">Competency Certificate</label>
+                                                            <div class="fileinput {{ $cert->cert_path ? 'fileinput-exists' : 'fileinput-new' }}"
+                                                                data-provides="fileinput">
 
-    <div class="fileinput {{ $cert->cert_path ? 'fileinput-exists' : 'fileinput-new' }}"
-        data-provides="fileinput">
+                                                                @php
+                                                                    $extension = isset($cert->cert_path)
+                                                                        ? strtolower(
+                                                                            pathinfo(
+                                                                                $cert->cert_path,
+                                                                                PATHINFO_EXTENSION,
+                                                                            ),
+                                                                        )
+                                                                        : '';
+                                                                    $isImage = in_array($extension, [
+                                                                        'jpg',
+                                                                        'jpeg',
+                                                                        'png',
+                                                                        'gif',
+                                                                        'webp',
+                                                                        'jfif',
+                                                                    ]);
+                                                                    $isPdf = $extension === 'pdf';
+                                                                    $isDoc = in_array($extension, ['doc', 'docx']);
+                                                                    $isExcel = in_array($extension, ['xls', 'xlsx']);
+                                                                    $previewIcon = $isPdf
+                                                                        ? 'https://cdn-icons-png.flaticon.com/512/337/337946.png'
+                                                                        : ($isDoc
+                                                                            ? 'https://cdn-icons-png.flaticon.com/512/337/337932.png'
+                                                                            : ($isExcel
+                                                                                ? 'https://cdn-icons-png.flaticon.com/512/337/337958.png'
+                                                                                : url(
+                                                                                    'public/assets/images/common/camera.png',
+                                                                                )));
+                                                                @endphp
 
-        <div class="fileinput-preview img-thumbnail"
-            data-trigger="fileinput"
-            style="width:200px;height:150px;overflow:hidden;">
+                                                                <div class="fileinput-preview img-thumbnail"
+                                                                    data-trigger="fileinput"
+                                                                    style="width:200px;height:150px;overflow:hidden;cursor:pointer;position:relative;">
 
-            @if ($cert->cert_path)
+                                                                    @if ($cert->cert_path)
+                                                                        {{-- Invisible overlay anchor so the whole box is clickable --}}
+                                                                        <a href="{{ asset('public/' . $cert->cert_path) }}"
+                                                                            target="_blank"
+                                                                            onclick="event.stopPropagation();"
+                                                                            style="position:absolute;inset:0;z-index:10;display:block;"></a>
 
-                @php
-                    $extension = strtolower(pathinfo($cert->cert_path, PATHINFO_EXTENSION));
-                @endphp
+                                                                        <img src="{{ $isImage ? asset('public/' . $cert->cert_path) : $previewIcon }}"
+                                                                            style="width:100%;height:100%;object-fit:contain;">
+                                                                    @else
+                                                                        <img src="{{ url('public/assets/images/common/camera.png') }}"
+                                                                            style="width:100%;height:100%;object-fit:contain;">
+                                                                    @endif
 
-                <a href="{{ asset('public/'.$cert->cert_path) }}" target="_blank">
+                                                                </div>
 
-                    @if(in_array($extension, ['jpg','jpeg','png','gif','webp']))
+                                                                <div class="mt-2">
+                                                                    <span class="btn-file">
+                                                                        <span
+                                                                            class="btn btn-primary btn-sm fileinput-new">Upload
+                                                                            Attachment</span>
+                                                                        <span
+                                                                            class="btn btn-warning btn-sm fileinput-exists">Change</span>
+                                                                        <input type="file"
+                                                                            name="other_competency_certi[]"
+                                                                            class="form-control other_competency_certi">
+                                                                    </span>
+                                                                </div>
+                                                                <span
+                                                                    class="text-danger other_competency_certi_error"></span>
 
-                        <img src="{{ asset('public/'.$cert->cert_path) }}"
-                            style="width:100%;height:100%;object-fit:contain;">
-
-                    @elseif($extension == 'pdf')
-
-                        <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png"
-                            style="width:100%;height:100%;object-fit:contain;">
-
-
-                    @else
-
-                        <img src="{{ url('public/assets/images/common/camera.png') }}"
-                            style="width:100%;height:100%;object-fit:contain;">
-
-                    @endif
-
-                </a>
-
-            @else
-
-                <img src="{{ url('public/assets/images/common/camera.png') }}"
-                    style="width:100%;height:100%;object-fit:contain;">
-
-            @endif
-
-        </div>
-
-        <div class="mt-2">
-
-            <span class="btn-file">
-
-                <span class="btn btn-primary btn-sm fileinput-new">
-                    Upload Attachment
-                </span>
-
-                <span class="btn btn-warning btn-sm fileinput-exists">
-                    Change
-                </span>
-
-                <input type="file"
-                    name="other_competency_certi[]"
-                    class="form-control other_competency_certi">
-
-            </span>
-
-        </div>
-
-        <span class="text-danger other_competency_certi_error"></span>
-
-    </div>
-
-</div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -397,8 +404,7 @@
                                 <div class="row card-bottom">
                                     <div class="col-12 mt-2 mb-3">
                                         <hr>
-                                        <button type="reset" class="btn btn-danger" data-bs-toggle="tooltip"
-                                            title="Reset">Reset</button>
+                                        <button type="button" class="btn btn-danger" id="resetBtn" data-bs-toggle="tooltip" title="Reset">Reset</button>
                                         <button class="btn btn-primary" type="submit" data-bs-toggle="tooltip"
                                             title="Submit">Update</button>
                                     </div>
@@ -417,24 +423,24 @@
 
 @push('script')
     <script type="text/javascript">
-
         // Pre-load location dropdown on page load based on saved company
-        $(document).ready(function () {
+        $(document).ready(function() {
 
-            var companyId  = '{{ encryptId($editData->company_id) }}';
-            var savedLocation = '{{ $editData->location }}';
-
+            var companyId = '{{ encryptId($editData->company_id) }}';
+            var savedLocation = '{{ encryptId($editData->location_id) }}';
             if (companyId) {
                 $.ajax({
                     url: "{{ admin_url('location/list/') }}" + companyId,
                     type: 'GET',
                     dataType: 'json',
-                    success: function (data) {
+                    success: function(data) {
                         $('#location').empty().append('<option value="">Select Location</option>');
-                        $.each(data, function (key, value) {
+                        $.each(data, function(key, value) {
+                             console.log('value.id:', value.id, '| savedLocation:', savedLocation);
                             var selected = (value.id == savedLocation) ? 'selected' : '';
                             $('#location').append(
-                                '<option value="' + value.id + '" ' + selected + '>' + value.name + '</option>'
+                                '<option value="' + value.id + '" ' + selected + '>' + value
+                                .name + '</option>'
                             );
                         });
                         $('#location').trigger('change.select2');
@@ -443,25 +449,26 @@
             }
 
             // Init datepickers for all existing competency rows
-            $('.competency-row').each(function () {
+            $('.competency-row').each(function() {
                 initializeDateValidation($(this));
             });
 
         });
 
         // Company change → reload locations
-        $('select[name=company_id]').change(function () {
+        $('select[name=company_id]').change(function() {
             var companyId = $(this).val();
             if (companyId) {
                 $.ajax({
                     url: "{{ admin_url('location/list/') }}" + companyId,
                     type: 'GET',
                     dataType: 'json',
-                    success: function (data) {
+                    success: function(data) {
                         $('#location').empty().append('<option value="">Select Location</option>');
-                        $.each(data, function (key, value) {
+                        $.each(data, function(key, value) {
                             $('#location').append(
-                                '<option value="' + value.id + '">' + value.name + '</option>'
+                                '<option value="' + value.id + '">' + value.name +
+                                '</option>'
                             );
                         });
                         $('#location').trigger('change.select2');
@@ -474,9 +481,9 @@
         });
 
         // Form validation
-        $(function () {
+        $(function() {
 
-            $.validator.addMethod("noSpace", function (value, element) {
+            $.validator.addMethod("noSpace", function(value, element) {
                 return value.trim().length > 0 && value.indexOf(" ") !== 0;
             }, "First space is not allowed");
 
@@ -485,42 +492,82 @@
                 ignore: [],
 
                 rules: {
-                    unique_id:        { required: true },
-                    name:             { required: true, noSpace: true },
-                    id_type:          { required: true },
-                    passport_number:  { required: true, noSpace: true },
-                    company_id:       { required: true },
-                    location:         { required: true },
-                    designation_id:   { required: true },
-                    induction_date:   { required: true },
-                    induction_duedate:{ required: true }
+                    unique_id: {
+                        required: true
+                    },
+                    name: {
+                        required: true,
+                        noSpace: true
+                    },
+                    id_type: {
+                        required: true
+                    },
+                    passport_number: {
+                        required: true,
+                        noSpace: true
+                    },
+                    company_id: {
+                        required: true
+                    },
+                    location: {
+                        required: true
+                    },
+                    designation_id: {
+                        required: true
+                    },
+                    induction_date: {
+                        required: true
+                    },
+                    induction_duedate: {
+                        required: true
+                    }
                 },
 
                 messages: {
-                    unique_id:         { required: "Please enter Unique ID" },
-                    name:              { required: "Please enter Name", noSpace: "First space is not allowed" },
-                    id_type:           { required: "Please select ID Type" },
-                    passport_number:   { required: "Please enter IC/Passport No", noSpace: "First space is not allowed" },
-                    company_id:        { required: "Please select Company" },
-                    location:          { required: "Please select Location" },
-                    designation_id:    { required: "Please select Designation" },
-                    induction_date:    { required: "Please select Induction Date" },
-                    induction_duedate: { required: "Please select Induction Due Date" }
+                    unique_id: {
+                        required: "Please enter Unique ID"
+                    },
+                    name: {
+                        required: "Please enter Name",
+                        noSpace: "First space is not allowed"
+                    },
+                    id_type: {
+                        required: "Please select ID Type"
+                    },
+                    passport_number: {
+                        required: "Please enter IC/Passport No",
+                        noSpace: "First space is not allowed"
+                    },
+                    company_id: {
+                        required: "Please select Company"
+                    },
+                    location: {
+                        required: "Please select Location"
+                    },
+                    designation_id: {
+                        required: "Please select Designation"
+                    },
+                    induction_date: {
+                        required: "Please select Induction Date"
+                    },
+                    induction_duedate: {
+                        required: "Please select Induction Due Date"
+                    }
                 },
 
                 errorElement: 'span',
 
-                errorPlacement: function (error, element) {
+                errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
                     element.closest('.form-input').append(error);
                 },
 
-                highlight: function (element) {
+                highlight: function(element) {
                     $(element).addClass('is-invalid');
                     $(element).closest(".form-input").addClass("selecterror");
                 },
 
-                unhighlight: function (element) {
+                unhighlight: function(element) {
                     $(element).removeClass('is-invalid');
                     $(element).closest(".form-input").removeClass("selecterror");
                 }
@@ -533,7 +580,7 @@
         function initializeDateValidation(row) {
 
             let startDate = row.find('.cert_start_date');
-            let endDate   = row.find('.cert_end_date');
+            let endDate = row.find('.cert_end_date');
 
             startDate.datepicker('destroy');
             endDate.datepicker('destroy');
@@ -542,7 +589,7 @@
                 format: 'dd-mm-yyyy',
                 autoclose: true,
                 todayHighlight: true
-            }).on('changeDate', function (selected) {
+            }).on('changeDate', function(selected) {
                 let start = selected.date;
                 endDate.datepicker('setStartDate', start);
                 let end = endDate.datepicker('getDate');
@@ -555,7 +602,7 @@
                 format: 'dd-mm-yyyy',
                 autoclose: true,
                 todayHighlight: true
-            }).on('changeDate', function (selected) {
+            }).on('changeDate', function(selected) {
                 let end = selected.date;
                 startDate.datepicker('setEndDate', end);
                 let start = startDate.datepicker('getDate');
@@ -566,7 +613,7 @@
 
             // If editing existing row with pre-filled dates, set limits immediately
             let existingStart = startDate.val();
-            let existingEnd   = endDate.val();
+            let existingEnd = endDate.val();
 
             if (existingStart) {
                 let parsedStart = startDate.datepicker('getDate');
@@ -584,7 +631,7 @@
         }
 
         // Add more competency row
-        $(document).off('click.addCompetency').on('click.addCompetency', '.addMorcerti', function (e) {
+        $(document).off('click.addCompetency').on('click.addCompetency', '.addMorcerti', function(e) {
 
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -643,9 +690,73 @@
         });
 
         // Remove competency row
-        $(document).on('click', '.removeCompetency', function () {
-            $(this).closest('.competency-row').remove();
-        });
+        $(document).on('click', '.removeCompetency', function() {
+            var totalRows = $('#competencyContainer .competency-row').length;
+            var hasDefaultRow = $('#competencyContainer .competency-row:not(:has(.removeCompetency))').length > 0;
+            var minRequired = hasDefaultRow ? 0 : 1;
 
+            if (totalRows - 1 < minRequired) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Warning',
+                    text: 'At least one record must be present!',
+                    confirmButtonColor: '#d33'
+                });
+                return;
+            }
+
+            let btn    = $(this);
+            let row    = btn.closest('.competency-row');
+            let certId = row.find('input[name="cert_id[]"]').val();
+
+            // New row (no certId) — just remove directly
+            if (!certId) {
+                row.remove();
+                return;
+            }
+
+            // Existing DB row — confirm then AJAX delete
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'Do you really want to delete this Certificate?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "{{ admin_url('portsecurity/certificate/delete') }}",
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: {
+                            id: certId
+                        },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                row.remove();
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Deleted!',
+                                    text: 'Certificate deleted successfully.',
+                                    confirmButtonColor: '#3085d6'
+                                });
+                            } else {
+                                Swal.fire('Error', 'Unable to delete certificate.', 'error');
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Server error occurred.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+        $('#resetBtn').on('click', function() {
+                location.reload();
+        });
     </script>
 @endpush

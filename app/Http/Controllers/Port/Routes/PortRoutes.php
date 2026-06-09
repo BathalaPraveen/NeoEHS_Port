@@ -38,6 +38,8 @@ Route::middleware(['web', 'is_login'])->group(function () {
     Route::get('portsecurity/master/add', 'Port\PortSecurityMasterController@Add');
     Route::post('portsecurity/master/add/submit', 'Port\PortSecurityMasterController@Store');
     Route::get('portsecurity/master/edit/{id}', 'Port\PortSecurityMasterController@Edit');
+    Route::post('portsecurity/master/edit/submit', 'Port\PortSecurityMasterController@Update');
+    Route::post('portsecurity/certificate/delete', 'Port\PortSecurityMasterController@deleteCertificate');
 
 
 

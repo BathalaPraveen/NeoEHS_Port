@@ -274,7 +274,7 @@
                                 <div class="row card-bottom">
                                     <div class="col-12 mt-2 mb-3">
                                         <hr>
-                                        <button type="reset" class="btn btn-danger " data-bs-toggle="tooltip"
+                                        <button type="reset" class="btn btn-danger " id="resetBtn" data-bs-toggle="tooltip"
                                             title="Reset">Reset</button>
                                         <button class="btn btn-primary " type="submit" data-bs-toggle="tooltip"
                                             title="Submit">Submit</button>
@@ -628,5 +628,8 @@
         window.onbeforeunload = function(event) {
             //return confirm("Confirm refresh");
         };
+        $('#resetBtn').on('click', function() {
+                location.reload();
+        });
     </script>
 @endpush
