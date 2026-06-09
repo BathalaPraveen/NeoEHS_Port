@@ -48,6 +48,8 @@ Route::middleware(['web', 'is_login'])->group(function () {
     Route::get('portsecurity/security_access/export/excel', 'Port\PortSecurityController@ExportExcel');
     Route::get('portsecurity/security_access/export/pdf', 'Port\PortSecurityController@ExportPdf');
     Route::get('portsecurity/security_access/pdf/{id}', 'Port\PortSecurityController@ExportViewPdf');
+    Route::get('portsecurity/security_access/vehicle_status/{id}', 'Port\PortSecurityController@VehicleStatus');
+    Route::post('portsecurity/security_access/vehicle_status/submit', 'Port\PortSecurityController@VehicleStatusAdd');
 
 
 });
