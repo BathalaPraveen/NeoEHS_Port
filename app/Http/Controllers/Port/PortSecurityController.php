@@ -65,56 +65,6 @@ class PortSecurityController extends Controller
         return view('port.security.list', $data);
     }
 
-    public function Add(Request $request)
-    {
-
-        try {
-
-            $data = array(
-
-            );
-            return view('incident.master.category.add', $data);
-
-        } catch (Exception $ex) {
-            report($ex);
-        }
-    }
-
-    public function Store(Request $request)
-    {
-        try {
-
-            $rules = [
-                'category_name' => 'required',
-            ];
-            $messages = [
-                'category_name.required' => 'Please enter Location Name',
-            ];
-
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            try {
-                $this->securitymaster->store();
-
-                Session::flash('success', 'Incident Category added successfully!');
-            } catch (Exception $ex) {
-
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            }
-
-            return redirect(admin_url('incident/master/category/list'));
-        } catch (Exception $ex) {
-
-
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/master/category/list'));
-        }
-    }
-
     public function View(Request $request)
     {
         try {
@@ -184,69 +134,6 @@ class PortSecurityController extends Controller
             return redirect(admin_url('portsecurity/security_access/list'));
         }
     }
-    public function Edit(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $category = $this->securitymaster->selectOne($id);
-            $data = array(
-                'category' => $category,
-            );
-
-            return view('incident.master.category.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
-        }
-    }
-
-    public function Update(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $rules = [
-                'category_name' => 'required',
-            ];
-            $messages = [
-                'category_name.required' => 'Please enter Location Name',
-            ];
-
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            $this->securitymaster->updates($id);
-
-            Session::flash('success', 'Incident Category updated successfully!');
-            return redirect(admin_url('incident/master/category/list'));
-        } catch (Exception $ex) {
-
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/master/category/list'));
-        }
-    }
-
-    public function Uniquecheck(Request $request)
-    {
-        if ($request->ajax()) {
-            $email = $request->email;
-            $userid = $request->userid;
-            if ($userid == '') {
-                $user = $this->user->EmailCheck($email);
-            } else {
-                $user = $this->user->ExistEmailCheck($email, $userid);
-            }
-            if ($user->count()) {
-                return Response::json(array('msg' => 'true'));
-            }
-            return Response::json(array('msg' => 'false'));
-        }
-    }
-
-
 
     public function ExportExcel(Request $request)
     {

@@ -321,7 +321,6 @@ class PortSecurityMasterController extends Controller
             $filename = "Port Security Access.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
         }
     }

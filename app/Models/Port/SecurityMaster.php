@@ -100,7 +100,7 @@ class SecurityMaster extends Model
             'id_type'           => $request->id_type,
             'passport_number'   => $request->passport_number,
             'company_id'        => decryptId($request->company_id),
-            'location_id'          => decryptId($request->location),
+            'location_id'       => decryptId($request->location),
             'designation_id'    => decryptId($request->designation_id),
             'induction_date'    => DBdateformat($request->induction_date),
             'induction_duedate' => DBdateformat($request->induction_duedate),
@@ -127,7 +127,7 @@ class SecurityMaster extends Model
 
         return $this->where('id', $id)->update($update_array);
     }
-    
+
     public function VehicleStatusupdates($id)
     {
         $request = request();
