@@ -43,7 +43,7 @@ class PortSecurityMasterController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('portsecurity/master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('employee/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('portsecurity/master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
@@ -158,7 +158,9 @@ class PortSecurityMasterController extends Controller
             $companyList     = Company::get();
             $designationList = Designation::get();
             $editData = $this->securitymaster->find($id);
-            $competencyList = $this->securitycertificate->where('contractor_id', $id)->get();
+                        // dd($editData);
+            $competencyList = $this->securitycertificate->where('port_fk_id', $id)->get();
+            // dd($competencyList);
             $data = array(
                 'companyList'     => $companyList,
                 'designationList' => $designationList,
@@ -167,6 +169,7 @@ class PortSecurityMasterController extends Controller
             );
             return view('port.master.edit', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
         }
     }

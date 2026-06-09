@@ -37,6 +37,7 @@ Route::middleware(['web', 'is_login'])->group(function () {
     Route::get('portsecurity/master/export/pdf', 'Port\PortSecurityMasterController@ExportPdf');
     Route::get('portsecurity/master/add', 'Port\PortSecurityMasterController@Add');
     Route::post('portsecurity/master/add/submit', 'Port\PortSecurityMasterController@Store');
+    Route::get('portsecurity/master/edit/{id}', 'Port\PortSecurityMasterController@Edit');
 
 
 
