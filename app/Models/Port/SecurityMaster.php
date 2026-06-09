@@ -5,7 +5,7 @@ namespace App\Models\Port;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-
+use Carbon\Carbon;
 
 use App\Scopes\TrashScope;
 
@@ -125,6 +125,27 @@ class SecurityMaster extends Model
             'updated_by'        => Auth::id()
         );
 
+        return $this->where('id', $id)->update($update_array);
+    }
+    
+    public function VehicleStatusupdates($id)
+    {
+        $request = request();
+        $update_array = array(
+            'vehicle_type'   => $request->vehicle_type,
+            'vehicle_number' => $request->vehicle_number,
+            'purpose'        => $request->purpose,
+        );
+        // ENTRY
+        if ($request->status_type == 'entry') {
+            $update_array['vehicle_entry_date'] =  Carbon::now()->format('Y-m-d');
+            $update_array['vehicle_entry_time'] =  Carbon::now()->format('H:i:s');
+        }
+        // EXIT
+        if ($request->status_type == 'exit') {
+            $update_array['vehicle_exit_date'] =  Carbon::now()->format('Y-m-d');
+            $update_array['vehicle_exit_time'] =  Carbon::now()->format('H:i:s');
+        }
         return $this->where('id', $id)->update($update_array);
     }
 

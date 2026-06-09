@@ -86,7 +86,7 @@
                                         <div class="col-md-4 form-input">
                                             <label for="incidenttime" class="form-label">Induction Due Date</label>
                                             <div>
-                                                {{ displayDateformat($securitydata->induction_duedate)}}
+                                                {{ displayDateformat($securitydata->induction_duedate) }}
                                             </div>
                                         </div>
                                         <div class="col-md-4 form-input">
@@ -99,53 +99,6 @@
                                             <label for="location" class="form-label">Location Name</label>
                                             <div>
                                                 {{ getLocationName($securitydata->location_id) }}
-                                            </div>
-                                        </div>
-                                       <div class="col-md-4 form-input">
-                                            <label class="form-label">Vehicle Type</label>
-                                            <div>
-                                                {{ !empty($securitydata->vehicle_type) ? getVehicleType($securitydata->vehicle_type) : '-' }}
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4 form-input">
-                                            <label class="form-label">Vehicle Number</label>
-                                            <div>
-                                                {{ !empty($securitydata->vehicle_number) ? $securitydata->vehicle_number : '-' }}
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4 form-input">
-                                            <label class="form-label">Purpose</label>
-                                            <div>
-                                                {{ !empty($securitydata->purpose) ? $securitydata->purpose : '-' }}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 form-input">
-                                            <label for="location" class="form-label">Vehicle Entry Date</label>
-                                            <div>
-                                                {{ !empty($securitydata->vehicle_entry_date) ? displayDateformat($securitydata->vehicle_entry_date) : '-' }}
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4 form-input">
-                                            <label for="location" class="form-label">Vehicle Entry Time</label>
-                                            <div>
-                                                {{ !empty($securitydata->vehicle_entry_time) ? Displaytimeformat($securitydata->vehicle_entry_time) : '-' }}
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4 form-input">
-                                            <label for="location" class="form-label">Vehicle Exit Date</label>
-                                            <div>
-                                                {{ !empty($securitydata->vehicle_exit_date) ? displayDateformat($securitydata->vehicle_exit_date) : '-' }}
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-4 form-input">
-                                            <label for="location" class="form-label">Vehicle Exit Time</label>
-                                            <div>
-                                                {{ !empty($securitydata->vehicle_exit_time) ? Displaytimeformat($securitydata->vehicle_exit_time) : '-' }}
                                             </div>
                                         </div>
                                     </div>
@@ -178,12 +131,12 @@
                                                                 style="width: 200px; height: 150px; text-align: center;">
                                                                 @php $ext = strtolower(pathinfo('public/'.$certificate->cert_path, PATHINFO_EXTENSION)); @endphp
                                                                 @if ($ext === 'pdf')
-                                                                    <a href="{{ asset('public/'.$certificate->cert_path) }}"
+                                                                    <a href="{{ asset('public/' . $certificate->cert_path) }}"
                                                                         target="_blank" class="btn btn-sm btn-info">
                                                                         <i class="bx bx-file"></i> View PDF
                                                                     </a>
                                                                 @else
-                                                                    <img src="{{ asset('public/'.$certificate->cert_path) }}"
+                                                                    <img src="{{ asset('public/' . $certificate->cert_path) }}"
                                                                         style="max-width: 100%; max-height: 100%; border-radius: 5px;" />
                                                                 @endif
                                                             </div>
@@ -192,8 +145,90 @@
                                                 @endforeach
                                             </tbody>
                                         </table>
-                                    </div>   
+                                    </div>
                                 @endif
+                                <form class="" id="vehicle_status" novalidate method="POST" enctype="multipart/form-data"
+                                    action="{{ admin_url('portsecurity/security_access/vehicle_status/submit') }}">
+                                    @csrf
+                                    <div class="row g-3 px-4 pt-4 content-block-row">
+                                        <div class="col-md-4 form-input mt-4">
+                                            <label for="vehicle_type" class="form-label require">
+                                                Vehicle Type
+                                            </label>
+                                            <select name="vehicle_type"
+                                                id="vehicle_type"
+                                                required
+                                                class="form-control select2 othersshow">
+                                                <option value="">Select Vehicle Type</option>
+                                                <option value="1"
+                                                    {{ isset($securitydata) && $securitydata->vehicle_type == 1 ? 'selected' : '' }}>
+                                                    Motor Cycle
+                                                </option>
+                                                <option value="2"
+                                                    {{ isset($securitydata) && $securitydata->vehicle_type == 2 ? 'selected' : '' }}>
+                                                    Car
+                                                </option>
+                                                <option value="3"
+                                                    {{ isset($securitydata) && $securitydata->vehicle_type == 3 ? 'selected' : '' }}>
+                                                    Lorry
+                                                </option>
+                                                <option value="4"
+                                                    {{ isset($securitydata) && $securitydata->vehicle_type == 4 ? 'selected' : '' }}>
+                                                    No Vehicle
+                                                </option>
+                                                <option value="5"
+                                                    {{ isset($securitydata) && $securitydata->vehicle_type == 5 ? 'selected' : '' }}>
+                                                    Others
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4 form-input mt-4">
+                                            <label for="vehicle_number" class="form-label require">
+                                                Vehicle Number
+                                            </label>
+                                            <input type="text"
+                                                name="vehicle_number"
+                                                class="form-control"
+                                                id="vehicle_number"
+                                                value="{{ $securitydata->vehicle_number ?? '' }}"
+                                                required>
+                                            <input type="hidden"
+                                                name="id"
+                                                id="id"
+                                                value="{{ $securitydata->id ?? '' }}">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group form-input">
+                                                <label for="purpose" class="form-label">
+                                                    Purpose
+                                                </label>
+                                                <textarea name="purpose"
+                                                    id="purpose"
+                                                    rows="4"
+                                                    class="form-control"
+                                                    placeholder="Enter Purpose">{{ $securitydata->purpose ?? '' }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div style="width:100%; text-align:center; margin-top:20px; margin-bottom:20px;">
+                                            <button class="btn btn-primary"
+                                                type="submit"
+                                                name="status_type"
+                                                value="entry"
+                                                data-bs-toggle="tooltip"
+                                                title="Entry">
+                                                Entry
+                                            </button>
+                                            <button class="btn btn-warning"
+                                                type="submit"
+                                                name="status_type"
+                                                value="exit"
+                                                data-bs-toggle="tooltip"
+                                                title="Exit">
+                                                Exit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -206,4 +241,46 @@
     </div>
 @stop
 @push('script')
+    <script>
+        $(function() {
+            $.validator.addMethod("noSpace", function(value, element) {
+                return value.trim().length > 0 && value.indexOf(" ") !== 0;
+            }, "First space is not allowed");
+            $('#vehicle_status').validate({
+                ignore: [],
+                rules: {
+                    vehicle_type: {
+                        required: true
+                    },
+                    vehicle_number: {
+                        required: true,
+                        noSpace: true
+                    },
+                },
+                messages: {
+                    vehicle_type: {
+                        required: "Please select Vehicle Type"
+                    },
+                    vehicle_number: {
+                        required: "Please enter Vehicle Number",
+                        noSpace: "First space is not allowed"
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+
+                }
+            });
+
+        });
+    </script>
 @endpush
