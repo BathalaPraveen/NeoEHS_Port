@@ -159,9 +159,7 @@
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="25%" style="padding:5px;"> {{ getIdType($securitydata->id_type) }}</td>
             </tr>
-
             <tr>
-
                 <td width="20%" style="padding:5px;"><b>IC/Passport No</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="25%" style="padding:5px;">{{ $securitydata->passport_number }}</td>
@@ -170,7 +168,6 @@
                 <td width="25%" style="padding:5px;">{{ getDesignationName($securitydata->designation_id) }}</td>
             </tr>
             <tr>
-
                 <td width="20%" style="padding:5px;"><b>Induction Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="25%" style="padding:5px;">{{ displayDateformat($securitydata->induction_date) }}</td>
@@ -179,14 +176,25 @@
                 <td width="25%" style="padding:5px;">{{ displayDateformat($securitydata->induction_duedate)}}</td>
             </tr>
             <tr>
-
                 <td width="20%" style="padding:5px;"><b>Company Name</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="25%" style="padding:5px;">{{ getCompanyName($securitydata->company_id) }}</td>
                 <td width="20%" style="padding:5px;"><b>Location Name</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="25%" style="padding:5px;"> {{ getLocationName($securitydata->location_id) }}</td>
-
+            </tr>
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Vehicle Type</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="25%" style="padding:5px;"> {{ !empty($securitydata->vehicle_type) ? getVehicleType($securitydata->vehicle_type) : '-' }}</td>
+                <td width="20%" style="padding:5px;"><b>Vehicle Number</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="25%" style="padding:5px;"> {{ !empty($securitydata->vehicle_number) ? $securitydata->vehicle_number : '-' }}</td>
+            </tr>
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Purpose</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="25%" style="padding:5px;" colspan="4">   {{ !empty($securitydata->purpose) ? $securitydata->purpose : '-' }}</td>
             </tr>
             <tr>
                 <td width="20%" style="padding:5px;"><b>Vehicle Entry Date</b></td>

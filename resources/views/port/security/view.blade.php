@@ -101,7 +101,26 @@
                                                 {{ getLocationName($securitydata->location_id) }}
                                             </div>
                                         </div>
+                                       <div class="col-md-4 form-input">
+                                            <label class="form-label">Vehicle Type</label>
+                                            <div>
+                                                {{ !empty($securitydata->vehicle_type) ? getVehicleType($securitydata->vehicle_type) : '-' }}
+                                            </div>
+                                        </div>
 
+                                        <div class="col-md-4 form-input">
+                                            <label class="form-label">Vehicle Number</label>
+                                            <div>
+                                                {{ !empty($securitydata->vehicle_number) ? $securitydata->vehicle_number : '-' }}
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 form-input">
+                                            <label class="form-label">Purpose</label>
+                                            <div>
+                                                {{ !empty($securitydata->purpose) ? $securitydata->purpose : '-' }}
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 form-input">
                                             <label for="location" class="form-label">Vehicle Entry Date</label>
                                             <div>

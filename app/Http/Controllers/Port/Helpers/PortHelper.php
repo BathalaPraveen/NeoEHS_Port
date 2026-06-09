@@ -22,7 +22,33 @@ use Illuminate\Support\Str;
             return $id_type;
         }
     }
-    
+    if (!function_exists('getVehicleType')) {
+
+        function getVehicleType($id)
+        {
+            $vehicle_type = '';
+
+            switch ($id) {
+                case 1:
+                    $vehicle_type = 'Motor Cycle';
+                    break;
+                case 2:
+                    $vehicle_type = 'Car';
+                    break;
+                case 3:
+                    $vehicle_type = 'Lorry';
+                    break;
+                case 4:
+                    $vehicle_type = 'No Vehicle';
+                    break;
+                case 5:
+                    $vehicle_type = 'Others';
+                    break;
+            }
+            return $vehicle_type;
+        }
+    }
+
     if (!function_exists('getsequenceforport')) {
         function getsequenceforport($type)
         {
